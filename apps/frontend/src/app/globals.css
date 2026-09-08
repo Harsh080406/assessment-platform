@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pop-lime: #CCFF00;
+  --color-pop-cyan: #00F0FF;
+  --color-pop-pink: #FF2E93;
+  --color-pop-orange: #FF6600;
+  --color-pop-violet: #7928CA;
+  --color-pop-yellow: #FFDE59;
+  --color-pop-ink: #0B0F19;
+  --color-pop-paper: #FAFAF7;
+  --color-pop-card: #FFFFFF;
+
+  --color-brand-charcoal: #0B0F19;
+  --color-brand-pearl: #FAFAF7;
+  --color-brand-slateBg: #F4F4F0;
+  --color-brand-electricCyan: #00F0FF;
+  --color-brand-vividViolet: #7928CA;
+  --color-brand-deepIndigo: #4F46E5;
+  --color-brand-fuchsiaPink: #FF2E93;
+  --color-brand-warmCoral: #FF6600;
+  --color-brand-emeraldLime: #10B981;
+  --color-brand-brightAmber: #FFDE59;
+
+  --shadow-neo: 4px 4px 0px #0B0F19;
+  --shadow-neo-lg: 8px 8px 0px #0B0F19;
+  --shadow-neo-xl: 12px 12px 0px #0B0F19;
+  --shadow-neo-lime: 6px 6px 0px #CCFF00;
+  --shadow-neo-pink: 6px 6px 0px #FF2E93;
+  --shadow-neo-cyan: 6px 6px 0px #00F0FF;
+  --shadow-glow-violet: 0 10px 30px -5px rgba(121, 40, 202, 0.4);
+  --shadow-glow-cyan: 0 10px 30px -5px rgba(0, 240, 255, 0.4);
+  --shadow-glow-pink: 0 10px 30px -5px rgba(255, 46, 147, 0.4);
+  --shadow-glow-lime: 0 10px 30px -5px rgba(204, 255, 0, 0.4);
+}
+
+/* Background Gradients & Textures */
+.bg-student-grid {
+  background-color: #FAFAF7;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(204, 255, 0, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(255, 46, 147, 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 20% 85%, rgba(121, 40, 202, 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(255, 102, 0, 0.2) 0%, transparent 40%),
+    linear-gradient(to right, rgba(11, 15, 25, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 15, 25, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(#0B0F19 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+}
+
+.bg-dot-pattern-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+}
+
+/* Keyframes for Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 25s linear infinite;
+}
+
+.animate-marquee:hover, .animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Floating Animations */
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1.5deg); }
+}
+
+@keyframes floatGentleReverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(-1.5deg); }
+}
+
+@keyframes bounceSticker {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.04); }
+}
+
+.animate-float {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatGentleReverse 6s ease-in-out infinite;
+}
+
+.animate-sticker {
+  animation: bounceSticker 3s ease-in-out infinite;
+}
+
+/* Mobile Touch & Scroll Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Hide Next.js dev indicator & overlay */
+nextjs-portal,
+[data-nextjs-toast],
+[data-nextjs-dev-indicator],
+[data-nextjs-route-announcer] {
+  display: none !important;
+}

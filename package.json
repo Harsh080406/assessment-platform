@@ -1,26 +1,20 @@
 {
-  "name": "aurapath-temp",
-  "version": "0.1.0",
+  "name": "aurapath-platform",
+  "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "dev": "npm run dev --workspace=@aurapath/frontend",
+    "dev:frontend": "npm run dev --workspace=@aurapath/frontend",
+    "dev:backend": "npm run dev --workspace=@aurapath/backend",
+    "build": "npm run build --workspaces --if-present",
+    "build:frontend": "npm run build --workspace=@aurapath/frontend",
+    "build:backend": "npm run build --workspace=@aurapath/backend",
+    "lint": "npm run lint --workspaces --if-present",
+    "start:frontend": "npm run start --workspace=@aurapath/frontend",
+    "start:backend": "npm run start --workspace=@aurapath/backend"
   }
 }

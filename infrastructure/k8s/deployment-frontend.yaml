@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aurapath-frontend
+  labels:
+    app: aurapath-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aurapath-frontend
+  template:
+    metadata:
+      labels:
+        app: aurapath-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: aurapath/frontend:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurapath-frontend-svc
+spec:
+  selector:
+    app: aurapath-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
