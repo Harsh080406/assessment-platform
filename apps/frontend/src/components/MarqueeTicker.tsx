@@ -2,59 +2,47 @@
 
 interface MarqueeTickerProps {
   reverse?: boolean;
-  theme?: "lime" | "dark" | "pink" | "cyan";
+  theme?: "dark" | "light";
 }
 
 const ITEMS_1 = [
-  "⚡ STOP GUESSING YOUR LIFE",
-  "🎯 0% BORING QUESTIONNAIRES",
-  "🧠 REAL PSYCHOMETRIC POTENTIAL",
-  "🚫 NO MORE RELATIVES TELLING YOU WHAT TO STUDY",
-  "✨ 48,000+ STUDENTS UNLOCKED",
-  "🚀 CLASS 8 TO UNIVERSITY GRADS",
-  "🧬 DISCOVER YOUR SUPERPOWERS",
-  "🔮 FUTURE-PROOF CAREERS",
+  "SCENARIO-BASED ADAPTIVE COGNITIVE MATRIX",
+  "180+ VERIFIED 2026+ CAREER HORIZONS",
+  "BIG FIVE & RIASEC PSYCHOMETRIC CALIBRATION",
+  "ZERO TEST ANXIETY • NO ROTE MEMORIZATION",
+  "5-DIMENSION COGNITIVE RADAR PROFILE",
+  "REAL ENTRY-SALARY BENCHMARKS & ROADMAPS",
+  "100% PRIVATE • ZERO SPAM",
 ];
 
 const ITEMS_2 = [
-  "🔥 WHAT ARE YOU ACTUALLY BUILT FOR?",
-  "💡 BIG FIVE PERSONALITY THEORY",
-  "🎓 FIND YOUR EXACT COLLEGE MAJOR",
-  "📈 SALARY BENCHMARKS & ROADMAPS",
-  "🎨 DIVERGENT THINKERS WELCOME",
-  "⚡ TAKE THE 3-MIN QUICK QUIZ",
-  "💼 ZERO PRESSURE • 100% CLARITY",
+  "ACTIONABLE 4-YEAR COLLEGE MAJOR BLUEPRINTS",
+  "DISCOVER HIDDEN PROBLEM-SOLVING INSTINCTS",
+  "DIVERGENT THINKERS & SYSTEMS ARCHITECTS",
+  "END STREAM PARALYSIS & UNCERTAINTY",
+  "HIGH-GROWTH INDUSTRY DOMAINS MAPPED",
+  "PSYCHOMETRIC RIGOR MEETS INTUITIVE DESIGN",
 ];
 
 export default function MarqueeTicker({
   reverse = false,
-  theme = "lime",
+  theme = "light",
 }: MarqueeTickerProps) {
   const items = reverse ? ITEMS_2 : ITEMS_1;
   const repeated = [...items, ...items, ...items, ...items];
 
-  const getThemeClasses = () => {
-    switch (theme) {
-      case "lime":
-        return "bg-pop-lime text-pop-ink border-y-2 border-pop-ink font-black";
-      case "dark":
-        return "bg-pop-ink text-white border-y-2 border-pop-lime font-black";
-      case "pink":
-        return "bg-pop-pink text-white border-y-2 border-pop-ink font-black";
-      case "cyan":
-        return "bg-pop-cyan text-pop-ink border-y-2 border-pop-ink font-black";
-      default:
-        return "bg-pop-lime text-pop-ink border-y-2 border-pop-ink font-black";
-    }
-  };
+  const themeClasses =
+    theme === "dark"
+      ? "bg-[#2B2B2E] text-[#FBFBF9] border-y border-[#EDEBE7]"
+      : "bg-[#F1F3FC] text-[#2B2B2E] border-y border-[#EDEBE7]";
 
   return (
-    <div className={`overflow-hidden py-3 select-none ${getThemeClasses()}`}>
-      <div className={reverse ? "animate-marquee-reverse" : "animate-marquee"}>
+    <div className={`overflow-hidden py-3 select-none ${themeClasses}`}>
+      <div className={reverse ? "animate-ticker-reverse" : "animate-ticker"}>
         {repeated.map((item, idx) => (
-          <div key={idx} className="flex items-center mx-4 gap-4 shrink-0 text-xs sm:text-sm md:text-base tracking-wider uppercase">
+          <div key={idx} className="flex items-center mx-5 gap-5 shrink-0 text-xs sm:text-sm font-bold tracking-widest uppercase">
             <span>{item}</span>
-            <span className="text-base opacity-70">✦</span>
+            <span className="text-[#A9B4E8] text-xs">◆</span>
           </div>
         ))}
       </div>

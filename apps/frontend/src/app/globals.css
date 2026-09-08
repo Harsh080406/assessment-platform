@@ -1,116 +1,143 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pop-lime: #CCFF00;
-  --color-pop-cyan: #00F0FF;
-  --color-pop-pink: #FF2E93;
-  --color-pop-orange: #FF6600;
-  --color-pop-violet: #7928CA;
-  --color-pop-yellow: #FFDE59;
-  --color-pop-ink: #0B0F19;
-  --color-pop-paper: #FAFAF7;
-  --color-pop-card: #FFFFFF;
+  /* ═══════════════════════════════════════════════
+     Master Color System — High Contrast Black Typography
+     ═══════════════════════════════════════════════ */
 
-  --color-brand-charcoal: #0B0F19;
-  --color-brand-pearl: #FAFAF7;
-  --color-brand-slateBg: #F4F4F0;
-  --color-brand-electricCyan: #00F0FF;
-  --color-brand-vividViolet: #7928CA;
-  --color-brand-deepIndigo: #4F46E5;
-  --color-brand-fuchsiaPink: #FF2E93;
-  --color-brand-warmCoral: #FF6600;
-  --color-brand-emeraldLime: #10B981;
-  --color-brand-brightAmber: #FFDE59;
+  /* Base / Neutrals */
+  --color-base: #FBFBF9;
+  --color-surface: #FFFFFF;
+  --color-border: #E2E0DB;
+  --color-border-strong: #C8C5BD;
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-tertiary: #666666;
 
-  --shadow-neo: 4px 4px 0px #0B0F19;
-  --shadow-neo-lg: 8px 8px 0px #0B0F19;
-  --shadow-neo-xl: 12px 12px 0px #0B0F19;
-  --shadow-neo-lime: 6px 6px 0px #CCFF00;
-  --shadow-neo-pink: 6px 6px 0px #FF2E93;
-  --shadow-neo-cyan: 6px 6px 0px #00F0FF;
-  --shadow-glow-violet: 0 10px 30px -5px rgba(121, 40, 202, 0.4);
-  --shadow-glow-cyan: 0 10px 30px -5px rgba(0, 240, 255, 0.4);
-  --shadow-glow-pink: 0 10px 30px -5px rgba(255, 46, 147, 0.4);
-  --shadow-glow-lime: 0 10px 30px -5px rgba(204, 255, 0, 0.4);
+  /* Primary Accent — "Faded Periwinkle" */
+  --color-periwinkle: #A9B4E8;
+  --color-periwinkle-hover: #8E9BDD;
+  --color-periwinkle-deep: #7C89CC;
+  --color-periwinkle-tint: #EEF1FB;
+  --color-periwinkle-muted: #C5CCF0;
+
+  /* Secondary Accent — "Sage Mist" */
+  --color-sage: #A9D8C6;
+  --color-sage-hover: #8FC9B0;
+  --color-sage-deep: #7FBFA7;
+  --color-sage-tint: #EAF6F0;
+
+  /* Alert / Caution */
+  --color-warn: #E8C08C;
+  --color-error: #E3A0A0;
+
+  /* Dark surfaces (for dark banners/footers) */
+  --color-dark: #1A1A1D;
+  --color-dark-surface: #141416;
+  --color-dark-border: #2E2E32;
+
+  /* Soft Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 40px -8px rgba(0, 0, 0, 0.14);
+  --shadow-2xl: 0 24px 56px -12px rgba(0, 0, 0, 0.18);
 }
 
-/* Background Gradients & Textures */
-.bg-student-grid {
-  background-color: #FAFAF7;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(204, 255, 0, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(255, 46, 147, 0.2) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.18) 0%, transparent 50%),
-    radial-gradient(circle at 20% 85%, rgba(121, 40, 202, 0.2) 0%, transparent 45%),
-    radial-gradient(circle at 80% 85%, rgba(255, 102, 0, 0.2) 0%, transparent 40%),
-    linear-gradient(to right, rgba(11, 15, 25, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(11, 15, 25, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+/* ═══════════════════════════════════════════════
+   Animated Gradient Mesh Background
+   ═══════════════════════════════════════════════ */
+@keyframes gradient-mesh-drift {
+  0%, 100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  25% {
+    transform: translate(4%, -2%) scale(1.04);
+  }
+  50% {
+    transform: translate(-2%, 4%) scale(0.98);
+  }
+  75% {
+    transform: translate(-4%, -2%) scale(1.02);
+  }
 }
 
-.bg-dot-pattern {
-  background-image: radial-gradient(#0B0F19 1.5px, transparent 1.5px);
-  background-size: 20px 20px;
+.bg-gradient-mesh {
+  position: relative;
+  overflow: hidden;
 }
 
-.bg-dot-pattern-light {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.3) 1.5px, transparent 1.5px);
-  background-size: 20px 20px;
+.bg-gradient-mesh::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(169, 180, 232, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(169, 216, 198, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, rgba(169, 180, 232, 0.10) 0%, transparent 50%);
+  animation: gradient-mesh-drift 60s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Keyframes for Marquee */
-@keyframes marquee {
+/* Soft blurred geometric blobs for landing pages */
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(20px, -15px) rotate(120deg); }
+  66% { transform: translate(-15px, 10px) rotate(240deg); }
+}
+
+.bg-blob-periwinkle {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(169, 180, 232, 0.12);
+  filter: blur(80px);
+  animation: blob-drift 90s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.bg-blob-sage {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: rgba(169, 216, 198, 0.10);
+  filter: blur(80px);
+  animation: blob-drift 75s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+/* Ticker Animations */
+@keyframes ticker {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
 }
 
-@keyframes marquee-reverse {
+@keyframes ticker-reverse {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0%); }
 }
 
-.animate-marquee {
+.animate-ticker {
   display: flex;
   width: max-content;
-  animation: marquee 25s linear infinite;
+  animation: ticker 35s linear infinite;
 }
 
-.animate-marquee-reverse {
+.animate-ticker-reverse {
   display: flex;
   width: max-content;
-  animation: marquee-reverse 25s linear infinite;
+  animation: ticker-reverse 35s linear infinite;
 }
 
-.animate-marquee:hover, .animate-marquee-reverse:hover {
+.animate-ticker:hover, .animate-ticker-reverse:hover {
   animation-play-state: paused;
-}
-
-/* Floating Animations */
-@keyframes floatGentle {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(1.5deg); }
-}
-
-@keyframes floatGentleReverse {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(10px) rotate(-1.5deg); }
-}
-
-@keyframes bounceSticker {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.04); }
-}
-
-.animate-float {
-  animation: floatGentle 5s ease-in-out infinite;
-}
-
-.animate-float-reverse {
-  animation: floatGentleReverse 6s ease-in-out infinite;
-}
-
-.animate-sticker {
-  animation: bounceSticker 3s ease-in-out infinite;
 }
 
 /* Mobile Touch & Scroll Utilities */
@@ -125,6 +152,25 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    background-color: #FBFBF9;
+    color: #000000;
+  }
+  body {
+    background-color: #FBFBF9;
+    color: #000000;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .bg-gradient-mesh::before,
+  .bg-blob-periwinkle,
+  .bg-blob-sage {
+    animation: none;
+  }
+  .animate-ticker,
+  .animate-ticker-reverse {
+    animation: none;
   }
 }
 

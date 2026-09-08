@@ -5,11 +5,11 @@ import Footer from "@/components/Footer";
 import StickyStackHowItWorks from "@/components/StickyStackHowItWorks";
 import FloatingQuickAction from "@/components/FloatingQuickAction";
 import Link from "next/link";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function QuestsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-pop-paper text-pop-ink font-sans selection:bg-pop-lime selection:text-pop-ink">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black font-sans selection:bg-[#A9B4E8] selection:text-black">
       <Navbar />
 
       <main className="flex-1">
@@ -17,25 +17,24 @@ export default function QuestsPage() {
         <StickyStackHowItWorks />
 
         {/* Bottom Launch Banner */}
-        <section className="py-12 sm:py-16 bg-pop-ink text-white border-t-4 border-pop-ink">
+        <section className="py-14 sm:py-18 bg-[#1A1A1D] text-white border-t border-[#2E2E32]">
           <div className="max-w-4xl mx-auto px-3.5 sm:px-8 text-center">
-            <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider bg-pop-lime text-pop-ink px-3 py-1 rounded-full border border-pop-ink shadow-neo mb-3 sm:mb-4">
-              <Zap className="w-3.5 h-3.5 fill-pop-ink" />
+            <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-[#A9B4E8] text-black px-3.5 py-1 rounded-full shadow-sm mb-4">
               Ready to Begin?
             </span>
-            <h2 className="text-2xl sm:text-5xl font-black text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-[family-name:var(--font-dm-sans)]">
               START WITH QUEST 01 TODAY
             </h2>
-            <p className="text-slate-300 font-medium text-xs sm:text-base mt-2 sm:mt-3 max-w-xl mx-auto px-1">
-              It takes 60 seconds to calibrate your genesis stage. No spam, no test anxiety, and 100% private.
+            <p className="text-[#A9B4E8] font-medium text-sm sm:text-base mt-3 max-w-xl mx-auto px-1 leading-relaxed">
+              It takes 60 seconds to calibrate your genesis stage. Zero spam, no test anxiety, and 100% private.
             </p>
-            <div className="mt-6 sm:mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center">
               <Link
                 href="/assessment"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-pop-lime text-pop-ink font-black text-sm sm:text-base hover:bg-[#b8e600] transition-all shadow-neo border-2 border-white"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#A9B4E8] text-black font-extrabold text-sm sm:text-base hover:bg-[#8E9BDD] transition-all shadow-sm active:scale-[0.98]"
               >
-                <span>Launch Genesis Profile</span>
-                <ArrowRight className="w-4 h-4 stroke-[3]" />
+                <span className="text-black font-extrabold">Launch Genesis Calibration</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5] text-black" />
               </Link>
             </div>
           </div>

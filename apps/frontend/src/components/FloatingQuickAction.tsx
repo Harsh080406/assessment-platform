@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Zap, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function FloatingQuickAction() {
@@ -32,16 +32,16 @@ export default function FloatingQuickAction() {
         >
           <Link
             href="/assessment"
-            className="flex items-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-pop-lime text-pop-ink font-black text-xs sm:text-sm border-2 sm:border-3 border-pop-ink shadow-neo sm:shadow-neo-lg hover:shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 transition-all group"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#A9B4E8] text-black font-extrabold text-xs sm:text-sm border border-[#8E9BDD] shadow-lg hover:bg-[#8E9BDD] hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] group"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-pop-ink text-pop-lime flex items-center justify-center shrink-0">
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-pop-lime" />
+            <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center shrink-0 shadow-sm">
+              <Sparkles className="w-4 h-4 stroke-[2.2] text-black" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="leading-tight text-xs sm:text-sm">Quick Quiz</span>
-              <span className="text-[9px] sm:text-[10px] text-slate-700 font-bold hidden xs:inline">20 mins • Free</span>
+              <span className="leading-tight text-xs sm:text-sm text-black font-extrabold">Assessment</span>
+              <span className="text-[10px] text-black/80 font-bold">20 mins • Free</span>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 stroke-[2.5] text-black group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       )}

@@ -1,55 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Activity } from "lucide-react";
+import { Compass } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-200 pt-12 sm:pt-16 pb-8 sm:pb-12 text-slate-600 text-sm mt-auto">
-      <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 pb-10 sm:pb-12 border-b border-slate-100">
+    <footer className="bg-[#1A1A1D] text-[#E2E0DB] border-t border-[#2E2E32] pt-12 sm:pt-16 pb-8 sm:pb-12 text-sm mt-auto">
+      <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 pb-10 sm:pb-12 border-b border-[#2E2E32]">
           {/* Brand Info */}
           <div className="sm:col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-deepIndigo to-brand-vividViolet flex items-center justify-center text-white font-black text-sm shadow-sm">
-                P
+              <div className="w-8 h-8 rounded-lg bg-[#A9B4E8] text-black flex items-center justify-center font-black text-sm">
+                <Compass className="w-5 h-5 stroke-[2.2] text-black" />
               </div>
-              <span className="text-lg font-black tracking-tight text-slate-900">
-                Pathfinder
+              <span className="text-lg font-extrabold tracking-tight text-white font-[family-name:var(--font-dm-sans)]">
+                AuraPath
               </span>
             </Link>
-            <p className="mt-3 text-xs sm:text-sm text-slate-500 max-w-sm leading-relaxed">
-              The modern student discovery platform. Combining behavioral psychometrics with emerging career constellations for students in Class 8 through University.
+            <p className="mt-3 text-xs sm:text-sm text-[#A9B4E8] max-w-sm leading-relaxed font-semibold">
+              The precision cognitive profiling & career architecture platform. Scenario-based behavioral psychometrics for students navigating 2026+ industry horizons.
             </p>
-            <div className="mt-4 text-xs text-slate-400 font-medium">
-              © {new Date().getFullYear()} Pathfinder EdTech Technologies Inc. All rights reserved.
+            <div className="mt-4 text-xs text-[#888888] font-bold">
+              © {new Date().getFullYear()} AuraPath Cognitive Technologies. All rights reserved.
             </div>
           </div>
 
           {/* Discovery Column */}
           <div>
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 sm:mb-4">
+            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-3 sm:mb-4">
               Discovery
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-600">
+            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/assessment">
-                  Take Assessment
+                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
+                  Begin Assessment
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/careers">
-                  Career Library
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/quests">
+                <Link className="hover:text-white hover:underline transition-colors" href="/quests">
                   The 4 Quests
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/decoder">
+                <Link className="hover:text-white hover:underline transition-colors" href="/decoder">
                   Parent vs You
+                </Link>
+              </li>
+              <li>
+                <Link className="hover:text-white hover:underline transition-colors" href="/careers">
+                  2026+ Careers
                 </Link>
               </li>
             </ul>
@@ -57,71 +57,64 @@ export default function Footer() {
 
           {/* Audiences Column */}
           <div>
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 sm:mb-4">
-              For You
+            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-3 sm:mb-4">
+              Calibrated For
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-600">
+            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/assessment">
-                  Middle School (8-10)
+                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
+                  Class 9 & 10 (Streams)
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/assessment">
-                  High School (11-12)
+                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
+                  Class 11 & 12 (Degrees)
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/assessment">
-                  University Students
+                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
+                  College & Early Grads
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-slate-900 transition-colors" href="/decoder">
-                  Parents &amp; Mentors
+                <Link className="hover:text-white hover:underline transition-colors" href="/decoder">
+                  Parents & Mentors
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Trust & Legal Column */}
+          {/* Trust & Ethics Column */}
           <div>
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
-              Trust &amp; Ethics
+            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-4">
+              Trust & Rigor
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-600">
+            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
               <li>
-                <span className="hover:text-slate-900 cursor-pointer">Psychometric Validity</span>
+                <span className="hover:text-white cursor-pointer">Big Five & RIASEC Models</span>
               </li>
               <li>
-                <span className="hover:text-slate-900 cursor-pointer">Student Privacy Charter</span>
+                <span className="hover:text-white cursor-pointer">Privacy Charter (Zero Spam)</span>
               </li>
               <li>
-                <span className="hover:text-slate-900 cursor-pointer">Terms of Service</span>
+                <span className="hover:text-white cursor-pointer">Independent Industry Research</span>
               </li>
               <li>
-                <span className="hover:text-slate-900 cursor-pointer">Editorial Independence</span>
-              </li>
-              <li>
-                <span className="hover:text-slate-900 cursor-pointer">Contact Counselors</span>
+                <span className="hover:text-white cursor-pointer">Terms & Security</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Footnote */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#888888] font-bold gap-4">
           <div>
-            Designed with empathy for the next generation of builders, thinkers, and explorers.
+            Architected for the next generation of builders, thinkers, and strategists.
           </div>
-          <div className="flex items-center gap-4 font-medium">
-            <span className="inline-flex items-center gap-1.5 text-slate-500">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Systems Operational
-            </span>
-            <span className="inline-flex items-center gap-1 text-slate-500">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              Encrypted Assessment Protocol
+          <div className="flex items-center gap-4 font-bold">
+            <span className="inline-flex items-center gap-1.5 text-black bg-[#A9D8C6] px-3 py-1 rounded-full font-extrabold">
+              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+              Adaptive Engine v2.6 Active
             </span>
           </div>
         </div>

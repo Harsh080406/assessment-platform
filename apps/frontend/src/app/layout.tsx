@@ -1,11 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const viewport: Viewport = {
@@ -26,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} scroll-smooth`}>
-      <body className="bg-mesh-glow text-brand-charcoal font-sans antialiased overflow-x-hidden selection:bg-brand-vividViolet selection:text-white min-h-screen flex flex-col">
+    <html lang="en" className={`${dmSans.variable} ${inter.variable} scroll-smooth`}>
+      <body className="bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] antialiased overflow-x-hidden selection:bg-[#A9B4E8] selection:text-black min-h-screen flex flex-col">
         {children}
       </body>
     </html>

@@ -318,7 +318,7 @@ export default function AssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-student-grid text-pop-ink selection:bg-pop-lime selection:text-pop-ink">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black selection:bg-[#A9B4E8] selection:text-black">
       <Navbar />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-8 lg:px-12 xl:px-16 py-6 sm:py-10">
@@ -326,18 +326,18 @@ export default function AssessmentPage() {
         <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-black text-pop-ink hover:text-pop-violet transition-colors bg-white px-3 py-1.5 rounded-xl border-2 border-pop-ink shadow-neo self-start"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:bg-[#EEF1FB] transition-colors bg-white px-3 py-1.5 rounded-xl border border-[#E2E0DB] shadow-sm self-start"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-3.5 h-3.5 text-black" />
+            <span className="text-black">Back to Home</span>
           </Link>
 
-          <div className="flex items-center justify-between sm:justify-start gap-2 bg-white border-2 border-pop-ink px-3.5 sm:px-4 py-1.5 rounded-2xl shadow-neo text-xs font-black">
-            <span>Calibrated for:</span>
+          <div className="flex items-center justify-between sm:justify-start gap-2 bg-white border border-[#E2E0DB] px-3.5 sm:px-4 py-1.5 rounded-2xl shadow-sm text-xs font-bold text-black">
+            <span className="text-black font-semibold">Calibrated for:</span>
             <select
               value={stage}
               onChange={(e) => setStage(e.target.value)}
-              className="bg-pop-lime text-pop-ink font-black px-2 py-0.5 rounded-lg border border-pop-ink outline-none cursor-pointer"
+              className="bg-[#A9B4E8] text-black font-extrabold px-2 py-0.5 rounded-lg border border-[#A9B4E8] outline-none cursor-pointer"
             >
               <option value="8-10">Class 8 – 10 (Foundation)</option>
               <option value="11-12">Class 11 – 12 (Crossroad)</option>
@@ -348,37 +348,37 @@ export default function AssessmentPage() {
 
         {!isCompleted ? (
           /* Question Card */
-          <div className="bg-white rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-pop-ink shadow-neo-xl overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2E0DB] shadow-md overflow-hidden text-black">
             {/* Top Bar */}
-            <div className="bg-pop-ink text-white px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b-3 sm:border-b-4 border-pop-ink">
+            <div className="bg-[#1A1A1D] text-white px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-[#2E2E32]">
               <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3">
-                <span className="px-2.5 sm:px-3 py-1 rounded-xl bg-pop-lime text-pop-ink font-black text-[11px] sm:text-xs uppercase">
+                <span className="px-2.5 sm:px-3 py-1 rounded-xl bg-[#A9B4E8] text-black font-extrabold text-[11px] sm:text-xs uppercase shadow-sm">
                   {question.section}
                 </span>
-                <span className="text-[11px] sm:text-xs font-black text-pop-yellow flex items-center gap-1">
-                  <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-pop-yellow" />
+                <span className="text-[11px] sm:text-xs font-bold text-white flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#A9B4E8] text-[#A9B4E8]" />
                   Quest {currentStep + 1} of {FULL_QUESTIONS.length}
                 </span>
               </div>
 
               {/* Progress */}
               <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3">
-                <div className="w-28 sm:w-36 h-2.5 sm:h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                <div className="w-28 sm:w-36 h-2.5 sm:h-3 bg-[#141416] rounded-full overflow-hidden border border-[#2E2E32]">
                   <div
-                    className="h-full bg-gradient-to-r from-pop-lime via-pop-cyan to-pop-pink transition-all duration-300"
+                    className="h-full bg-[#A9B4E8] transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <span className="text-xs font-black text-pop-lime">{progressPercent}%</span>
+                <span className="text-xs font-bold text-white">{progressPercent}%</span>
               </div>
             </div>
 
             {/* Question Body */}
             <div className="p-4 sm:p-10">
-              <h2 className="text-xl sm:text-3xl font-black text-pop-ink leading-snug">
+              <h2 className="text-xl sm:text-3xl font-extrabold text-black leading-snug font-[family-name:var(--font-dm-sans)]">
                 {question.question}
               </h2>
-              <p className="text-xs sm:text-sm font-bold text-slate-500 mt-1.5 sm:mt-2">
+              <p className="text-xs sm:text-sm font-medium text-[#333333] mt-1.5 sm:mt-2">
                 {question.context}
               </p>
 
@@ -391,33 +391,35 @@ export default function AssessmentPage() {
                       key={choice.key}
                       onClick={() => handleSelectChoice(choice.key)}
                       type="button"
-                      className={`w-full text-left p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 border-pop-ink transition-all flex items-start justify-between group cursor-pointer ${
+                      className={`w-full text-left p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border transition-all flex items-start justify-between group cursor-pointer ${
                         isSelected
-                          ? "bg-pop-lime/25 shadow-neo translate-x-0.5 -translate-y-0.5"
-                          : "bg-white hover:bg-slate-50 shadow-sm"
+                          ? "bg-[#EEF1FB] border-[#A9B4E8] shadow-sm -translate-y-0.5"
+                          : "bg-white border-[#E2E0DB] hover:bg-[#EEF1FB] shadow-sm"
                       }`}
                     >
                       <div className="flex items-start gap-2.5 sm:gap-4">
-                        <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-pop-ink text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border ${
+                          isSelected ? "bg-[#A9B4E8] text-black border-[#A9B4E8]" : "bg-white text-black border-[#E2E0DB]"
+                        }`}>
                           {choice.key}
                         </span>
                         <div>
                           <div className="flex items-center gap-1.5 sm:gap-2">
                             <span className="text-lg sm:text-xl">{choice.emoji}</span>
-                            <h4 className="font-black text-sm sm:text-base text-pop-ink">{choice.text}</h4>
+                            <h4 className="font-bold text-sm sm:text-base text-black">{choice.text}</h4>
                           </div>
-                          <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-1 leading-relaxed">
+                          <p className="text-xs sm:text-sm font-medium text-[#333333] mt-1 leading-relaxed">
                             {choice.detail}
                           </p>
                         </div>
                       </div>
 
                       <div
-                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl border-2 border-pop-ink flex items-center justify-center shrink-0 ml-2 transition-all ${
-                          isSelected ? "bg-pop-ink text-white" : "bg-white"
+                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl border flex items-center justify-center shrink-0 ml-2 transition-all ${
+                          isSelected ? "bg-[#A9B4E8] text-black border-[#A9B4E8]" : "bg-white border-[#E2E0DB]"
                         }`}
                       >
-                        {isSelected && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />}
+                        {isSelected && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-black" />}
                       </div>
                     </button>
                   );
@@ -425,14 +427,14 @@ export default function AssessmentPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-6 sm:mt-10 pt-4 sm:pt-6 border-t-2 border-slate-100 flex items-center justify-between gap-3">
+              <div className="mt-6 sm:mt-10 pt-4 sm:pt-6 border-t border-[#E2E0DB] flex items-center justify-between gap-3">
                 <button
                   onClick={handleBack}
                   disabled={currentStep === 0}
-                  className={`text-xs font-black px-3.5 sm:px-4 py-2 rounded-xl transition-colors ${
+                  className={`text-xs font-bold px-3.5 sm:px-4 py-2 rounded-xl transition-colors cursor-pointer ${
                     currentStep === 0
-                      ? "text-slate-300 cursor-not-allowed"
-                      : "text-slate-600 hover:text-pop-ink border-2 border-transparent hover:border-pop-ink"
+                      ? "text-[#888888]/40 cursor-not-allowed"
+                      : "text-black hover:text-black border border-transparent hover:border-[#E2E0DB]"
                   }`}
                 >
                   ← Back
@@ -440,93 +442,93 @@ export default function AssessmentPage() {
 
                 <button
                   onClick={handleNext}
-                  className="px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl bg-pop-lime text-pop-ink font-black text-xs sm:text-sm border-2 border-pop-ink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center gap-2"
+                  className="px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl bg-[#A9B4E8] text-black font-extrabold text-xs sm:text-sm shadow-sm hover:bg-[#8E9BDD] transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
                 >
-                  <span>
+                  <span className="text-black">
                     {currentStep === FULL_QUESTIONS.length - 1
                       ? "⚡ Unlock Report"
                       : "Continue"}
                   </span>
-                  <ArrowRight className="w-4 h-4 stroke-[3]" />
+                  <ArrowRight className="w-4 h-4 stroke-[3] text-black" />
                 </button>
               </div>
             </div>
           </div>
         ) : (
           /* Completion State: Archetype Result Card */
-          <div className="bg-white rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-pop-ink p-5 sm:p-12 shadow-neo-xl animate-fade-in">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2E0DB] p-5 sm:p-12 shadow-md animate-fade-in text-black">
             <div className="text-center max-w-2xl mx-auto">
-              <span className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-pop-lime text-pop-ink font-black text-[10px] sm:text-xs uppercase mb-3 sm:mb-4 border-2 border-pop-ink shadow-neo">
-                <Sparkles className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#A9D8C6] text-black font-extrabold text-[10px] sm:text-xs uppercase mb-3 sm:mb-4 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-black" />
                 Assessment Complete • Stage: Class {stage}
               </span>
-              <h2 className="text-2xl sm:text-5xl font-black text-pop-ink tracking-tight">
+              <h2 className="text-2xl sm:text-5xl font-extrabold text-black tracking-tight font-[family-name:var(--font-dm-sans)]">
                 Your Primary Student Archetype
               </h2>
-              <div className="text-xl sm:text-3xl font-black text-pop-violet mt-2 flex flex-wrap items-center justify-center gap-2">
+              <div className="text-xl sm:text-3xl font-extrabold text-black mt-2 flex flex-wrap items-center justify-center gap-2 font-[family-name:var(--font-dm-sans)]">
                 <span>{archetypeEmoji}</span>
                 <span>{topArchetype}</span>
-                <span className="text-slate-400 font-bold">{archetypeTag}</span>
+                <span className="text-[#7C89CC] font-bold">{archetypeTag}</span>
               </div>
-              <p className="text-xs sm:text-base font-bold text-slate-700 max-w-xl mx-auto mt-2 sm:mt-3 leading-relaxed">
+              <p className="text-xs sm:text-base font-medium text-[#333333] max-w-xl mx-auto mt-2 sm:mt-3 leading-relaxed">
                 {archetypeDesc}
               </p>
             </div>
 
             {/* Cognitive Trait Bars & Radar */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 my-6 sm:my-8 p-4 sm:p-8 bg-pop-paper rounded-2xl sm:rounded-3xl border-3 border-pop-ink shadow-neo">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 my-6 sm:my-8 p-4 sm:p-8 bg-[#EEF1FB] rounded-2xl sm:rounded-3xl border border-[#E2E0DB] shadow-sm">
               <div className="space-y-3.5 sm:space-y-4">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">
+                <h4 className="text-xs font-black uppercase tracking-wider text-black mb-2">
                   Cognitive Dimensional Fit
                 </h4>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black text-slate-800 mb-1">
+                  <div className="flex justify-between text-xs font-bold text-black mb-1">
                     <span>Creative &amp; Divergent Thinking</span>
                     <span>{totals.creative}%</span>
                   </div>
-                  <div className="h-2.5 sm:h-3 w-full bg-slate-100 rounded-full border-2 border-pop-ink overflow-hidden p-0.5">
+                  <div className="h-2.5 sm:h-3 w-full bg-white rounded-full border border-[#E2E0DB] overflow-hidden p-0.5">
                     <div
-                      className="h-full bg-pop-pink rounded-full"
+                      className="h-full bg-[#A9B4E8] rounded-full"
                       style={{ width: `${Math.min(totals.creative, 100)}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black text-slate-800 mb-1">
+                  <div className="flex justify-between text-xs font-bold text-black mb-1">
                     <span>Systems &amp; Algorithmic Logic</span>
                     <span>{totals.systems}%</span>
                   </div>
-                  <div className="h-2.5 sm:h-3 w-full bg-slate-100 rounded-full border-2 border-pop-ink overflow-hidden p-0.5">
+                  <div className="h-2.5 sm:h-3 w-full bg-white rounded-full border border-[#E2E0DB] overflow-hidden p-0.5">
                     <div
-                      className="h-full bg-pop-cyan rounded-full"
+                      className="h-full bg-black rounded-full"
                       style={{ width: `${Math.min(totals.systems, 100)}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black text-slate-800 mb-1">
+                  <div className="flex justify-between text-xs font-bold text-black mb-1">
                     <span>Interpersonal Resonance</span>
                     <span>{totals.empathy}%</span>
                   </div>
-                  <div className="h-2.5 sm:h-3 w-full bg-slate-100 rounded-full border-2 border-pop-ink overflow-hidden p-0.5">
+                  <div className="h-2.5 sm:h-3 w-full bg-white rounded-full border border-[#E2E0DB] overflow-hidden p-0.5">
                     <div
-                      className="h-full bg-pop-lime rounded-full"
+                      className="h-full bg-[#A9D8C6] rounded-full"
                       style={{ width: `${Math.min(totals.empathy, 100)}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black text-slate-800 mb-1">
+                  <div className="flex justify-between text-xs font-bold text-black mb-1">
                     <span>Venture &amp; Commercial Instinct</span>
                     <span>{totals.venture}%</span>
                   </div>
-                  <div className="h-2.5 sm:h-3 w-full bg-slate-100 rounded-full border-2 border-pop-ink overflow-hidden p-0.5">
+                  <div className="h-2.5 sm:h-3 w-full bg-white rounded-full border border-[#E2E0DB] overflow-hidden p-0.5">
                     <div
-                      className="h-full bg-pop-orange rounded-full"
+                      className="h-full bg-[#E8C08C] rounded-full"
                       style={{ width: `${Math.min(totals.venture, 100)}%` }}
                     />
                   </div>
@@ -534,30 +536,30 @@ export default function AssessmentPage() {
               </div>
 
               {/* Radar visualization */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-pop-ink flex flex-col items-center justify-center text-center shadow-sm">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E2E0DB] flex flex-col items-center justify-center text-center shadow-sm">
                 <svg className="w-32 h-32 sm:w-40 sm:h-40" viewBox="0 0 160 160">
                   <polygon
                     fill="none"
                     points="80,15 140,55 125,130 35,130 20,55"
-                    stroke="#CBD5E1"
+                    stroke="#E2E0DB"
                     strokeWidth="1.5"
                   />
                   <polygon
-                    fill="rgba(204, 255, 0, 0.4)"
+                    fill="rgba(169, 180, 232, 0.3)"
                     points="80,24 135,60 115,125 40,118 28,60"
-                    stroke="#0B0F19"
-                    strokeWidth="3"
+                    stroke="#000000"
+                    strokeWidth="2"
                   />
-                  <circle cx="80" cy="24" fill="#FF2E93" r="4" stroke="#0B0F19" strokeWidth="1.5" />
-                  <circle cx="135" cy="60" fill="#00F0FF" r="4" stroke="#0B0F19" strokeWidth="1.5" />
-                  <circle cx="115" cy="125" fill="#CCFF00" r="4" stroke="#0B0F19" strokeWidth="1.5" />
-                  <circle cx="40" cy="118" fill="#FF6600" r="4" stroke="#0B0F19" strokeWidth="1.5" />
-                  <circle cx="28" cy="60" fill="#7928CA" r="4" stroke="#0B0F19" strokeWidth="1.5" />
+                  <circle cx="80" cy="24" fill="#000000" r="4" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="135" cy="60" fill="#000000" r="4" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="115" cy="125" fill="#000000" r="4" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="40" cy="118" fill="#000000" r="4" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx="28" cy="60" fill="#000000" r="4" stroke="#FFFFFF" strokeWidth="1.5" />
                 </svg>
-                <span className="text-xs font-black text-pop-ink mt-2">
+                <span className="text-xs font-bold text-black mt-2">
                   Multi-Factor Polymath Signature
                 </span>
-                <span className="text-[10px] font-bold text-slate-500">
+                <span className="text-[10px] font-bold text-[#444444]">
                   Calibrated to your exact milestone
                 </span>
               </div>
@@ -565,7 +567,7 @@ export default function AssessmentPage() {
 
             {/* Top Careers */}
             <div className="mt-6 sm:mt-8">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-3 sm:mb-4">
+              <h4 className="text-xs font-black uppercase tracking-wider text-black mb-3 sm:mb-4">
                 Highest Affinity Modern Career Horizons
               </h4>
 
@@ -573,27 +575,27 @@ export default function AssessmentPage() {
                 {recommendedRoles.map((role) => (
                   <div
                     key={role.title}
-                    className="p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 border-pop-ink bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-neo hover:translate-x-0.5 transition-all"
+                    className="p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-[#E2E0DB] bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-black"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] sm:text-xs font-black px-2 sm:px-2.5 py-0.5 rounded-md bg-pop-paper border border-pop-ink">
+                        <span className="text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-md bg-[#EEF1FB] border border-[#A9B4E8]/40 text-black">
                           {role.stream}
                         </span>
-                        <h5 className="font-black text-slate-900 text-sm sm:text-base">{role.title}</h5>
+                        <h5 className="font-bold text-black text-sm sm:text-base">{role.title}</h5>
                       </div>
-                      <span className="text-xs font-bold text-slate-500 mt-1 block">
+                      <span className="text-xs font-medium text-[#333333] mt-1 block">
                         💰 Typical entry horizon: {role.salary}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                      <span className="px-3 py-1 rounded-full bg-pop-lime text-pop-ink text-xs font-black border border-pop-ink shadow-sm">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E2E0DB]">
+                      <span className="px-3 py-1 rounded-full bg-[#A9D8C6] text-black text-xs font-extrabold shadow-sm">
                         {role.match} Match
                       </span>
                       <Link
                         href="/careers"
-                        className="text-xs font-black text-pop-violet hover:underline flex items-center gap-1"
+                        className="text-black hover:text-[#7C89CC] font-bold text-sm transition-colors"
                       >
                         Explore Roadmap →
                       </Link>
@@ -604,21 +606,21 @@ export default function AssessmentPage() {
             </div>
 
             {/* Footer Actions */}
-            <div className="mt-8 sm:mt-10 pt-4 sm:pt-6 border-t-2 border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="mt-8 sm:mt-10 pt-4 sm:pt-6 border-t border-[#E2E0DB] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
               <button
                 onClick={handleRestart}
-                className="inline-flex items-center justify-center gap-2 text-xs font-black text-pop-ink px-5 py-3 rounded-2xl border-2 border-pop-ink hover:bg-slate-100 shadow-neo transition-all"
+                className="inline-flex items-center justify-center gap-2 text-xs font-bold text-black px-5 py-3 rounded-2xl border border-[#E2E0DB] bg-white hover:bg-[#EEF1FB] shadow-sm transition-all cursor-pointer"
               >
-                <RotateCcw className="w-4 h-4" />
-                <span>Retake Quiz</span>
+                <RotateCcw className="w-4 h-4 text-black" />
+                <span className="text-black">Retake Quiz</span>
               </button>
 
               <button
                 onClick={() => alert("Downloading your official 24-page psychometric report (PDF)...")}
-                className="px-6 sm:px-8 py-3.5 rounded-2xl bg-pop-lime text-pop-ink font-black text-xs sm:text-sm border-2 border-pop-ink shadow-neo-lg hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                className="px-6 sm:px-8 py-3.5 rounded-2xl bg-[#A9B4E8] text-black font-extrabold text-xs sm:text-sm shadow-sm hover:bg-[#8E9BDD] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
               >
-                <Download className="w-4 h-4" />
-                <span>Download Full Diagnostic PDF</span>
+                <Download className="w-4 h-4 text-black" />
+                <span className="text-black">Download Full Diagnostic PDF</span>
               </button>
             </div>
           </div>

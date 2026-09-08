@@ -111,7 +111,7 @@ export default function CareersPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-student-grid text-pop-ink selection:bg-pop-lime selection:text-pop-ink">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black selection:bg-[#A9B4E8] selection:text-black">
       <Navbar />
 
       <main className="flex-1 w-full mx-auto px-3.5 sm:px-8 lg:px-12 xl:px-16 py-6 sm:py-10">
@@ -119,57 +119,57 @@ export default function CareersPage() {
         <div className="mb-6 sm:mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-black text-pop-ink hover:text-pop-violet transition-colors mb-3 bg-white px-3 py-1.5 rounded-xl border-2 border-pop-ink shadow-neo"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:bg-[#EEF1FB] transition-colors mb-3 bg-white px-3 py-1.5 rounded-xl border border-[#E2E0DB] shadow-sm"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-3.5 h-3.5 text-black" />
+            <span className="text-black">Back to Home</span>
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-pop-cyan text-pop-ink border-2 border-pop-ink px-3.5 sm:px-4 py-1 rounded-full shadow-neo inline-block rotate-[-1deg]">
+              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest bg-[#A9B4E8] text-black px-3.5 sm:px-4 py-1 rounded-full shadow-sm inline-block">
                 Career Constellation Library
               </span>
-              <h1 className="text-2xl sm:text-5xl font-black text-pop-ink mt-2 sm:mt-3 tracking-tight">
+              <h1 className="text-2xl sm:text-5xl font-extrabold text-black mt-2 sm:mt-3 tracking-tight font-[family-name:var(--font-dm-sans)]">
                 EXPLORE MODERN HORIZONS
               </h1>
-              <p className="text-xs sm:text-base font-bold text-slate-600 mt-1.5 sm:mt-2 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-base font-medium text-[#333333] mt-1.5 sm:mt-2 max-w-2xl leading-relaxed">
                 Discover future-proof career disciplines aligned with actual psychometric inclinations rather than outdated corporate stereotypes.
               </p>
             </div>
 
             <Link
               href="/assessment"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-pop-lime text-pop-ink border-2 border-pop-ink font-black text-xs sm:text-sm shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 self-start md:self-auto"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-[#A9B4E8] text-black font-extrabold text-xs sm:text-sm shadow-sm hover:bg-[#8E9BDD] self-start md:self-auto transition-all active:scale-[0.98]"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Match With My Profile</span>
+              <Sparkles className="w-4 h-4 text-black" />
+              <span className="text-black font-extrabold">Match With My Profile</span>
             </Link>
           </div>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border-3 border-pop-ink shadow-neo-lg mb-6 sm:mb-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-[#E2E0DB] shadow-sm mb-6 sm:mb-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search careers, skills, or traits..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border-2 border-pop-ink outline-none font-bold"
+              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-[#E2E0DB] outline-none font-bold text-black bg-white focus:ring-1 focus:ring-[#A9B4E8] transition-colors"
             />
           </div>
 
-          {/* Stream Filter Pills — Horizontal swipeable on touch */}
+          {/* Stream Filter Pills */}
           <div className="flex flex-nowrap md:flex-wrap overflow-x-auto no-scrollbar py-1 gap-1.5 sm:gap-2 w-full md:w-auto">
             {streams.map((st) => (
               <button
                 key={st}
                 onClick={() => setSelectedStream(st)}
-                className={`shrink-0 text-[11px] sm:text-xs px-3 sm:px-4 py-1.5 rounded-xl font-black border-2 border-pop-ink transition-all ${
+                className={`shrink-0 text-[11px] sm:text-xs px-3 sm:px-4 py-1.5 rounded-xl font-bold border transition-all cursor-pointer ${
                   selectedStream === st
-                    ? "bg-pop-lime text-pop-ink shadow-neo"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    ? "bg-[#A9B4E8] text-black border-[#A9B4E8] shadow-sm font-extrabold"
+                    : "bg-white text-black border-[#E2E0DB] hover:border-[#A9B4E8]"
                 }`}
               >
                 {st}
@@ -183,22 +183,22 @@ export default function CareersPage() {
           {filtered.map((career) => (
             <div
               key={career.id}
-              className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-3 sm:border-4 border-pop-ink shadow-neo-lg hover:shadow-neo-xl transition-all flex flex-col justify-between group hover:-translate-y-1"
+              className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-[#E2E0DB] shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group hover:-translate-y-0.5 text-black"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-pop-paper text-pop-ink border border-pop-ink">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-[#EEF1FB] text-black border border-[#A9B4E8]/40">
                     {career.stream}
                   </span>
-                  <span className="text-xs font-black text-pop-ink bg-pop-lime px-3 py-1 rounded-full border border-pop-ink">
+                  <span className="text-xs font-bold text-black bg-[#A9B4E8] px-3 py-1 rounded-full">
                     {career.growth}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-black text-pop-ink group-hover:text-pop-violet transition-colors">
+                <h3 className="text-xl font-extrabold text-black group-hover:text-[#7C89CC] transition-colors font-[family-name:var(--font-dm-sans)]">
                   {career.title}
                 </h3>
-                <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 leading-relaxed">
+                <p className="text-xs sm:text-sm font-medium text-[#333333] mt-2 leading-relaxed">
                   {career.description}
                 </p>
 
@@ -207,7 +207,7 @@ export default function CareersPage() {
                   {career.matchTraits.map((t) => (
                     <span
                       key={t}
-                      className="text-[10px] font-black bg-pop-paper text-pop-ink border border-pop-ink px-2 py-0.5 rounded-md"
+                      className="text-[10px] font-bold bg-[#EEF1FB] text-black border border-[#A9B4E8]/40 px-2 py-0.5 rounded-md"
                     >
                       {t}
                     </span>
@@ -215,26 +215,31 @@ export default function CareersPage() {
                 </div>
 
                 {/* Details */}
-                <div className="mt-5 pt-4 border-t-2 border-slate-100 space-y-2 text-xs font-bold">
-                  <div className="flex items-start gap-2 text-slate-700">
-                    <GraduationCap className="w-3.5 h-3.5 text-pop-ink shrink-0 mt-0.5" />
-                    <span className="leading-snug">{career.degree}</span>
+                <div className="mt-5 pt-4 border-t border-[#E2E0DB] space-y-2 text-xs font-medium">
+                  <div className="flex items-start gap-2 text-black">
+                    <GraduationCap className="w-3.5 h-3.5 text-black shrink-0 mt-0.5" />
+                    <span className="leading-snug text-black font-semibold">{career.degree}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t-2 border-slate-100">
-                <p className="text-[11px] font-semibold text-slate-500 italic mb-3">
-                  <span className="font-black text-pop-ink not-italic">First Step:</span>{" "}
+              <div className="mt-6 pt-4 border-t border-[#E2E0DB]">
+                <p className="text-[11px] font-medium text-[#333333] italic mb-3">
+                  <span className="font-bold text-black not-italic">First Step:</span>{" "}
                   {career.readinessStep}
                 </p>
-                <Link
-                  href="/assessment"
-                  className="w-full py-3 rounded-2xl bg-pop-ink text-white hover:bg-slate-800 font-black text-xs flex items-center justify-center gap-2 transition-all border-2 border-pop-ink shadow-neo"
-                >
-                  <span>Test Compatibility</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E2E0DB]">
+                  <span className="text-xs font-bold text-black">
+                    Avg: {career.salary}
+                  </span>
+                  <Link
+                    href="/assessment"
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold px-3.5 py-1.5 rounded-xl bg-[#A9B4E8] text-black shadow-sm hover:bg-[#8E9BDD] transition-all"
+                  >
+                    <span className="text-black font-extrabold">Match Trait</span>
+                    <ArrowRight className="w-3 h-3 stroke-[2.5] text-black" />
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

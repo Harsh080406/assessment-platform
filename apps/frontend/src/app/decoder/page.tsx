@@ -8,7 +8,7 @@ import FloatingQuickAction from "@/components/FloatingQuickAction";
 
 export default function ParentDecoderPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-pop-paper text-pop-ink font-sans selection:bg-pop-lime selection:text-pop-ink">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black font-sans selection:bg-[#A9B4E8] selection:text-black">
       <Navbar />
 
       <main className="flex-1">

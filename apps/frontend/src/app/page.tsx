@@ -16,7 +16,7 @@ export default function Home() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-pop-paper text-pop-ink font-sans selection:bg-pop-lime selection:text-pop-ink">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] selection:bg-[#A9B4E8] selection:text-black">
       {/* 1. Sticky Top Scroll Progress Tracker */}
       <ScrollProgress />
 
@@ -25,29 +25,29 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* 3. Hero Section (Headline, Student Stickers, Primary CTAs) */}
+        {/* 3. Hero Section */}
         <Hero />
 
-        {/* 4. Infinite Marquee Ticker 1 (Acid Lime) */}
-        <MarqueeTicker theme="lime" />
+        {/* 4. Metric Ticker 1 */}
+        <MarqueeTicker theme="dark" />
 
-        {/* 5. Sound Familiar? Real Student Dilemmas Grid */}
+        {/* 5. Real Student Dilemmas */}
         <SocialProof />
 
-        {/* 6. Infinite Marquee Ticker 2 (Hot Pink Reverse) */}
-        <MarqueeTicker theme="pink" reverse />
+        {/* 6. Metric Ticker 2 */}
+        <MarqueeTicker theme="light" reverse />
 
-        {/* 7. About Pathfinder / Why We Exist Section */}
+        {/* 7. About AuraPath */}
         <AboutSection />
 
-        {/* 8. Final High-Voltage CTA Banner */}
+        {/* 8. Call-to-Action Banner */}
         <CtaBanner />
       </main>
 
       {/* 9. Footer */}
       <Footer />
 
-      {/* 10. Floating Quick Quiz Action Button */}
+      {/* 10. Floating Quick Action */}
       <FloatingQuickAction />
 
       {/* 11. Authentication Modal */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, HeartHandshake, Flame, ShieldAlert, Sparkles, Check, X } from "lucide-react";
+import { ArrowRight, ArrowLeft, Compass, ShieldAlert, Check, X } from "lucide-react";
 import Link from "next/link";
 
 interface MythFact {
@@ -12,7 +12,7 @@ interface MythFact {
   reality: string;
   realityProof: string;
   stat: string;
-  emoji: string;
+  icon: string;
 }
 
 const COMPARISONS: MythFact[] = [
@@ -24,7 +24,7 @@ const COMPARISONS: MythFact[] = [
     reality: "Cognitive burn-out happens when innate divergent minds are forced into purely algorithmic rote drills.",
     realityProof: "Over 71% of engineering grads never work in technical coding roles. 4 years lost to disengagement.",
     stat: "71% Disengagement",
-    emoji: "🛑",
+    icon: "🛑",
   },
   {
     id: "humanities",
@@ -34,7 +34,7 @@ const COMPARISONS: MythFact[] = [
     reality: "AI requires prompt architects, behavioral researchers, and spatial UX directors—drawing heavily on human psychology.",
     realityProof: "Top Spatial UX & Behavioral Tech architects average $140,000+ early in their career.",
     stat: "$140k+ Avg Horizon",
-    emoji: "📈",
+    icon: "📈",
   },
   {
     id: "pressure",
@@ -44,7 +44,7 @@ const COMPARISONS: MythFact[] = [
     reality: "Exam memory has almost zero correlation with entrepreneurial or systems-scaling instinct.",
     realityProof: "Top venture capitalists and corporate strategists scored across diverse distributions but possessed high economic curiosity.",
     stat: "93.4% Validity Matrix",
-    emoji: "⚡",
+    icon: "⚡",
   },
 ];
 
@@ -53,111 +53,107 @@ export default function StudentParentDecoder() {
   const activeData = COMPARISONS.find((c) => c.id === activeTab) || COMPARISONS[0];
 
   return (
-    <section className="pt-4 sm:pt-8 pb-16 sm:pb-24 bg-pop-paper relative overflow-hidden" id="decoder">
+    <section className="pt-6 sm:pt-10 pb-16 sm:pb-24 bg-[#FBFBF9] relative overflow-hidden" id="decoder">
       <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-6xl mx-auto">
         {/* Unified Page Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-black text-slate-700 hover:text-pop-violet transition-colors mb-4 sm:mb-5 bg-white px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border-2 border-pop-ink shadow-neo"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-black transition-colors mb-5 bg-white px-4 py-2 rounded-xl border border-[#E2E0DB] shadow-sm hover:bg-[#EEF1FB]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-3.5 h-3.5 text-black" />
+            <span className="text-black">Back to Home</span>
           </Link>
 
           <div>
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-black tracking-widest uppercase bg-pop-pink text-white border-2 border-pop-ink px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-neo rotate-[1deg]">
-              <HeartHandshake className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Bridge The Generation Gap</span>
+            <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase bg-[#A9B4E8] text-black px-4 py-1.5 rounded-full mb-3 shadow-sm">
+              <Compass className="w-4 h-4 stroke-[2.2] text-black" />
+              <span className="text-black">Bridge The Generation Gap</span>
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-6xl font-black text-pop-ink mt-3 sm:mt-4 tracking-tight">
+          <h1 className="text-3xl sm:text-6xl font-extrabold text-black mt-2 tracking-tight font-[family-name:var(--font-dm-sans)]">
             PARENT VS. YOU: REALITY DECODER
           </h1>
-          <p className="text-slate-700 font-bold text-sm sm:text-lg mt-2 sm:mt-3 max-w-2xl mx-auto px-1 leading-relaxed">
+          <p className="text-black font-semibold text-sm sm:text-lg mt-3 max-w-2xl mx-auto px-1 leading-relaxed">
             Replace high-stress dinner table arguments with objective cognitive evidence. See how outdated myths pushed onto students stack up against validated 2026+ psychometric reality.
           </p>
 
-          {/* Interactive Switcher Buttons — Swipeable on Mobile */}
-          <div className="mt-6 sm:mt-8 flex flex-nowrap sm:flex-wrap overflow-x-auto no-scrollbar py-1 gap-2 sm:gap-3 justify-start sm:justify-center px-1">
+          {/* Interactive Switcher Buttons */}
+          <div className="mt-8 flex flex-nowrap sm:flex-wrap overflow-x-auto no-scrollbar py-1 gap-2.5 justify-start sm:justify-center px-1">
             {COMPARISONS.map((comp) => (
               <button
                 key={comp.id}
                 onClick={() => setActiveTab(comp.id)}
-                className={`shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl font-black border-2 border-pop-ink transition-all ${
+                className={`shrink-0 text-xs sm:text-sm px-5 py-2.5 rounded-xl font-bold transition-all cursor-pointer ${
                   activeTab === comp.id
-                    ? "bg-pop-lime text-pop-ink shadow-neo scale-105"
-                    : "bg-white text-slate-700 hover:bg-slate-100 shadow-sm"
+                    ? "bg-[#A9B4E8] text-black border border-[#A9B4E8] shadow-sm font-extrabold"
+                    : "bg-white text-black border border-[#E2E0DB] hover:bg-[#EEF1FB]"
                 }`}
               >
-                {comp.emoji} {comp.topic}
+                {comp.icon} <span className="text-black">{comp.topic}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Side by Side Contrast Box */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
-          {/* Myth Side */}
-          <div className="bg-red-50 border-3 sm:border-4 border-pop-ink rounded-2xl sm:rounded-3xl p-5 sm:p-10 shadow-neo-lg flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-red-200/50 rounded-full pointer-events-none" />
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
+          {/* Traditional Myth Side */}
+          <div className="bg-white border border-[#E2E0DB] shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden text-black">
             <div>
-              <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-                <span className="px-3 py-1 rounded-xl bg-red-500 text-white font-black text-[10px] sm:text-xs uppercase border-2 border-pop-ink shadow-neo flex items-center gap-1">
-                  <X className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3]" />
-                  Outdated Advice
+              <div className="flex items-center justify-between mb-4 gap-2">
+                <span className="px-3 py-1 rounded-lg bg-[#E3A0A0]/20 text-[#B03A3A] font-black text-xs uppercase flex items-center gap-1.5 border border-[#E3A0A0]/40">
+                  <X className="w-3.5 h-3.5 stroke-[2.5] text-[#B03A3A]" />
+                  Legacy Advice
                 </span>
-                <span className="text-[11px] sm:text-xs font-bold text-slate-500 italic">
+                <span className="text-xs font-bold text-black italic">
                   {activeData.mythSpeaker}
                 </span>
               </div>
 
-              <p className="text-lg sm:text-2xl font-black text-slate-900 mt-2 sm:mt-3 leading-snug">
+              <p className="text-lg sm:text-2xl font-bold text-black mt-3 leading-snug">
                 {activeData.myth}
               </p>
             </div>
 
-            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t-2 border-red-200 text-xs font-bold text-red-700 flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
-              <span>Causes 4+ years of career dissatisfaction and misalignment</span>
+            <div className="mt-8 pt-5 border-t border-[#E2E0DB] text-xs font-semibold text-black flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 shrink-0 text-[#B03A3A]" />
+              <span>Often leads to 4+ years of cognitive misalignment & disengagement</span>
             </div>
           </div>
 
-          {/* Reality / Science Side */}
-          <div className="bg-pop-lime border-3 sm:border-4 border-pop-ink rounded-2xl sm:rounded-3xl p-5 sm:p-10 shadow-neo-lg flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/40 rounded-full pointer-events-none" />
-
+          {/* Validated Reality Side */}
+          <div className="bg-[#1A1A1D] text-white border border-[#2E2E32] rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-md flex flex-col justify-between relative overflow-hidden">
             <div>
-              <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-                <span className="px-3 py-1 rounded-xl bg-pop-ink text-pop-lime font-black text-[10px] sm:text-xs uppercase border-2 border-pop-ink shadow-neo flex items-center gap-1">
-                  <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3]" />
-                  Validated Reality
+              <div className="flex items-center justify-between mb-4 gap-2">
+                <span className="px-3 py-1 rounded-lg bg-[#A9D8C6] text-black font-black text-xs uppercase flex items-center gap-1.5 shadow-sm">
+                  <Check className="w-3.5 h-3.5 stroke-[3] text-black" />
+                  2026+ Validated Reality
                 </span>
-                <span className="text-[11px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white text-pop-ink border border-pop-ink">
+                <span className="text-xs font-black px-3 py-1 rounded-lg bg-[#141416] text-white border border-[#2E2E32]">
                   {activeData.stat}
                 </span>
               </div>
 
-              <h4 className="text-lg sm:text-2xl font-black text-pop-ink mt-2 sm:mt-3 leading-snug">
+              <h4 className="text-lg sm:text-2xl font-black text-white mt-3 leading-snug">
                 {activeData.reality}
               </h4>
-              <p className="text-xs sm:text-sm font-bold text-slate-800 mt-2 sm:mt-3 leading-relaxed">
+              <p className="text-xs sm:text-sm font-medium text-[#A9B4E8] mt-3 leading-relaxed">
                 {activeData.realityProof}
               </p>
             </div>
 
-            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t-2 border-pop-ink flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="text-xs font-black text-pop-ink">
-                Based on Big-5 psychometrics
+            <div className="mt-8 pt-5 border-t border-[#2E2E32] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-white">
+                Calibrated against 180+ modern disciplines
               </span>
               <Link
                 href="/assessment"
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-pop-ink text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-neo hover:translate-x-0.5 hover:translate-y-0.5"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white text-black hover:bg-[#EEF1FB] font-black text-xs flex items-center justify-center gap-1.5 border border-[#E2E0DB] shadow-sm transition-all"
               >
-                <span>Check My Fit</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Discover Your Edge</span>
+                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5] text-black" />
               </Link>
             </div>
           </div>

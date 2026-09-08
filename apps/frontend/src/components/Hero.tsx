@@ -1,102 +1,117 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Play, Sparkles, Zap, Flame, ShieldCheck, Star } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Rocket, Play, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
     <section
-      className="relative pt-10 pb-16 sm:pt-14 sm:pb-20 overflow-hidden bg-student-grid border-b-2 border-pop-ink"
+      className="relative pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden"
       id="hero"
     >
-      {/* Background kinetic gradient shapes */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-pop-lime/20 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Image - Modern Collaborative Team */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="/hero-bg.jpg"
+          alt="Modern Collaborative Student Team"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        {/* Directional scrim: darker on left to make text pop, clear on right for students */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#FBFBF9]" />
+      </div>
 
-      <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16 text-center relative z-10 max-w-6xl mx-auto">
-        {/* Floating Student Stickers */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-5">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.35 }}
-            className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1 rounded-full bg-pop-lime text-pop-ink border-2 border-pop-ink font-black text-[10px] sm:text-xs shadow-neo rotate-[-1.5deg]"
-          >
-            <span>FOR STUDENTS WHO REFUSE TO GUESS</span>
-          </motion.div>
+      <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 relative z-10 max-w-[1700px] mr-auto">
+        <div className="max-w-xl lg:max-w-2xl xl:max-w-[650px] flex flex-col items-start text-left">
+            {/* Editorial Eyebrow Tag */}
+            <motion.div
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-xs mb-4 shadow-lg shadow-black/20"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#A9B4E8]" />
+              <span className="tracking-wider uppercase text-[10px] sm:text-xs text-white font-black drop-shadow-sm">
+                Diagnostics • 2026+
+              </span>
+            </motion.div>
 
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.35, delay: 0.1 }}
-            className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-pop-pink text-white border-2 border-pop-ink font-black text-[10px] sm:text-xs shadow-neo rotate-[1.5deg]"
-          >
-            <Flame className="w-3 h-3 fill-white" />
-            <span>CLASS 8 TO GRADS</span>
-          </motion.div>
+            {/* Grand Headline with Website Palette Gradient */}
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.08] font-[family-name:var(--font-dm-sans)] drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)]"
+            >
+              STOP GUESSING <br />
+              YOUR POTENTIAL. <br />
+              <span className="bg-gradient-to-r from-[#A9B4E8] via-[#8E9BDD] to-[#F472B6] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(169,180,232,0.4)]">
+                CALIBRATE YOUR TRAJECTORY.
+              </span>
+            </motion.h1>
 
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.35, delay: 0.15 }}
-            className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-pop-ink border-2 border-pop-ink font-black text-xs shadow-neo"
-          >
-            <span>NO BORING TESTS ✦</span>
-          </motion.div>
+            {/* Streamlined Subtitle */}
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg text-zinc-100 max-w-lg font-medium leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+            >
+              Map your natural problem-solving instincts to 2026+ high-growth careers in 20 minutes.
+            </motion.p>
+
+            {/* Dual CTAs */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 w-full"
+            >
+              <Link
+                href="/assessment"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-extrabold bg-[#A9B4E8] text-black hover:bg-white rounded-xl shadow-xl shadow-[#A9B4E8]/25 transition-all duration-200 active:scale-[0.98]"
+              >
+                <Rocket className="w-4 h-4 stroke-[2.5] text-black" />
+                <span className="text-black font-extrabold">Launch Assessment</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5] text-black" />
+              </Link>
+
+              <Link
+                href="/quests"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3.5 sm:py-4 text-sm sm:text-base font-bold bg-white text-black hover:bg-[#EEF1FB] border border-[#E2E0DB] rounded-xl shadow-md transition-all duration-200"
+              >
+                <Play className="w-4 h-4 fill-black text-black" />
+                <span className="text-black font-bold" style={{ color: "#000000" }}>Watch Video</span>
+              </Link>
+            </motion.div>
+
+            {/* Bottom Stats Row - Compact & Mobile Friendly */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-7 sm:mt-10 pt-5 border-t border-[#C8C5BD] flex items-center gap-4 sm:gap-8 w-full"
+            >
+              <div>
+                <div className="text-xl sm:text-3xl font-black text-black" style={{ color: "#000000" }}>10K+</div>
+                <div className="text-[11px] sm:text-xs font-bold text-black mt-0.5" style={{ color: "#000000" }}>Guided</div>
+              </div>
+              <div className="w-px h-7 bg-[#C8C5BD]" />
+              <div>
+                <div className="text-xl sm:text-3xl font-black text-black" style={{ color: "#000000" }}>500+</div>
+                <div className="text-[11px] sm:text-xs font-bold text-black mt-0.5" style={{ color: "#000000" }}>Roles</div>
+              </div>
+              <div className="w-px h-7 bg-[#C8C5BD]" />
+              <div>
+                <div className="text-xl sm:text-3xl font-black text-black" style={{ color: "#000000" }}>50+</div>
+                <div className="text-[11px] sm:text-xs font-bold text-black mt-0.5" style={{ color: "#000000" }}>Partners</div>
+              </div>
+            </motion.div>
         </div>
-
-        {/* Big Bold Headline */}
-        <motion.h1
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.45, delay: 0.1 }}
-          className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-pop-ink leading-[1.12] sm:leading-[1.06]"
-        >
-          WHAT ARE YOU <br className="hidden sm:inline" />
-          <span className="relative inline-block mt-1 sm:mt-2">
-            <span className="relative z-10 px-2.5 sm:px-4 py-0.5 sm:py-1 bg-pop-lime border-2 sm:border-3 border-pop-ink shadow-neo sm:shadow-neo-lg text-pop-ink rounded-xl sm:rounded-2xl rotate-[-1deg] inline-block text-2xl xs:text-3xl sm:text-6xl lg:text-7xl xl:text-8xl">
-              ACTUALLY BUILT FOR?
-            </span>
-          </span>
-        </motion.h1>
-
-        {/* Relatable Subheading */}
-        <motion.p
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.45, delay: 0.2 }}
-          className="mt-4 sm:mt-6 text-sm sm:text-xl text-slate-700 max-w-2xl mx-auto font-bold leading-relaxed px-1"
-        >
-          Stop letting relatives, WhatsApp groups, and outdated advice pick your future. Uncover your real cognitive strengths and modern 2026+ career horizons in 20 minutes.
-        </motion.p>
-
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.45, delay: 0.3 }}
-          className="mt-7 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm sm:max-w-none mx-auto"
-        >
-          <Link
-            href="/assessment"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-lg font-black text-pop-ink bg-pop-lime hover:bg-[#b8e600] rounded-2xl border-3 border-pop-ink shadow-neo-lg hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150"
-          >
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-pop-ink fill-pop-ink" />
-            <span>Discover My Superpowers</span>
-            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3]" />
-          </Link>
-
-          <Link
-            href="/quests"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-4 text-sm sm:text-base font-black text-pop-ink bg-white hover:bg-slate-50 rounded-2xl border-3 border-pop-ink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
-          >
-            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-pop-ink" />
-            <span>See The 4 Quests</span>
-          </Link>
-        </motion.div>
-
-        {/* Trust & Live Indicator Strip */}
-        
       </div>
     </section>
   );
