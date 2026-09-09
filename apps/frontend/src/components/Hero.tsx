@@ -28,17 +28,7 @@ export default function Hero() {
       <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 relative z-10 max-w-[1700px] mr-auto">
         <div className="max-w-xl lg:max-w-2xl xl:max-w-[650px] flex flex-col items-start text-left">
             {/* Editorial Eyebrow Tag */}
-            <motion.div
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-xs mb-4 shadow-lg shadow-black/20"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#A9B4E8]" />
-              <span className="tracking-wider uppercase text-[10px] sm:text-xs text-white font-black drop-shadow-sm">
-                Diagnostics • 2026+
-              </span>
-            </motion.div>
+            
 
             {/* Grand Headline with Website Palette Gradient */}
             <motion.h1

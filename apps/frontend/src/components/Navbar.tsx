@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Compass, Menu, X, ArrowRight, User } from "lucide-react";
 
@@ -10,9 +10,25 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenAuth }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-[#FBFBF9]/92 border-b border-[#E2E0DB] transition-all">
+    <header
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "bg-[#FBFBF9]/75 backdrop-blur-xl border-b border-[#E2E0DB]/80 shadow-sm"
+          : "bg-[#FBFBF9]/95 backdrop-blur-md border-b border-[#E2E0DB]"
+      }`}
+    >
       <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-14 h-16 sm:h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
