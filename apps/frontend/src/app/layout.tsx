@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     "One assessment. A clearer picture of your innate strengths, deep interests, and real-world career directions before committing years of your life.",
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: {
@@ -34,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${inter.variable} scroll-smooth`}>
       <body className="bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] antialiased overflow-x-hidden selection:bg-[#A9B4E8] selection:text-black min-h-screen flex flex-col">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

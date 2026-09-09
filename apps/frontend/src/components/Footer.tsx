@@ -107,17 +107,7 @@ export default function Footer() {
         </div>
 
         {/* Footnote */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#888888] font-bold gap-4">
-          <div>
-            Architected for the next generation of builders, thinkers, and strategists.
-          </div>
-          <div className="flex items-center gap-4 font-bold">
-            <span className="inline-flex items-center gap-1.5 text-black bg-[#A9D8C6] px-3 py-1 rounded-full font-extrabold">
-              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
-              Adaptive Engine v2.6 Active
-            </span>
-          </div>
-        </div>
+        
       </div>
     </footer>
   );

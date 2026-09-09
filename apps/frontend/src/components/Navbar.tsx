@@ -3,14 +3,24 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Compass, Menu, X, ArrowRight, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavbarProps {
   onOpenAuth?: () => void;
 }
 
 export default function Navbar({ onOpenAuth }: NavbarProps) {
+  const { openAuth } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleAuth = () => {
+    if (onOpenAuth) {
+      onOpenAuth();
+    } else {
+      openAuth();
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,7 +91,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         {/* CTA Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
           <button
-            onClick={onOpenAuth}
+            onClick={handleAuth}
             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold bg-white text-black border border-[#E2E0DB] hover:bg-[#EEF1FB] px-4 py-2.5 rounded-xl shadow-sm transition-all duration-200 cursor-pointer"
           >
             <User className="w-4 h-4 text-black" />
@@ -156,7 +166,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenAuth?.();
+                handleAuth();
               }}
               className="w-full py-3 px-4 rounded-xl border border-[#E2E0DB] bg-white text-black font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#EEF1FB] shadow-sm transition-all"
             >

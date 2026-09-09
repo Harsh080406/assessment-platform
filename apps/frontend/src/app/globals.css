@@ -127,13 +127,13 @@
 .animate-ticker {
   display: flex;
   width: max-content;
-  animation: ticker 35s linear infinite;
+  animation: ticker 68s linear infinite;
 }
 
 .animate-ticker-reverse {
   display: flex;
   width: max-content;
-  animation: ticker-reverse 35s linear infinite;
+  animation: ticker-reverse 68s linear infinite;
 }
 
 .animate-ticker:hover, .animate-ticker-reverse:hover {

@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
 interface DilemmaCard {
   id: string;
   student: string;
@@ -72,10 +69,9 @@ export default function SocialProof() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {DILEMMAS.map((item) => {
             return (
-              <Link
+              <div
                 key={item.id}
-                href="/assessment"
-                className="group relative p-5 sm:p-6 bg-white border border-[#E2E0DB] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 rounded-2xl flex flex-col justify-between overflow-hidden"
+                className="group relative p-5 sm:p-6 bg-white border border-[#E2E0DB] shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl flex flex-col justify-between overflow-hidden"
               >
                 {/* Small length accent border */}
                 <div className="absolute top-0 left-6 w-12 h-[3px] bg-[#A9B4E8] rounded-full group-hover:w-16 transition-all duration-300" />
@@ -99,13 +95,16 @@ export default function SocialProof() {
                   </div>
                 </div>
 
-                <div className="mt-5 pt-3.5 border-t border-[#E2E0DB] flex items-center justify-between">
-                  <span className="text-xs font-bold text-black group-hover:text-[#7C89CC] transition-colors">
-                    See Calibration
+                <div className="mt-5 pt-3.5 border-t border-[#E2E0DB] flex items-center justify-between text-xs font-bold text-black">
+                  <span className="flex items-center gap-1.5 text-[#333333]">
+                    <span className="w-2 h-2 rounded-full bg-[#A9D8C6]" />
+                    {item.answers}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1 group-hover:text-[#7C89CC] transition-all" />
+                  <span className="text-[11px] font-semibold text-[#555555] bg-[#F5F5F3] px-2 py-0.5 rounded-md">
+                    Calibrated
+                  </span>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
