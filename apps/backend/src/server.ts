@@ -22,6 +22,15 @@ app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(requestLogger);
 
+// Root welcome & status endpoint
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    status: "online",
+    message: "AuraPath Enterprise Backend API is live",
+    health: "/api/v1/health",
+  });
+});
+
 // Health Check Endpoint
 app.get("/api/v1/health", (_req, res) => {
   res.status(200).json({
