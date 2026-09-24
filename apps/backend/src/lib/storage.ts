@@ -1,12 +1,19 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import os from "os";
 
-const UPLOAD_DIR = path.resolve(process.cwd(), "uploads", "reports");
-
-// Ensure upload directory exists
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+function getUploadDir(): string {
+  const baseDir = process.env.VERCEL ? os.tmpdir() : process.cwd();
+  const targetDir = path.resolve(baseDir, "uploads", "reports");
+  try {
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+  } catch (err) {
+    console.warn("[Storage] Unable to create upload directory:", err);
+  }
+  return targetDir;
 }
 
 export class StorageService {
@@ -31,11 +38,12 @@ export class StorageService {
       throw new Error("Invalid file content. File must be a valid PDF document with %PDF- header.");
     }
 
+    const uploadDir = getUploadDir();
     const ext = path.extname(originalName) || ".pdf";
     const safeBase = path.basename(originalName, ext).replace(/[^a-zA-Z0-9_-]/g, "_");
     const uniqueId = crypto.randomBytes(8).toString("hex");
     const fileName = `${attemptId}_${safeBase}_${uniqueId}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, fileName);
+    const filePath = path.join(uploadDir, fileName);
 
     await fs.promises.writeFile(filePath, fileBuffer);
 
@@ -50,8 +58,9 @@ export class StorageService {
    * Retrieve file buffer by fileReference
    */
   public static async getReportBuffer(fileReference: string): Promise<Buffer | null> {
+    const uploadDir = getUploadDir();
     const safeRef = path.basename(fileReference);
-    const filePath = path.join(UPLOAD_DIR, safeRef);
+    const filePath = path.join(uploadDir, safeRef);
     if (!fs.existsSync(filePath)) {
       return null;
     }
