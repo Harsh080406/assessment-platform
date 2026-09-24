@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@aurapath/shared": ["../../packages/shared/src/index.ts"]
+      "@aurapath/shared": ["../../packages/shared/dist/index.d.ts"]
     }
   },
   "include": [

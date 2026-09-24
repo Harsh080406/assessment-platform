@@ -1,4 +1,9 @@
-import { StudentArchetype } from "../types";
+import { StudentArchetype } from "../types/index.js";
+
+
+
+
+
 
 export const PSYCHOMETRIC_MODELS = {
   BIG_FIVE: ["Openness", "Conscientiousness", "Extraversion", "Agreeableness", "Neuroticism"],
