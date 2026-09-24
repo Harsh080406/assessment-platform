@@ -167,32 +167,14 @@ export default function UnifiedAuthCard({
         return;
       }
 
-      // Successful authentication: confirm session and determine destination by role
+      // Successful authentication: redirect directly to target destination
       setIsAuthenticating(false);
       setIsRedirecting(true);
 
-      try {
-        const sessionRes = await fetch("/api/auth/session");
-        const sessionData = await sessionRes.json();
-        const role = sessionData?.user?.role;
+      if (onClose) onClose();
 
-        let targetUrl = "/dashboard";
-        if (callbackUrl && callbackUrl !== "/dashboard" && !callbackUrl.startsWith("/login")) {
-          targetUrl = callbackUrl;
-        } else if (role === "STAFF") {
-          targetUrl = "/portal";
-        } else if (role === "ADMIN") {
-          targetUrl = "/console";
-        } else {
-          targetUrl = "/dashboard";
-        }
-
-        if (onClose) onClose();
-        window.location.href = targetUrl;
-      } catch {
-        if (onClose) onClose();
-        window.location.href = callbackUrl || "/dashboard";
-      }
+      const destination = res?.url || absoluteCallback || "/dashboard";
+      window.location.href = destination;
     } catch (err: any) {
       setIsAuthenticating(false);
       setIsRedirecting(false);
