@@ -11,31 +11,38 @@ const globalForPrisma = globalThis as unknown as {
 const connectionString = process.env.DATABASE_URL;
 
 function createPrismaClient(): PrismaClient {
-  if (!connectionString) {
-    console.warn("[Prisma] ⚠️ DATABASE_URL is not set in environment variables. Falling back to standard client.");
+  // On Vercel serverless environment, use standard Prisma Client with rhel-openssl-3.0.x binary target
+  if (process.env.VERCEL || !connectionString) {
     return new PrismaClient({
       log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     });
   }
 
-  const pool =
-    globalForPrisma.pool ??
-    new Pool({
-      connectionString,
-      ssl: { rejectUnauthorized: false },
-      max: 10,
-      connectionTimeoutMillis: 30000,
-      idleTimeoutMillis: 30000,
+  try {
+    const pool =
+      globalForPrisma.pool ??
+      new Pool({
+        connectionString,
+        ssl: { rejectUnauthorized: false },
+        max: 10,
+        connectionTimeoutMillis: 30000,
+        idleTimeoutMillis: 30000,
+      });
+
+    if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
+
+    const adapter = new PrismaPg(pool);
+
+    return new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     });
-
-  if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
-
-  const adapter = new PrismaPg(pool);
-
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  });
+  } catch (err) {
+    console.warn("[Prisma] Falling back to standard PrismaClient due to adapter init error:", err);
+    return new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    });
+  }
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
@@ -48,7 +55,7 @@ if (connectionString && !globalForPrisma.isWarmedUp) {
   prisma
     .$queryRaw`SELECT 1`
     .then(() => {
-      console.log("[Prisma] ⚡ Database connection pool warmed up successfully via PrismaPg adapter.");
+      console.log("[Prisma] ⚡ Database connection pool warmed up successfully.");
     })
     .catch((err) => {
       console.warn("[Prisma] ⚠️ Database connection warm-up warning:", err?.message || err);
