@@ -10,31 +10,40 @@ const globalForPrisma = globalThis as unknown as {
 
 const connectionString = process.env.DATABASE_URL;
 
-const pool =
-  globalForPrisma.pool ??
-  new Pool({
-    connectionString,
-    ssl: { rejectUnauthorized: false },
-    max: 10,
-    connectionTimeoutMillis: 30000,
-    idleTimeoutMillis: 30000,
-  });
+function createPrismaClient(): PrismaClient {
+  if (!connectionString) {
+    console.warn("[Prisma] ⚠️ DATABASE_URL is not set in environment variables. Falling back to standard client.");
+    return new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    });
+  }
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
+  const pool =
+    globalForPrisma.pool ??
+    new Pool({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+      connectionTimeoutMillis: 30000,
+      idleTimeoutMillis: 30000,
+    });
 
-const adapter = new PrismaPg(pool);
+  if (process.env.NODE_ENV !== "production") globalForPrisma.pool = pool;
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+  const adapter = new PrismaPg(pool);
+
+  return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
+}
+
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Auto connection warm-up on server startup
-if (!globalForPrisma.isWarmedUp) {
+if (connectionString && !globalForPrisma.isWarmedUp) {
   globalForPrisma.isWarmedUp = true;
   prisma
     .$queryRaw`SELECT 1`
