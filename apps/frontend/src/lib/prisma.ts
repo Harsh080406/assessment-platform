@@ -11,8 +11,8 @@ const globalForPrisma = globalThis as unknown as {
 const connectionString = process.env.DATABASE_URL;
 
 function createPrismaClient(): PrismaClient {
-  // On Vercel serverless environment, use standard Prisma Client with rhel-openssl-3.0.x binary target
-  if (process.env.VERCEL || !connectionString) {
+  if (!connectionString) {
+    console.warn("[Prisma] ⚠️ DATABASE_URL is not set in environment variables.");
     return new PrismaClient({
       log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     });
@@ -24,7 +24,7 @@ function createPrismaClient(): PrismaClient {
       new Pool({
         connectionString,
         ssl: { rejectUnauthorized: false },
-        max: 10,
+        max: 5,
         connectionTimeoutMillis: 30000,
         idleTimeoutMillis: 30000,
       });
@@ -55,7 +55,7 @@ if (connectionString && !globalForPrisma.isWarmedUp) {
   prisma
     .$queryRaw`SELECT 1`
     .then(() => {
-      console.log("[Prisma] ⚡ Database connection pool warmed up successfully.");
+      console.log("[Prisma] ⚡ Database connection pool warmed up successfully via PrismaPg adapter.");
     })
     .catch((err) => {
       console.warn("[Prisma] ⚠️ Database connection warm-up warning:", err?.message || err);
