@@ -1,31 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Pure Edge-compatible JWT Payload Decoder (Zero external Node/Prisma/bcrypt dependencies)
-function decodeJwtPayload(tokenString: string): Record<string, unknown> | null {
-  try {
-    const parts = tokenString.split(".");
-    if (parts.length < 2) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = base64.length % 4;
-    const paddedBase64 = pad ? base64 + "=".repeat(4 - pad) : base64;
-    
-    // In Edge Runtime, atob is globally available
-    const binaryStr = atob(paddedBase64);
-    const jsonStr = decodeURIComponent(
-      binaryStr
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(jsonStr);
-  } catch {
-    return null;
-  }
-}
-
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
 
@@ -40,24 +17,25 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // 2. Extract Session Token Cookie cleanly from request cookies
-    const sessionCookie =
-      request.cookies.get("authjs.session-token")?.value ||
-      request.cookies.get("__Secure-authjs.session-token")?.value ||
-      request.cookies.get("next-auth.session-token")?.value ||
-      request.cookies.get("__Secure-next-auth.session-token")?.value;
+    // 2. Extract and Decrypt Session Token via Edge-native getToken
+    const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
 
-    let payload: Record<string, unknown> | null = null;
-    if (sessionCookie) {
-      payload = decodeJwtPayload(sessionCookie);
+    let token = await getToken({ req: request, secret });
+
+    if (!token) {
+      // Fallback check for explicit cookie names across authjs and next-auth variants
+      token =
+        (await getToken({ req: request, secret, cookieName: "__Secure-authjs.session-token" })) ||
+        (await getToken({ req: request, secret, cookieName: "authjs.session-token" })) ||
+        (await getToken({ req: request, secret, cookieName: "__Secure-next-auth.session-token" })) ||
+        (await getToken({ req: request, secret, cookieName: "next-auth.session-token" }));
     }
 
-    // Check expiration if present
-    const exp = typeof payload?.exp === "number" ? payload.exp : null;
+    const exp = typeof token?.exp === "number" ? token.exp : null;
     const isExpired = exp ? Date.now() >= exp * 1000 : false;
 
-    const isAuthenticated = !!payload && !isExpired;
-    const userRole = (payload?.role as string) || null;
+    const isAuthenticated = !!token && !isExpired;
+    const userRole = (token?.role as string) || null;
 
     // 3. Route Category Classifications
     const isAuthRoute =

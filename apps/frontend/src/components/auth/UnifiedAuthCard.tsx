@@ -133,18 +133,25 @@ export default function UnifiedAuthCard({
     setIsAuthenticating(true);
 
     try {
+      const absoluteCallback =
+        typeof window !== "undefined"
+          ? `${window.location.origin}${callbackUrl.startsWith("/") ? callbackUrl : `/${callbackUrl}`}`
+          : callbackUrl;
+
       const res = await signInWithTimeout(
         "credentials",
         {
           email: loginEmail.trim().toLowerCase(),
           password: loginPassword,
           redirect: false,
+          callbackUrl: absoluteCallback,
         },
         30000
       );
 
       if (res?.error) {
         setIsAuthenticating(false);
+        setIsRedirecting(false);
         const errStr = String(res.error);
         if (errStr.includes("ACCOUNT_LOCKED")) {
           setServerError("Account temporarily locked due to multiple failed login attempts. Please try again in 15 minutes.");
@@ -189,8 +196,19 @@ export default function UnifiedAuthCard({
     } catch (err: any) {
       setIsAuthenticating(false);
       setIsRedirecting(false);
-      if (err?.message === "AUTH_TIMEOUT") {
+      const errStr = String(err?.message || err || "");
+      if (errStr === "AUTH_TIMEOUT") {
         setServerError("Unable to sign in right now. Request timed out. Please try again.");
+      } else if (errStr.includes("ACCOUNT_LOCKED")) {
+        setServerError("Account temporarily locked due to multiple failed login attempts. Please try again in 15 minutes.");
+      } else if (errStr.includes("ACCOUNT_INACTIVE")) {
+        setServerError("Your account is inactive. If you received an invitation, please check your email for the activation link.");
+      } else if (errStr.includes("SECURITY_BLOCKED_METHOD")) {
+        setServerError("This sign-in method is restricted for your account type.");
+      } else if (errStr.includes("EMAIL_NOT_VERIFIED")) {
+        setServerError("Your email address is not verified yet. Please check your inbox.");
+      } else if (errStr.includes("CredentialsSignin") || errStr.includes("Invalid URL") || errStr.includes("CallbackRouteError")) {
+        setServerError("Invalid email address or password. Please verify your credentials and try again.");
       } else {
         setServerError("Unable to sign in right now. Please check your connection and try again.");
       }
