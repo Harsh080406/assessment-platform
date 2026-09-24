@@ -10,9 +10,9 @@
     "dev": "npm run dev --workspace=@aurapath/frontend",
     "dev:frontend": "npm run dev --workspace=@aurapath/frontend",
     "dev:backend": "npm run dev --workspace=@aurapath/backend",
-    "build": "npm run build --workspaces --if-present",
-    "build:frontend": "npm run build --workspace=@aurapath/frontend",
-    "build:backend": "npm run build --workspace=@aurapath/backend",
+    "build": "npm run build --workspace=@aurapath/shared && npm run build --workspace=@aurapath/frontend",
+    "build:frontend": "npm run build --workspace=@aurapath/shared && npm run build --workspace=@aurapath/frontend",
+    "build:backend": "npm run build --workspace=@aurapath/shared && npm run build --workspace=@aurapath/backend",
     "lint": "npm run lint --workspaces --if-present",
     "start:frontend": "npm run start --workspace=@aurapath/frontend",
     "start:backend": "npm run start --workspace=@aurapath/backend"
