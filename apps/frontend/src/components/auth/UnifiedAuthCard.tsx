@@ -78,10 +78,11 @@ export default function UnifiedAuthCard({
     setErrors({});
     setServerError(null);
     setSuccessMessage(null);
+    setIsAuthenticating(false);
+    setIsRedirecting(false);
   };
 
   const switchMode = (newMode: AuthMode) => {
-    if (isAuthenticating || isRedirecting) return;
     resetFeedback();
     setMode(newMode);
   };
@@ -113,7 +114,6 @@ export default function UnifiedAuthCard({
   // Login Submit Handler
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isAuthenticating || isRedirecting) return;
     resetFeedback();
 
     const validation = LoginSchema.safeParse({
@@ -123,10 +123,13 @@ export default function UnifiedAuthCard({
 
     if (!validation.success) {
       const fieldErrors = validation.error.flatten().fieldErrors;
+      const emailMsg = fieldErrors.email?.[0] || "";
+      const passMsg = fieldErrors.password?.[0] || "";
       setErrors({
-        email: fieldErrors.email?.[0] || "",
-        password: fieldErrors.password?.[0] || "",
+        email: emailMsg,
+        password: passMsg,
       });
+      setServerError(emailMsg || passMsg || "Please enter a valid email address and password.");
       return;
     }
 
