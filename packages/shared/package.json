@@ -1,13 +1,22 @@
 {
   "name": "@aurapath/shared",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"
   },
-  "devDependencies": {
-    "typescript": "^5.0.0"
+  "dependencies": {
+    "typescript": "^5.7.3",
+    "zod": "^3.24.2"
   }
 }

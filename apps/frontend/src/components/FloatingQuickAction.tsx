@@ -31,17 +31,17 @@ export default function FloatingQuickAction() {
           className="hidden md:block fixed bottom-6 right-6 z-40"
         >
           <Link
-            href="/assessment"
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#A9B4E8] text-black font-extrabold text-xs sm:text-sm border border-[#8E9BDD] shadow-lg hover:bg-[#8E9BDD] hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] group"
+            href="/quests"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0F172A] text-white font-extrabold text-xs sm:text-sm border border-[#334155] shadow-lg hover:bg-black hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] group"
           >
-            <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center shrink-0 shadow-sm">
-              <Sparkles className="w-4 h-4 stroke-[2.2] text-black" />
+            <div className="w-8 h-8 rounded-lg bg-[#FF6B6B] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Sparkles className="w-4 h-4 stroke-[2.2] text-white" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="leading-tight text-xs sm:text-sm text-black font-extrabold">Assessment</span>
-              <span className="text-[10px] text-black/80 font-bold">20 mins • Free</span>
+              <span className="leading-tight text-xs sm:text-sm text-white font-extrabold">The 4 Modules</span>
+              <span className="text-[10px] text-zinc-300 font-bold">Framework &amp; Roadmap</span>
             </div>
-            <ArrowRight className="w-4 h-4 stroke-[2.5] text-black group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 stroke-[2.5] text-white group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import {
   Sparkles,
   ArrowRight,
@@ -39,106 +39,106 @@ const QUESTS: QuestCard[] = [
   {
     id: "quest-1",
     stepNum: 1,
-    questNum: "QUEST 01",
-    title: "Craft Your Genesis Profile",
-    tagline: "Pinpoint exactly where you stand right now",
+    questNum: "MODULE A",
+    title: "Psychometric Assessment",
+    tagline: "Pinpoint core cognitive architecture & problem-solving styles",
     description:
-      "Whether you're picking streams in Class 10, preparing for competitive entrances in Class 12, or feeling misaligned in college, we calibrate everything to your real stage.",
-    timeTag: "Takes 60 seconds",
-    stageTag: "Class 9 to College",
+      "A comprehensive evaluation of your intrinsic processing style, analytical instincts, cognitive patterns, and decision frameworks.",
+    timeTag: "Takes 15 mins",
+    stageTag: "Class 8 to College",
     colorBg: "bg-white",
-    textColor: "text-black",
-    badgeBg: "bg-[#A9B4E8]",
-    badgeText: "text-black",
+    textColor: "text-[#0F172A]",
+    badgeBg: "bg-[#EEF2FF]",
+    badgeText: "text-[#4F46E5]",
     icon: "🧭",
     points: [
-      "Select your exact class or semester",
-      "No spam, zero unsolicited coaching calls",
-      "Tailors dilemmas to your life stage",
+      "Measures core cognitive processing style",
+      "Evaluates analytical vs intuitive tendencies",
+      "Tailors scenarios to your educational stage",
     ],
-    hudBadgeTitle: "STAGE CALIBRATION",
-    hudBadgeValue: "Class 9 • 10 • 11 • 12 • College",
-    hudPreviewText: "Zero spam • 100% student private",
-    ctaText: "Start Quest 01",
+    hudBadgeTitle: "MODULE A DIAGNOSTIC",
+    hudBadgeValue: "Cognitive Processing & Analytics",
+    hudPreviewText: "Zero anxiety • 100% student private",
+    ctaText: "Start Module A",
     ctaLink: "/assessment",
   },
   {
     id: "quest-2",
     stepNum: 2,
-    questNum: "QUEST 02",
-    title: "Battle Dilemmas, Not Math Formulas",
-    tagline: "Intuitive scenario-based psychometrics that feel like an RPG",
+    questNum: "MODULE B",
+    title: "Competency Self-Report",
+    tagline: "Calibrate behavioral strengths, work preferences, and leadership traits",
     description:
-      "Forget test anxiety. There are no right or wrong answers, no geometry tricks, and no memorization. You'll tackle real scenarios that reveal how your brain naturally solves problems.",
-    timeTag: "Adaptive 20 mins",
-    stageTag: "Zero Test Anxiety",
+      "Self-report behavioral competencies, workplace collaboration rhythms, stress adaptation, and interpersonal leadership preferences.",
+    timeTag: "Takes 20 mins",
+    stageTag: "Self-Report Matrix",
     colorBg: "bg-white",
-    textColor: "text-black",
-    badgeBg: "bg-[#A9B4E8]",
-    badgeText: "text-black",
+    textColor: "text-[#0F172A]",
+    badgeBg: "bg-[#EEF2FF]",
+    badgeText: "text-[#4F46E5]",
     icon: "⚡",
     points: [
-      "Dynamic adaptive question engine",
-      "Measures divergent vs. algorithmic instincts",
-      "Zero negative marking or penalty points",
+      "Dynamic behavioral competency matrix",
+      "Measures team collaboration & leadership style",
+      "Evaluates emotional resilience & stress response",
     ],
-    hudBadgeTitle: "LIVE SCENARIO ENGINE",
-    hudBadgeValue: "Dilemma #04: Server Crash vs. Demo",
-    hudPreviewText: "Measures natural cognitive instincts",
-    ctaText: "Battle Dilemmas",
+    hudBadgeTitle: "COMPETENCY MATRIX",
+    hudBadgeValue: "Behavioral & Leadership Drivers",
+    hudPreviewText: "Measures natural workplace instincts",
+    ctaText: "Start Module B",
     ctaLink: "/assessment",
   },
   {
     id: "quest-3",
     stepNum: 3,
-    questNum: "QUEST 03",
-    title: "Unlock Your Cognitive Archetype",
-    tagline: "More than a boring report card or generic letter grade",
+    questNum: "MODULE C",
+    title: "Situational Judgment Test",
+    tagline: "Battle real-world scenario dilemmas and ethical workplace trade-offs",
     description:
-      "Receive your distinct cognitive profile—like 'The Creative Strategist' or 'The Systems Architect'—with a personalized 5-dimensional radar signature, cognitive traits, and energy zones.",
-    timeTag: "Precision Report",
-    stageTag: "Psychometric Rigor",
+      "Tackle immersive real-world situational dilemmas that test your practical problem solving, ethical reasoning, and critical decision-making.",
+    timeTag: "Takes 15 mins",
+    stageTag: "Scenario Dilemmas",
     colorBg: "bg-white",
-    textColor: "text-black",
-    badgeBg: "bg-[#A9D8C6]",
-    badgeText: "text-black",
+    textColor: "text-[#0F172A]",
+    badgeBg: "bg-[#F0FDF4]",
+    badgeText: "text-[#16A34A]",
     icon: "🧠",
     points: [
-      "Calibrated on Big Five & RIASEC models",
-      "Visual cognitive radar signature",
-      "Identifies hidden natural superpowers",
+      "Real-world situational judgment scenarios",
+      "Evaluates crisis management & ethics",
+      "Identifies practical problem-solving superpowers",
     ],
-    hudBadgeTitle: "ARCHETYPE DECODER",
-    hudBadgeValue: "The Creative Strategist • 96% Match",
-    hudPreviewText: "5-Dimension Cognitive Radar",
-    ctaText: "Decode Archetype",
+    hudBadgeTitle: "SITUATIONAL ENGINE",
+    hudBadgeValue: "Practical Dilemma Synthesis",
+    hudPreviewText: "Real-world Scenario Evaluation",
+    ctaText: "Start Module C",
     ctaLink: "/assessment",
   },
   {
     id: "quest-4",
     stepNum: 4,
-    questNum: "QUEST 04",
-    title: "Launch Your High-Growth Odyssey",
-    tagline: "Actionable, modern, future-proof career paths tailored for 2026+",
+    questNum: "MODULE D",
+    title: "Aptitude: Verbal Reasoning",
+    tagline: "Assess logical deduction, verbal comprehension, and structural analysis",
     description:
-      "Get matched to real 2026+ career horizons (from Spatial AI to Behavioral Economics), with real entry salary benchmarks, recommended degree majors, and step-by-step prep roadmaps.",
-    timeTag: "Lifelong Roadmap",
-    stageTag: "180+ Future Careers",
+      "Diagnose verbal aptitude, complex passage analysis, logical inference, and conceptual reasoning precision for future-proof academic and career pathways.",
+    timeTag: "Takes 18 mins",
+    stageTag: "Verbal & Logic",
     colorBg: "bg-white",
-    textColor: "text-black",
-    badgeBg: "bg-[#A9B4E8]",
-    badgeText: "text-black",
+    textColor: "text-[#0F172A]",
+    badgeBg: "bg-[#FFF0EE]",
+    badgeText: "text-[#FF6B6B]",
     icon: "🚀",
     points: [
-      "180+ modern industry roles mapped",
-      "College degree & entrance priorities",
-      "Actionable reading & project starter pack",
+      "Verbal comprehension & logic inference",
+      "Structured critical thinking benchmarks",
+      "Actionable academic & skill roadmap",
     ],
-    hudBadgeTitle: "CAREER HORIZON",
-    hudBadgeValue: "Spatial Systems & Modern AI",
-    hudPreviewText: "Actionable 4-Year Prep Roadmap",
-    ctaText: "Launch Your Odyssey",
-    ctaLink: "/careers",
+    hudBadgeTitle: "APTITUDE ENGINE",
+    hudBadgeValue: "Verbal Reasoning & Inference",
+    hudPreviewText: "Critical Thinking Calibration",
+    ctaText: "Start Module D",
+    ctaLink: "/assessment",
   },
 ];
 
@@ -167,62 +167,89 @@ function QuestCardItem({ quest, index, total, scrollProgress, isDesktop }: Quest
     }
   }
 
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   return (
-    <div
+    <motion.div
       id={quest.id}
-      className={`scroll-mt-20 lg:scroll-mt-28 w-full rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-10 flex flex-col justify-between overflow-hidden border border-[#E2E0DB] text-black ${
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`group scroll-mt-24 lg:scroll-mt-32 w-full rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-10 flex flex-col justify-between overflow-hidden border border-[#CBD5E1] hover:border-[#FF6B6B]/60 text-black shadow-xs hover:shadow-2xl transition-all duration-300 ${
         isDesktop
-          ? "sticky top-20 lg:top-24 h-[460px]"
+          ? "sticky top-24 lg:top-28 h-[460px]"
           : "relative h-auto mb-6 sm:mb-8"
       } ${quest.colorBg}`}
       style={{
-        zIndex: isDesktop ? (index + 1) * 10 : 1,
+        zIndex: isDesktop ? index + 1 : 1,
         marginBottom: isDesktop ? (isLast ? "0" : "2.5rem") : undefined,
         transformOrigin: "top center",
-        transform: isDesktop ? `scale(${scale})` : "none",
-        opacity: 1,
-        transition: isDesktop ? "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)" : "none",
+        transform: isDesktop ? `scale(${scale})` : undefined,
         boxShadow: isDesktop
           ? index > 0
             ? "0 -8px 24px rgba(0,0,0,0.06), 0 4px 16px -4px rgba(0,0,0,0.08)"
             : "0 4px 16px -4px rgba(0,0,0,0.08)"
-          : "0 4px 16px -4px rgba(0,0,0,0.08)",
+          : undefined,
       }}
     >
+      {/* Interactive Cursor Spotlight Backlight */}
+      {isHovered && (
+        <div
+          className="pointer-events-none absolute -inset-px rounded-2xl sm:rounded-3xl transition-opacity duration-300 opacity-100 z-0"
+          style={{
+            background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 107, 107, 0.07), transparent 60%)`,
+          }}
+        />
+      )}
+
       {/* 1. Card Top Bar */}
-      <div className="flex items-center justify-between gap-2 border-b border-[#E2E0DB] pb-3 sm:pb-4">
+      <div className="relative z-10 flex items-center justify-between gap-2 border-b border-[#CBD5E1] pb-3 sm:pb-4">
         <div className="flex items-center gap-1.5 sm:gap-2.5">
-          {/* Quest Number Badge */}
-          <span
-            className={`px-3 py-1 sm:py-1.5 rounded-lg font-black text-xs sm:text-sm uppercase border border-[#E2E0DB] ${quest.badgeBg} ${quest.badgeText}`}
+          {/* Quest / Module Badge */}
+          <motion.span
+            whileHover={{ scale: 1.08 }}
+            className="px-3 py-1 sm:py-1.5 rounded-lg font-black text-xs sm:text-sm uppercase border border-[#0F172A] bg-black text-white shadow-xs cursor-default"
           >
             {quest.questNum}
-          </span>
+          </motion.span>
           {/* Stage Tag */}
-          <span className="hidden sm:inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg border border-[#E2E0DB] bg-[#EEF1FB] text-black">
+          <span className="hidden sm:inline-flex items-center gap-1 text-xs font-black px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-[#F1F5F9] text-black">
             <Target className="w-3.5 h-3.5 text-black" />
-            {quest.stageTag}
+            <span className="text-black" style={{ color: "#000000" }}>{quest.stageTag}</span>
           </span>
           {/* Time Tag */}
-          <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-[#E2E0DB] bg-[#EEF1FB] text-black">
+          <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-black px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-[#CBD5E1] bg-[#F1F5F9] text-black">
             <Clock className="w-3.5 h-3.5 text-black" />
-            {quest.timeTag}
+            <span className="text-black" style={{ color: "#000000" }}>{quest.timeTag}</span>
           </span>
         </div>
 
         {/* Step Indicator & Segmented Progress Bar */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#E2E0DB] bg-[#EEF1FB] text-black">
-          <span className="text-[11px] sm:text-xs font-black tracking-wider uppercase text-black">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-[#F1F5F9] text-black">
+          <span className="text-[11px] sm:text-xs font-black tracking-wider uppercase text-black" style={{ color: "#000000" }}>
             {quest.stepNum}/4
           </span>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4].map((step) => (
               <div
                 key={step}
-                className={`h-2 sm:h-2.5 w-2 sm:w-3.5 rounded-sm transition-colors ${
+                className={`h-2 sm:h-2.5 w-2.5 sm:w-3.5 rounded-sm transition-colors ${
                   step <= quest.stepNum
-                    ? "bg-[#A9B4E8]"
-                    : "bg-[#E2E0DB]"
+                    ? "bg-[#000000]"
+                    : "bg-[#CBD5E1]"
                 }`}
               />
             ))}
@@ -231,102 +258,86 @@ function QuestCardItem({ quest, index, total, scrollProgress, isDesktop }: Quest
       </div>
 
       {/* 2. Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-center my-auto py-3 sm:py-6">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-center my-auto py-3 sm:py-6">
         {/* Left Column: Headlines, Description, Feature Badges */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center">
-          <h3
-            className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight leading-tight text-black font-[family-name:var(--font-dm-sans)]"
-            style={{ color: "#000000" }}
-          >
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight leading-tight text-black group-hover:text-[#0F172A] transition-colors" style={{ color: "#000000" }}>
             {quest.title}
           </h3>
-          <p
-            className="text-sm sm:text-base lg:text-lg font-bold mt-1.5 sm:mt-2 text-black"
-            style={{ color: "#000000" }}
-          >
+          <p className="text-sm sm:text-base lg:text-lg font-black mt-1.5 sm:mt-2 text-black" style={{ color: "#000000" }}>
             {quest.tagline}
           </p>
-          <p
-            className="mt-2.5 sm:mt-4 text-xs sm:text-sm lg:text-base font-semibold leading-relaxed max-w-2xl text-black"
-            style={{ color: "#000000" }}
-          >
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-sm lg:text-base font-bold leading-relaxed max-w-2xl text-black" style={{ color: "#000000" }}>
             {quest.description}
           </p>
 
           {/* Bullet Points */}
           <div className="mt-3.5 sm:mt-5 flex flex-wrap gap-2">
             {quest.points.map((pt) => (
-              <span
+              <motion.span
                 key={pt}
-                className="text-[11px] sm:text-xs lg:text-sm font-bold px-3 py-1 sm:py-1.5 rounded-lg border border-[#E2E0DB] bg-[#EEF1FB] text-black inline-flex items-center gap-1.5"
+                whileHover={{ scale: 1.03, y: -1 }}
+                className="text-[11px] sm:text-xs lg:text-sm font-bold px-3 py-1 sm:py-1.5 rounded-lg border border-[#CBD5E1] bg-[#F8FAFC] text-black inline-flex items-center gap-1.5 transition-shadow shadow-xs hover:border-[#FF6B6B]/40"
                 style={{ color: "#000000" }}
               >
-                <span
-                  className="w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-black bg-[#A9D8C6] text-black"
-                  style={{ color: "#000000" }}
-                >
+                <span className="w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-black bg-[#A9D8C6] text-black" style={{ color: "#000000" }}>
                   ✓
                 </span>
-                <span className="text-black" style={{ color: "#000000" }}>{pt}</span>
-              </span>
+                <span className="text-black font-bold" style={{ color: "#000000" }}>{pt}</span>
+              </motion.span>
             ))}
           </div>
         </div>
 
         {/* Right Column: Interactive Preview HUD Card */}
         <div className="lg:col-span-5 xl:col-span-4 flex flex-col items-stretch justify-center">
-          <div
-            className="rounded-2xl border border-[#E2E0DB] p-4 sm:p-5 lg:p-6 shadow-sm flex flex-col gap-3 sm:gap-4 mt-2 lg:mt-0 bg-[#EEF1FB]/60 text-black"
+          <motion.div
+            whileHover={{ y: -5, scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="rounded-2xl border border-[#CBD5E1] group-hover:border-[#FF6B6B]/50 p-4 sm:p-5 lg:p-6 shadow-xs group-hover:shadow-lg flex flex-col gap-3 sm:gap-4 mt-2 lg:mt-0 bg-[#F8FAFC] text-black transition-all"
           >
             <div className="flex items-center justify-between gap-2.5 sm:gap-3">
-              <div
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0 border border-[#E2E0DB] bg-white text-black"
+              <motion.div
+                whileHover={{ rotate: [0, -12, 12, 0], scale: 1.15 }}
+                transition={{ duration: 0.3 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0 border border-[#CBD5E1] bg-white text-black shadow-xs"
               >
                 {quest.icon}
-              </div>
+              </motion.div>
               <div className="text-right">
-                <div
-                  className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-black"
-                >
+                <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-black" style={{ color: "#000000" }}>
                   {quest.hudBadgeTitle}
                 </div>
-                <div
-                  className="text-xs sm:text-sm font-extrabold truncate max-w-[200px] sm:max-w-none text-black"
-                >
+                <div className="text-xs sm:text-sm font-black truncate max-w-[200px] sm:max-w-none text-black" style={{ color: "#000000" }}>
                   {quest.hudBadgeValue}
                 </div>
               </div>
             </div>
 
-            <div
-              className="text-[11px] sm:text-xs font-bold p-2.5 rounded-lg border border-[#E2E0DB] flex items-center gap-1.5 bg-white text-black"
-            >
-              <Sparkles className="w-3.5 h-3.5 shrink-0 text-black" />
-              <span className="truncate text-black">{quest.hudPreviewText}</span>
+            <div className="text-[11px] sm:text-xs font-bold p-2.5 rounded-lg border border-[#CBD5E1] flex items-center gap-1.5 bg-white text-black">
+              <Sparkles className="w-3.5 h-3.5 shrink-0 text-[#FF6B6B]" />
+              <span className="truncate text-black font-bold" style={{ color: "#000000" }}>{quest.hudPreviewText}</span>
             </div>
 
             <Link
               href={quest.ctaLink}
-              className="w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#A9B4E8] shadow-sm transition-all active:scale-[0.98] bg-[#A9B4E8] text-black hover:bg-[#8E9BDD]"
+              className="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#FF6B6B] hover:bg-[#F95858] text-white shadow-xs hover:shadow-md transition-all active:scale-[0.98] group/btn"
             >
-              <span className="text-black">{quest.ctaText}</span>
-              <ArrowRight className="w-4 h-4 stroke-[2.5] text-black" />
+              <span className="text-white font-bold">{quest.ctaText}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5] text-white group-hover/btn:translate-x-1 transition-transform" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* 3. Card Bottom Bar */}
-      <div className="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-[#E2E0DB] text-[10px] sm:text-xs font-bold mt-2 text-black">
-        <span className="text-black font-bold">
-          AuraPath Adaptive Engine v2.6
-        </span>
+      <div className="relative z-10 flex items-center justify-end pt-2.5 sm:pt-3 border-t border-[#CBD5E1] text-[10px] sm:text-xs font-bold mt-2 text-black">
         <span className="inline-flex items-center gap-1 sm:gap-1.5 font-bold text-black">
           <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5] text-black" />
-          <span>Diagnostic Pipeline Verified</span>
+          <span className="text-black font-bold" style={{ color: "#000000" }}>Diagnostic Pipeline Verified</span>
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -369,24 +380,24 @@ export default function StickyStackHowItWorks() {
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:bg-[#EEF1FB] transition-colors mb-5 bg-white px-4 py-2 rounded-xl border border-[#E2E0DB] shadow-sm"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:bg-[#F8FAFC] transition-colors mb-5 bg-white px-3.5 py-2 rounded-xl border border-[#E2E8F0] shadow-xs"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-black" />
             <span className="text-black">Back to Home</span>
           </Link>
 
           <div>
-            <span className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-[#A9B4E8] text-black px-4 py-1.5 rounded-full mb-3 shadow-sm font-extrabold">
-              <Compass className="w-4 h-4 stroke-[2.2] text-black" />
-              <span className="text-black">The Complete Roadmap</span>
+            <span className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-wider uppercase bg-[#EEF2FF] text-black border border-[#E0E7FE] px-3.5 py-1.5 rounded-full mb-3 shadow-xs">
+              <Compass className="w-3.5 h-3.5 stroke-[2.2] text-[#4F46E5]" />
+              <span className="text-black">The Complete Assessment Framework</span>
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-6xl font-extrabold text-black mt-2 tracking-tight font-[family-name:var(--font-dm-sans)]">
-            THE 4 QUESTS TO CLARITY
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-black mt-2 tracking-tight">
+            THE 4 ASSESSMENT MODULES
           </h1>
           <p className="text-black font-semibold text-sm sm:text-lg mt-3 max-w-2xl mx-auto px-1 leading-relaxed">
-            Each quest builds directly on your natural problem-solving instincts. Tap any quest or scroll through to uncover your future step-by-step.
+            Four specialized diagnostic modules evaluating your cognitive architecture, behavioral competencies, situational judgment, and verbal reasoning.
           </p>
 
           {/* Mini Step Indicator Badges */}
@@ -397,12 +408,12 @@ export default function StickyStackHowItWorks() {
                 href={`#${q.id}`}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 shrink-0 border ${
                   activeCardIndex === i
-                    ? "bg-[#A9B4E8] text-black border-[#A9B4E8] shadow-sm"
-                    : "bg-white text-black border-[#E2E0DB] hover:bg-[#EEF1FB]"
+                    ? "bg-black text-white border-black shadow-xs"
+                    : "bg-white text-black border-[#E2E8F0] hover:bg-[#F8FAFC]"
                 }`}
               >
-                <span className="w-2 h-2 rounded-full bg-[#A9B4E8]" />
-                <span className="text-black">{q.questNum}: {q.title.split(" ")[q.title.split(" ").length - 1]}</span>
+                <span className={`w-2 h-2 rounded-full ${activeCardIndex === i ? "bg-[#FF6B6B]" : "bg-[#CBD5E1]"}`} />
+                <span className="text-inherit">{q.questNum}: {q.title}</span>
               </a>
             ))}
           </div>

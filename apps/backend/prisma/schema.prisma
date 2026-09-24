@@ -1,0 +1,298 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AuthType {
+  PASSWORD
+  GOOGLE
+  PHONE_OTP
+  EMAIL_OTP
+}
+
+enum OtpPurpose {
+  LOGIN
+  SIGNUP
+  RESET
+}
+
+enum AssessmentStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTI_CHOICE
+  LIKERT
+  YES_NO
+  RANKING
+}
+
+enum AttemptStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  UNDER_REVIEW
+  REPORT_IN_PREP
+  PENDING_APPROVAL
+  PUBLISHED
+}
+
+enum ReportStatus {
+  PENDING_APPROVAL
+  APPROVED
+  PUBLISHED
+  REJECTED
+}
+
+enum AuditResult {
+  SUCCESS
+  FAILURE
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String?         @unique
+  phone         String?         @unique
+  passwordHash  String?
+  role          UserRole        @default(STUDENT)
+  status        UserStatus      @default(ACTIVE)
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  sessionVersion Int            @default(0)
+  totpSecret    String?
+  totpEnabled   Boolean         @default(false)
+  invitedBy     String?
+  invitedAt     DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  lastLoginAt   DateTime?
+
+  authMethods    AuthMethod[]
+  studentProfile StudentProfile?
+  staffProfile   StaffProfile?
+  attempts       AssessmentAttempt[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]
+
+  @@index([role])
+  @@index([status])
+}
+
+model AuthMethod {
+  id                String    @id @default(cuid())
+  userId            String
+  type              AuthType
+  providerAccountId String?
+  createdAt         DateTime  @default(now())
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@unique([userId, type, providerAccountId])
+}
+
+model OtpCode {
+  id          String      @id @default(cuid())
+  userId      String?
+  destination String
+  code        String
+  purpose     OtpPurpose
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  attempts    Int         @default(0)
+  createdAt   DateTime    @default(now())
+
+  @@index([destination, purpose])
+}
+
+model StudentProfile {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  firstName      String
+  lastName       String
+  avatarUrl      String?
+  dateOfBirth    DateTime?
+  country        String?
+  phone          String?
+  school         String?
+  grade          String?
+  educationLevel String?
+  bio            String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StaffProfile {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  specialty String?
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Assessment {
+  id                    String              @id @default(cuid())
+  title                 String
+  description           String
+  version               Int                 @default(1)
+  status                AssessmentStatus    @default(DRAFT)
+  estimatedDurationMins Int                 @default(45)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  sections              AssessmentSection[]
+  attempts              AssessmentAttempt[]
+
+  @@unique([title, version])
+}
+
+model AssessmentSection {
+  id           String     @id @default(cuid())
+  assessmentId String
+  title        String
+  description  String?
+  displayOrder Int
+  createdAt    DateTime   @default(now())
+
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  questions    Question[]
+
+  @@index([assessmentId, displayOrder])
+}
+
+model Question {
+  id           String            @id @default(cuid())
+  sectionId    String
+  version      Int               @default(1)
+  questionText String
+  questionType QuestionType
+  displayOrder Int
+  required     Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+
+  section      AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  options      QuestionOption[]
+  responses    Response[]
+
+  @@index([sectionId, displayOrder])
+}
+
+model QuestionOption {
+  id           String    @id @default(cuid())
+  questionId   String
+  optionText   String
+  displayOrder Int
+
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, displayOrder])
+}
+
+model AssessmentAttempt {
+  id                String        @id @default(cuid())
+  userId            String
+  assessmentId      String
+  assessmentVersion Int
+  startedAt         DateTime      @default(now())
+  submittedAt       DateTime?
+  status            AttemptStatus @default(NOT_STARTED)
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessment        Assessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+  responses         Response[]
+  reports           Report[]
+
+  @@index([userId])
+  @@index([assessmentId, status])
+}
+
+model Response {
+  id              String            @id @default(cuid())
+  attemptId       String
+  questionId      String
+  questionVersion Int
+  answer          Json
+  answeredAt      DateTime          @default(now())
+
+  attempt         AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question        Question          @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+}
+
+model Report {
+  id            String            @id @default(cuid())
+  attemptId     String
+  studentId     String
+  fileReference String
+  version       Int               @default(1)
+  status        ReportStatus      @default(PENDING_APPROVAL)
+  uploadedBy    String
+  approvedBy    String?
+  uploadedAt    DateTime          @default(now())
+  publishedAt   DateTime?
+
+  attempt       AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([attemptId])
+  @@index([status])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  message   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String?
+  action     String
+  resource   String
+  resourceId String?
+  ipAddress  String?
+  metadata   Json?
+  result     AuditResult @default(SUCCESS)
+  createdAt  DateTime    @default(now())
+
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

@@ -39,7 +39,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link className="hover:text-white hover:underline transition-colors" href="/quests">
-                  The 4 Quests
+                  The 4 Modules
                 </Link>
               </li>
               <li>

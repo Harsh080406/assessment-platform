@@ -1,17 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -21,12 +17,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Pathfinder — What Are You Actually Built For? | AuraPath",
+  title: "AuraPath — What Are You Actually Built For? | Psychometric Matrix",
   description:
-    "One assessment. A clearer picture of your innate strengths, deep interests, and real-world career directions before committing years of your life.",
+    "Calibrate your cognitive architecture, behavioral traits, and calibrated career trajectory with human-certified expert evaluations.",
 };
-
-import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -34,11 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${inter.variable} scroll-smooth`}>
-      <body className="bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] antialiased overflow-x-hidden selection:bg-[#A9B4E8] selection:text-black min-h-screen flex flex-col">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+    <html lang="en" className={`${plusJakartaSans.variable} scroll-smooth`}>
+      <body className="bg-[#FBFBF9] text-black font-sans antialiased overflow-x-hidden selection:bg-[#A9B4E8] selection:text-black min-h-screen flex flex-col">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

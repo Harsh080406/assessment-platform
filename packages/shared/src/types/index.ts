@@ -1,4 +1,99 @@
-export type UserRole = "STUDENT" | "PARENT" | "COUNSELOR" | "SCHOOL_ADMIN";
+export type UserRole = "STUDENT" | "STAFF" | "ADMIN" | "PARENT" | "COUNSELOR" | "SCHOOL_ADMIN";
+
+export type AttemptStatus =
+  | "NOT_STARTED"
+  | "IN_PROGRESS"
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "REPORT_IN_PREP"
+  | "PENDING_APPROVAL"
+  | "PUBLISHED";
+
+export type ReportStatus =
+  | "PENDING_APPROVAL"
+  | "APPROVED"
+  | "PUBLISHED"
+  | "REJECTED";
+
+export interface StaffDashboardStats {
+  submitted: number;
+  underReview: number;
+  reportInPrep: number;
+  pendingApproval: number;
+  published: number;
+  total: number;
+}
+
+export interface StaffSubmissionSummary {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string | null;
+  school?: string | null;
+  grade?: string | null;
+  assessmentTitle: string;
+  assessmentVersion: number;
+  startedAt: string;
+  submittedAt: string | null;
+  status: AttemptStatus;
+  reportsCount: number;
+  latestReportStatus?: ReportStatus | null;
+  latestReportId?: string | null;
+}
+
+export interface VersionedQuestionDetail {
+  id: string;
+  questionText: string;
+  questionType: string;
+  version: number;
+  displayOrder: number;
+  required: boolean;
+  sectionTitle: string;
+  sectionDisplayOrder: number;
+  options: { id: string; optionText: string; displayOrder: number }[];
+  studentAnswer: any;
+  answeredAt?: string;
+}
+
+export interface StaffSubmissionDetail {
+  attempt: {
+    id: string;
+    userId: string;
+    assessmentId: string;
+    assessmentTitle: string;
+    assessmentVersion: number;
+    status: AttemptStatus;
+    startedAt: string;
+    submittedAt: string | null;
+  };
+  student: {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string | null;
+    phone?: string | null;
+    school?: string | null;
+    grade?: string | null;
+    country?: string | null;
+    educationLevel?: string | null;
+  };
+  sections: {
+    id: string;
+    title: string;
+    description?: string | null;
+    questions: VersionedQuestionDetail[];
+  }[];
+  reports: {
+    id: string;
+    version: number;
+    status: ReportStatus;
+    fileReference: string;
+    uploadedBy: string;
+    uploadedAt: string;
+    approvedBy?: string | null;
+    publishedAt?: string | null;
+  }[];
+}
 
 export type EducationStage = "CLASS_8_10" | "CLASS_11_12" | "COLLEGE_UNDERGRAD" | "EARLY_GRAD";
 

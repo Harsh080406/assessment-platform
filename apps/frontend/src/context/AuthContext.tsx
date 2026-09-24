@@ -3,9 +3,12 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import AuthModal from "@/components/AuthModal";
 
+export type AuthModalMode = "login" | "signup" | "forgot_password" | "phone";
+
 interface AuthContextType {
   isAuthOpen: boolean;
-  openAuth: () => void;
+  authMode: AuthModalMode;
+  openAuth: (mode?: AuthModalMode) => void;
   closeAuth: () => void;
 }
 
@@ -13,14 +16,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthModalMode>("login");
 
-  const openAuth = () => setIsAuthOpen(true);
-  const closeAuth = () => setIsAuthOpen(false);
+  const openAuth = (mode: AuthModalMode = "login") => {
+    setAuthMode(mode);
+    setIsAuthOpen(true);
+  };
+
+  const closeAuth = () => {
+    setIsAuthOpen(false);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthOpen, openAuth, closeAuth }}>
+    <AuthContext.Provider value={{ isAuthOpen, authMode, openAuth, closeAuth }}>
       {children}
-      <AuthModal isOpen={isAuthOpen} onClose={closeAuth} />
+      <AuthModal isOpen={isAuthOpen} onClose={closeAuth} initialMode={authMode} />
     </AuthContext.Provider>
   );
 }

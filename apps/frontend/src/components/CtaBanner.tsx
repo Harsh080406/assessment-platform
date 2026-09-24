@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight, Compass, UserPlus } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CtaBanner() {
+  const { openAuth } = useAuth();
+
   return (
     <section className="pt-4 sm:pt-6 pb-12 sm:pb-16 bg-[#FBFBF9] relative">
       <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-6xl mx-auto">
@@ -28,28 +31,36 @@ export default function CtaBanner() {
               Join 48,000+ students who eliminated career paralysis and discovered their authentic strengths in 20 minutes.
             </p>
 
-            {/* Primary Action Button */}
-            <div className="mt-6 sm:mt-8 flex flex-col items-center justify-center gap-3 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto">
+            {/* Primary Action Buttons */}
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto">
+              <button
+                onClick={() => openAuth("signup")}
+                className="w-full sm:w-auto px-7 sm:px-10 py-3.5 rounded-xl bg-[#FF6B6B] hover:bg-[#F95858] text-white font-extrabold text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2.5 hover:-translate-y-0.5 cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4 text-white" />
+                <span className="text-white font-extrabold">Sign Up Free</span>
+              </button>
+
               <Link
-                href="/assessment"
+                href="/quests"
                 className="w-full sm:w-auto px-7 sm:px-10 py-3.5 rounded-xl bg-white text-black hover:bg-[#EEF1FB] font-extrabold text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2.5 hover:-translate-y-0.5"
               >
-                <span className="text-black font-extrabold">Begin Assessment</span>
+                <span className="text-black font-extrabold">Explore The 4 Modules</span>
                 <ArrowRight className="w-4 h-4 stroke-[2.5] text-black" />
               </Link>
+            </div>
 
-              {/* Trust Badges */}
-              <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-bold pt-1">
-                <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
-                  20 Min Adaptive
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
-                  180+ Horizons
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
-                  100% Private
-                </span>
-              </div>
+            {/* Trust Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-bold pt-1 mt-4">
+              <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
+                20 Min Adaptive
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
+                180+ Horizons
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[#141416] text-[#A9B4E8] border border-[#2E2E32]">
+                100% Private
+              </span>
             </div>
           </div>
         </div>

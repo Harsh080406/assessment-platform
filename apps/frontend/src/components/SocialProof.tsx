@@ -43,23 +43,23 @@ export default function SocialProof() {
         {/* Section Top Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#A9B4E8] text-black text-xs font-bold uppercase tracking-wider mb-2.5 shadow-sm">
-              <span className="text-black font-extrabold">Real Dilemmas</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEF2FF] text-[#4F46E5] text-[11px] font-bold uppercase tracking-wider mb-2 border border-[#E0E7FE]">
+              <span>Real Student Dilemmas</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black tracking-tight font-[family-name:var(--font-dm-sans)]">
-              SOUND FAMILIAR?
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-[#0F172A] tracking-tight">
+              Sound familiar?
             </h2>
-            <p className="text-[#333333] font-semibold text-sm sm:text-base mt-1.5 max-w-lg leading-relaxed">
+            <p className="text-[#64748B] font-medium text-xs sm:text-base mt-1.5 max-w-lg leading-relaxed">
               Confronting outdated career advice? See how students solved stream and career paralysis.
             </p>
           </div>
 
-          <div className="self-start lg:self-auto bg-white border border-[#E2E0DB] px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-2.5">
+          <div className="self-start lg:self-auto bg-white border border-[#E2E8F0] px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-2.5">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A9D8C6] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A9D8C6]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-xs sm:text-sm font-bold text-black">
+            <span className="text-xs font-semibold text-[#0F172A]">
               48,290+ Students Guided This Month
             </span>
           </div>
@@ -71,17 +71,17 @@ export default function SocialProof() {
             return (
               <div
                 key={item.id}
-                className="group relative p-5 sm:p-6 bg-white border border-[#E2E0DB] shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl flex flex-col justify-between overflow-hidden"
+                className="group relative p-5 sm:p-6 bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 rounded-2xl flex flex-col justify-between overflow-hidden"
               >
                 {/* Small length accent border */}
-                <div className="absolute top-0 left-6 w-12 h-[3px] bg-[#A9B4E8] rounded-full group-hover:w-16 transition-all duration-300" />
+                <div className="absolute top-0 left-6 w-12 h-[3px] bg-[#FF6B6B] rounded-full group-hover:w-16 transition-all duration-300" />
 
                 <div>
                   <div className="flex items-center justify-between mb-3 mt-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 bg-[#EEF1FB] text-black border border-[#A9B4E8]/40 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 bg-[#EEF2FF] text-[#4F46E5] border border-[#E0E7FE] rounded-full">
                       {item.classStage}
                     </span>
-                    <span className="text-[11px] font-bold text-[#444444]">
+                    <span className="text-[11px] font-semibold text-[#64748B]">
                       {item.dilemma}
                     </span>
                   </div>
@@ -90,17 +90,17 @@ export default function SocialProof() {
                     {item.quote}
                   </p>
 
-                  <div className="mt-3 text-xs font-bold uppercase tracking-wider text-[#555555]">
+                  <div className="mt-3 text-xs font-bold uppercase tracking-wider text-black">
                     — {item.student}
                   </div>
                 </div>
 
-                <div className="mt-5 pt-3.5 border-t border-[#E2E0DB] flex items-center justify-between text-xs font-bold text-black">
-                  <span className="flex items-center gap-1.5 text-[#333333]">
-                    <span className="w-2 h-2 rounded-full bg-[#A9D8C6]" />
+                <div className="mt-5 pt-3.5 border-t border-[#F1F5F9] flex items-center justify-between text-xs font-semibold text-[#0F172A]">
+                  <span className="flex items-center gap-1.5 text-[#64748B]">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     {item.answers}
                   </span>
-                  <span className="text-[11px] font-semibold text-[#555555] bg-[#F5F5F3] px-2 py-0.5 rounded-md">
+                  <span className="text-[11px] font-semibold text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 rounded-md">
                     Calibrated
                   </span>
                 </div>
