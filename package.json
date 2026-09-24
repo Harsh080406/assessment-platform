@@ -16,5 +16,8 @@
     "lint": "npm run lint --workspaces --if-present",
     "start:frontend": "npm run start --workspace=@aurapath/frontend",
     "start:backend": "npm run start --workspace=@aurapath/backend"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
   }
 }
