@@ -125,7 +125,7 @@ export default function Hero() {
               {/* Student Visual Cutout Image */}
               <div className="relative w-full h-full flex items-end justify-center z-10">
                 <Image
-                  src="/hero-student.png"
+                  src="/ChatGPT Image Sep 26, 2026, 01_16_28 PM_upscayl_5x_upscayl-standard-4x.png"
                   alt="AuraPath Student discovering career trajectory"
                   fill
                   priority
