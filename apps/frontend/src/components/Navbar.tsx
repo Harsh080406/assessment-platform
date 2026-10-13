@@ -60,9 +60,9 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
           : "bg-[#FBFBF9]/95 backdrop-blur-md border-b border-[#E2E8F0]"
       }`}
     >
-      <div className="w-full px-2.5 sm:px-8 lg:px-12 xl:px-14 h-16 sm:h-20 flex items-center justify-between gap-2">
+      <div className="w-full px-2.5 sm:px-6 lg:px-8 xl:px-14 h-16 sm:h-20 flex items-center justify-between gap-2 lg:gap-4">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-1.5 sm:gap-3.5 group shrink min-w-0">
+        <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 xl:gap-3.5 group shrink min-w-0">
           <Image
             src="/AlderwoodVANTAGE.svg"
             alt="Alderwood Vantage Logo"
@@ -70,11 +70,11 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             height={60}
             priority
             draggable={false}
-            className="h-8 sm:h-14 md:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-200 shrink-0"
+            className="h-8 sm:h-10 lg:h-11 xl:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-200 shrink-0"
           />
           <div className="flex flex-col min-w-0">
             <div className="flex items-center">
-              <span className="text-xs min-[360px]:text-sm sm:text-2xl font-extrabold tracking-tight text-[#0F172A] whitespace-nowrap">
+              <span className="text-xs min-[360px]:text-sm sm:text-base lg:text-lg xl:text-2xl font-extrabold tracking-tight text-[#0F172A] whitespace-nowrap">
                 Alderwood <span className="text-[#FF6B6B]">Vantage</span>
               </span>
             </div>
@@ -82,16 +82,16 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         </Link>
 
         {/* Desktop Navigation Links with Active Page Indicators */}
-        <nav className="hidden lg:flex items-center gap-2 text-sm font-semibold">
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-sm font-semibold">
           {navLinks.map((link) => {
             const active = isActiveLink(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-3.5 py-2 flex items-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-lg ${
+                className={`relative px-2.5 xl:px-3.5 py-1.5 xl:py-2 flex items-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-lg ${
                   active
-                    ? "text-[#0F172A] font-bold after:absolute after:bottom-0.5 after:left-3.5 after:right-3.5 after:h-0.5 after:bg-[#FF6B6B] after:rounded-full"
+                    ? "text-[#0F172A] font-bold after:absolute after:bottom-0.5 after:left-2.5 xl:after:left-3.5 after:right-2.5 xl:after:right-3.5 after:h-0.5 after:bg-[#FF6B6B] after:rounded-full"
                     : "text-[#475569] hover:text-[#0F172A] hover:bg-slate-100/50 font-semibold"
                 }`}
               >
@@ -102,10 +102,10 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         </nav>
 
         {/* CTA Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-3 shrink-0">
           <button
             onClick={() => handleAuth("login")}
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-100/80 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+            className="hidden sm:inline-flex items-center gap-1 xl:gap-1.5 text-xs xl:text-sm font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-100/80 px-2.5 xl:px-4 py-1.5 sm:py-2 xl:py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
           >
             <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0F172A]" />
             <span>Sign In</span>
@@ -113,7 +113,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
 
           <button
             onClick={() => handleAuth("signup")}
-            className="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-extrabold bg-[#FF6B6B] hover:bg-[#F95858] text-white px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+            className="inline-flex items-center gap-1 sm:gap-1.5 text-xs xl:text-sm font-extrabold bg-[#FF6B6B] hover:bg-[#F95858] text-white px-2.5 sm:px-3.5 xl:px-5 py-1.5 sm:py-2 xl:py-2.5 rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
           >
             <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             <span>Sign Up</span>
