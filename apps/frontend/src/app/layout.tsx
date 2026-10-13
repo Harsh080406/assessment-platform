@@ -20,6 +20,16 @@ export const metadata: Metadata = {
   title: "ALDERWOOD VANTAGE — Find Your Vantage | Raising Leaders, Not Just Employees",
   description:
     "A comprehensive, academically validated assessment designed by corporate leadership and HR professionals. Reveals the leader, innovator, and builder in every student—and maps what it takes to get there.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
