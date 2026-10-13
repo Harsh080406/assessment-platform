@@ -176,7 +176,17 @@ export default function UnifiedAuthCard({
 
       if (onClose) onClose();
 
-      const destination = res?.url || absoluteCallback || "/dashboard";
+      let destination = res?.url || absoluteCallback || "/dashboard";
+      if (typeof window !== "undefined") {
+        try {
+          const parsed = new URL(destination, window.location.origin);
+          if (parsed.origin !== window.location.origin) {
+            destination = `${window.location.origin}${parsed.pathname}${parsed.search}`;
+          }
+        } catch {
+          destination = absoluteCallback || "/dashboard";
+        }
+      }
       window.location.href = destination;
     } catch (err: any) {
       setIsAuthenticating(false);

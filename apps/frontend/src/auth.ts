@@ -9,6 +9,7 @@ import { normalizePhone } from "@/lib/utils/phone";
 import { AuthType, AuditResult, OtpPurpose, UserRole, UserStatus } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: {
     signIn: "/login",
@@ -811,6 +812,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       return true;
+    },
+
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin or custom domains
+      try {
+        const parsedUrl = new URL(url);
+        const parsedBase = new URL(baseUrl);
+        if (parsedUrl.origin === parsedBase.origin) return url;
+        if (
+          parsedUrl.hostname.endsWith("alderwoodvantage.com") ||
+          parsedUrl.hostname === "localhost"
+        ) {
+          return url;
+        }
+      } catch {
+        // Fallback on invalid URL parse
+      }
+      return baseUrl;
     },
 
     async jwt({ token, user }) {

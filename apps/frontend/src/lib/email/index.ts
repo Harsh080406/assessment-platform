@@ -9,6 +9,7 @@ export interface IEmailService {
   sendEmail(options: SendEmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }>;
   sendVerificationEmail(to: string, token: string, baseUrl?: string): Promise<{ success: boolean }>;
   sendPasswordResetEmail(to: string, token: string, baseUrl?: string): Promise<{ success: boolean }>;
+  sendPasswordResetOtpEmail(to: string, code: string): Promise<{ success: boolean }>;
   sendLoginOtpEmail(to: string, code: string): Promise<{ success: boolean }>;
 }
 
@@ -26,7 +27,11 @@ export class ConsoleEmailService implements IEmailService {
     return { success: true, messageId: `stub_${Date.now()}` };
   }
 
-  async sendVerificationEmail(to: string, token: string, baseUrl = "http://localhost:3000"): Promise<{ success: boolean }> {
+  async sendVerificationEmail(
+    to: string,
+    token: string,
+    baseUrl = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "https://www.alderwoodvantage.com"
+  ): Promise<{ success: boolean }> {
     const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
     console.log("\n=======================================================");
     console.log(`[EMAIL DISPATCH] Verification Email to: ${to}`);
@@ -49,7 +54,11 @@ export class ConsoleEmailService implements IEmailService {
     });
   }
 
-  async sendPasswordResetEmail(to: string, token: string, baseUrl = "http://localhost:3000"): Promise<{ success: boolean }> {
+  async sendPasswordResetEmail(
+    to: string,
+    token: string,
+    baseUrl = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "https://www.alderwoodvantage.com"
+  ): Promise<{ success: boolean }> {
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
     console.log("\n=======================================================");
     console.log(`[EMAIL DISPATCH] Password Reset Email to: ${to}`);
@@ -70,6 +79,30 @@ export class ConsoleEmailService implements IEmailService {
         </div>
       `,
       text: `Reset your Alderwood Vantage password at: ${resetUrl}`,
+    });
+  }
+
+  async sendPasswordResetOtpEmail(to: string, code: string): Promise<{ success: boolean }> {
+    console.log("\n=======================================================");
+    console.log(`[EMAIL OTP DISPATCH] Password Reset Code to: ${to}`);
+    console.log(`[PASSWORD RESET 6-DIGIT OTP CODE]: ${code}`);
+    console.log(`[VALIDITY]: 10 Minutes (Single-Use)`);
+    console.log("=======================================================\n");
+
+    return this.sendEmail({
+      to,
+      subject: "Your Alderwood Vantage Password Reset Code",
+      html: `
+        <div style="font-family: sans-serif; padding: 24px; max-width: 520px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 16px;">
+          <h2 style="color: #0F172A; margin-top: 0;">Reset Your Password</h2>
+          <p style="color: #475569; font-size: 14px;">Use the 6-digit verification code below to reset your Alderwood Vantage account password. This code expires in 10 minutes.</p>
+          <div style="background: #F1F5F9; border: 1px solid #CBD5E1; padding: 16px; text-align: center; border-radius: 12px; margin: 24px 0;">
+            <span style="letter-spacing: 6px; font-size: 32px; font-weight: 800; color: #0F172A; font-family: monospace;">${code}</span>
+          </div>
+          <p style="color: #64748B; font-size: 12px; margin-bottom: 0;">If you did not request this code, you can safely ignore this email.</p>
+        </div>
+      `,
+      text: `Your Alderwood Vantage password reset code is: ${code}. It expires in 10 minutes.`,
     });
   }
 

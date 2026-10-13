@@ -992,7 +992,10 @@ export async function inviteStaffOrAdminAction(data: {
     const { generateActivationToken } = await import("@/lib/activationToken");
     const activationToken = generateActivationToken(email, role);
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const baseUrl =
+      process.env.NEXTAUTH_URL ||
+      process.env.AUTH_URL ||
+      "https://www.alderwoodvantage.com";
     const activationUrl = `${baseUrl}/activate?token=${activationToken}`;
 
     let invitedUser = existingUser;
