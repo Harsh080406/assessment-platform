@@ -60,9 +60,9 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
           : "bg-[#FBFBF9]/95 backdrop-blur-md border-b border-[#E2E8F0]"
       }`}
     >
-      <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-14 h-16 sm:h-20 flex items-center justify-between">
+      <div className="w-full px-2.5 sm:px-8 lg:px-12 xl:px-14 h-16 sm:h-20 flex items-center justify-between gap-2">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0">
+        <Link href="/" className="flex items-center gap-1.5 sm:gap-3.5 group shrink min-w-0">
           <Image
             src="/AlderwoodVANTAGE.svg"
             alt="Alderwood Vantage Logo"
@@ -70,11 +70,11 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
             height={60}
             priority
             draggable={false}
-            className="h-12 sm:h-14 md:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-200 shrink-0"
+            className="h-8 sm:h-14 md:h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-200 shrink-0"
           />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="text-base sm:text-2xl font-extrabold tracking-tight text-[#0F172A] whitespace-nowrap">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center">
+              <span className="text-xs min-[360px]:text-sm sm:text-2xl font-extrabold tracking-tight text-[#0F172A] whitespace-nowrap">
                 Alderwood <span className="text-[#FF6B6B]">Vantage</span>
               </span>
             </div>
@@ -102,7 +102,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
         </nav>
 
         {/* CTA Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <button
             onClick={() => handleAuth("login")}
             className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#334155] hover:text-[#0F172A] hover:bg-slate-100/80 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
@@ -113,7 +113,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
 
           <button
             onClick={() => handleAuth("signup")}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-extrabold bg-[#FF6B6B] hover:bg-[#F95858] text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+            className="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-extrabold bg-[#FF6B6B] hover:bg-[#F95858] text-white px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
           >
             <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             <span>Sign Up</span>
@@ -122,7 +122,7 @@ export default function Navbar({ onOpenAuth }: NavbarProps) {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg bg-white text-[#0F172A] border border-[#E2E8F0] shadow-xs cursor-pointer shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center transition-all hover:bg-[#F8FAFC]"
+            className="lg:hidden p-1.5 sm:p-2 rounded-lg bg-white text-[#0F172A] border border-[#E2E8F0] shadow-xs cursor-pointer shrink-0 min-w-[34px] min-h-[34px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center transition-all hover:bg-[#F8FAFC]"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4 text-[#0F172A]" /> : <Menu className="w-4 h-4 text-[#0F172A]" />}
