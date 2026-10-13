@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { CheckCircle2, AlertCircle, Loader2, ArrowRight } from "lucide-react";
 import { verifyEmailAction } from "@/app/actions/auth";
 
@@ -51,9 +52,17 @@ function VerifyEmailContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBFBF9] p-4 text-black font-sans selection:bg-[#A9B4E8]">
       <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-10 border border-[#E2E0DB] shadow-md text-center">
-        <Link href="/" className="inline-block mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Image
+            src="/AlderwoodVANTAGE.svg"
+            alt="Alderwood Vantage Logo"
+            width={70}
+            height={55}
+            draggable={false}
+            className="h-14 sm:h-16 w-auto object-contain shrink-0"
+          />
           <span className="font-[family-name:var(--font-dm-sans)] text-2xl font-black tracking-tight text-black">
-            Aura<span className="text-[#7C89CC]">Path</span>
+            Alderwood <span className="text-[#FF6B6B]">Vantage</span>
           </span>
         </Link>
 

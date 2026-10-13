@@ -79,7 +79,7 @@ export default function ActivateAccountClient({
           Activate Your Account
         </h1>
         <p className="text-xs text-[#64748B] font-medium">
-          You have been invited to join the AuraPath platform.
+          You have been invited to join the Alderwood Vantage platform.
         </p>
       </div>
 

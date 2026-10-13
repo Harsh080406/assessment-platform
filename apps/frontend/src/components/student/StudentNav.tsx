@@ -21,12 +21,6 @@ export default function StudentNav() {
       isActive: pathname.startsWith("/dashboard/assessments"),
     },
     {
-      href: "/dashboard/careers",
-      label: "Career Insights",
-      icon: Compass,
-      isActive: pathname.startsWith("/dashboard/careers"),
-    },
-    {
       href: "/dashboard/results",
       label: "Results",
       icon: BarChart3,

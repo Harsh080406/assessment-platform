@@ -1,4 +1,4 @@
-﻿export interface SendSmsOptions {
+export interface SendSmsOptions {
   to: string;
   message: string;
 }
@@ -25,7 +25,7 @@ export class ConsoleSmsService implements ISmsService {
     console.log("=======================================================\n");
     return this.sendSms({
       to,
-      message: `Your AuraPath security code is: ${code}. Valid for 10 minutes.`,
+      message: `Your Alderwood Vantage security code is: ${code}. Valid for 10 minutes.`,
     });
   }
 }

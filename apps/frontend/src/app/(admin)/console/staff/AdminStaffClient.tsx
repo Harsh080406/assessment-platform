@@ -2,21 +2,20 @@
 
 import { useState, useTransition } from "react";
 import {
-  UserCog,
-  Shield,
-  UserCheck,
-  CheckCircle2,
-  AlertCircle,
-  X,
-  Briefcase,
   UserPlus,
+  Briefcase,
   Copy,
   Check,
   Mail,
-  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  X,
 } from "lucide-react";
 import { UserRole, UserStatus } from "@prisma/client";
 import { updateUserRoleAction, inviteStaffOrAdminAction } from "@/app/actions/admin";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import AdminStatusPill, { AdminTag } from "@/components/admin/AdminStatusPill";
+import AdminConfirmationDialog from "@/components/admin/AdminConfirmationDialog";
 
 interface StaffItem {
   id: string;
@@ -28,6 +27,7 @@ interface StaffItem {
   activeReviewsCount: number;
   publishedCount: number;
   createdAt: string;
+  available?: boolean;
 }
 
 interface AdminStaffClientProps {
@@ -46,15 +46,30 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
   const [createdActivationUrl, setCreatedActivationUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const handleRoleChange = (userId: string, newRole: UserRole) => {
+  // Role Confirmation Dialog State
+  const [pendingRoleChange, setPendingRoleChange] = useState<{
+    staff: StaffItem;
+    newRole: UserRole;
+  } | null>(null);
+
+  const handleRoleChangeSelect = (staff: StaffItem, newRole: UserRole) => {
+    if (staff.role === newRole) return;
+    setPendingRoleChange({ staff, newRole });
+  };
+
+  const handleConfirmRoleChange = () => {
+    if (!pendingRoleChange) return;
+    const { staff, newRole } = pendingRoleChange;
+
     setMessage(null);
     startTransition(async () => {
-      const res = await updateUserRoleAction(userId, newRole);
+      const res = await updateUserRoleAction(staff.id, newRole);
       if (res.success) {
         setStaffList((prev) =>
-          prev.map((s) => (s.id === userId ? { ...s, role: newRole } : s))
+          prev.map((s) => (s.id === staff.id ? { ...s, role: newRole } : s))
         );
         setMessage({ text: res.message, type: "success" });
+        setPendingRoleChange(null);
       } else {
         setMessage({ text: res.message, type: "error" });
       }
@@ -76,7 +91,7 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
         setCreatedActivationUrl(res.data.activationUrl);
         setMessage({ text: res.message, type: "success" });
 
-        // Optimistically add inactive staff item to list if STAFF
+        // Optimistically add inactive staff item
         setStaffList((prev) => [
           {
             id: `temp-${Date.now()}`,
@@ -108,36 +123,35 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
 
   return (
     <div className="space-y-6">
-      {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-xs">
-        <div>
-          <h2 className="text-lg font-black text-[#0F172A] tracking-tight">
-            Staff & Administrator Management
-          </h2>
-          <p className="text-xs text-[#64748B]">
-            Provision staff/admin accounts via secure invite links. Self-registration for administrative roles is restricted.
-          </p>
-        </div>
+      {/* 1. Page Header with "Invite staff / admin" as Primary Button */}
+      <AdminPageHeader
+        title="Staff & Workload"
+        description="Monitor staff evaluator open assignments, review capacity, published report volume, and manage internal roles."
+        breadcrumbHref="/console"
+        breadcrumbLabel="Back to Overview"
+        action={
+          <button
+            type="button"
+            onClick={() => {
+              setShowInviteModal(true);
+              setCreatedActivationUrl(null);
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold shadow-xs transition-colors"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Invite staff / admin</span>
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => {
-            setShowInviteModal(true);
-            setCreatedActivationUrl(null);
-          }}
-          className="px-4 py-2.5 rounded-xl bg-[#0F172A] hover:bg-black text-white text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 shadow-sm"
-        >
-          <UserPlus className="w-4 h-4 text-indigo-400" />
-          <span>Invite Staff / Admin</span>
-        </button>
-      </div>
-
-      {/* Global Alert */}
+      {/* 2. Toast Feedback */}
       {message && (
         <div
-          className={`p-4 rounded-xl border flex items-center justify-between gap-3 text-xs font-bold ${
+          role="status"
+          className={`p-3.5 px-4 rounded-xl border flex items-center justify-between gap-3 text-xs font-semibold animate-in fade-in-0 duration-150 ${
             message.type === "success"
-              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-              : "bg-red-50 border-red-200 text-red-800"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+              : "bg-red-50 border-red-200 text-red-900"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -148,94 +162,44 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
             )}
             <span>{message.text}</span>
           </div>
-          <button onClick={() => setMessage(null)} className="text-gray-400 hover:text-black">
-            <X className="w-4 h-4" />
+          <button
+            type="button"
+            onClick={() => setMessage(null)}
+            className="text-slate-400 hover:text-slate-700 p-1"
+          >
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* Generated Activation Link Banner (If active) */}
+      {/* 3. Generated Activation Link Callout */}
       {createdActivationUrl && (
-        <div className="p-5 rounded-2xl bg-indigo-50/80 border border-indigo-200 text-indigo-950 space-y-3 shadow-xs">
+        <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-[#0F172A] space-y-2.5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-black uppercase text-indigo-900">
+            <div className="flex items-center gap-2 text-xs font-bold text-indigo-900">
               <Mail className="w-4 h-4 text-indigo-600" />
-              <span>Signed Activation Link Created (Fix #1)</span>
+              <span>Signed Account Activation Link</span>
             </div>
             <button
+              type="button"
               onClick={copyActivationLink}
-              className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
             >
               {copiedLink ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedLink ? "Copied!" : "Copy Link"}</span>
+              <span>{copiedLink ? "Copied" : "Copy Link"}</span>
             </button>
           </div>
-          <p className="text-xs font-medium text-indigo-800">
-            Share this link with the invitee to let them activate their account with a Password or Google OAuth:
+          <p className="text-xs text-[#475569]">
+            Share this activation link with the invitee to establish credentials:
           </p>
-          <div className="p-3 bg-white rounded-xl border border-indigo-200 text-xs font-mono break-all text-indigo-950 font-bold select-all">
+          <div className="p-2.5 bg-white rounded-lg border border-indigo-200 text-xs font-mono break-all text-[#0F172A] select-all">
             {createdActivationUrl}
           </div>
         </div>
       )}
 
-      {/* Invite Modal / Card Drawer */}
-      {showInviteModal && (
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-md space-y-4">
-          <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
-            <div className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-indigo-600" />
-              <h3 className="font-bold text-base text-[#0F172A]">Provision New Staff or Admin</h3>
-            </div>
-            <button
-              onClick={() => setShowInviteModal(false)}
-              className="text-[#94A3B8] hover:text-[#0F172A]"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSendInvite} className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-            <div className="space-y-1 sm:col-span-1">
-              <label className="text-xs font-bold text-[#334155]">Invitee Email Address</label>
-              <input
-                type="email"
-                placeholder="staff@aurapath.org"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-bold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              />
-            </div>
-
-            <div className="space-y-1 sm:col-span-1">
-              <label className="text-xs font-bold text-[#334155]">Assigned Role</label>
-              <select
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value as UserRole)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-bold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              >
-                <option value={UserRole.STAFF}>STAFF (Evaluator)</option>
-                <option value={UserRole.ADMIN}>ADMIN (System Administrator)</option>
-              </select>
-            </div>
-
-            <div className="sm:col-span-1 flex gap-2">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition flex items-center justify-center gap-2"
-              >
-                {isPending ? "Generating..." : "Generate Invite"}
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Staff Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* 4. Staff Card Grid (3-up laptop, 1-up mobile) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {staffList.map((staff) => {
           const initials = staff.name
             .split(" ")
@@ -247,72 +211,83 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
           return (
             <div
               key={staff.id}
-              className="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-5 flex flex-col justify-between"
+              className="bg-white rounded-xl border border-[#E2E8F0] p-4 sm:p-5 flex flex-col justify-between space-y-4"
             >
-              <div className="space-y-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-[#0F172A] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
+              {/* Card Header: Avatar + Identity + Status Tags */}
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#0F172A] text-white font-bold text-xs flex items-center justify-center shrink-0">
                       {initials}
                     </div>
-                    <div>
-                      <h3 className="font-bold text-base text-[#0F172A]">{staff.name}</h3>
-                      <p className="text-xs text-[#64748B]">{staff.email || "No email"}</p>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-[#0F172A] truncate">
+                        {staff.name}
+                      </h3>
+                      <p className="text-xs text-[#64748B] font-mono truncate">
+                        {staff.email || "—"}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span
-                      className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border ${
-                        staff.role === UserRole.ADMIN
-                          ? "bg-red-50 text-red-700 border-red-200"
-                          : "bg-indigo-50 text-indigo-700 border-indigo-200"
-                      }`}
-                    >
-                      {staff.role}
-                    </span>
-                    {staff.status === UserStatus.INACTIVE && (
-                      <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
-                        Pending Invite
+
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    {staff.role === UserRole.ADMIN ? (
+                      <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
+                        Admin
                       </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        Staff
+                      </span>
+                    )}
+
+                    {staff.status === UserStatus.INACTIVE ? (
+                      <AdminStatusPill label="Pending Invite" variant="warning" />
+                    ) : staff.available === false ? (
+                      <AdminStatusPill label="Paused" variant="neutral" />
+                    ) : (
+                      <AdminStatusPill label="Available" variant="success" />
                     )}
                   </div>
                 </div>
 
-                <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] space-y-1">
-                  <span className="text-[10px] font-bold text-[#94A3B8] uppercase block">
-                    Certified Specialty
-                  </span>
-                  <span className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-[#4F46E5]" />
-                    {staff.specialty}
+                {/* Specialty (single line) */}
+                <div className="p-2.5 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] text-xs flex items-center gap-2">
+                  <Briefcase className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
+                  <span className="text-[#334155] font-medium truncate">
+                    {staff.specialty || "Psychometric Evaluator"}
                   </span>
                 </div>
 
-                {/* Workload Indicators */}
-                <div className="grid grid-cols-2 gap-3 text-center">
-                  <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/60">
-                    <div className="text-xl font-black text-amber-900">{staff.activeReviewsCount}</div>
-                    <div className="text-[10px] font-bold text-amber-700 uppercase mt-0.5">
+                {/* Two Neutral Workload Counters */}
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <div className="text-lg font-bold text-[#0F172A] tabular-nums">
+                      {staff.activeReviewsCount}
+                    </div>
+                    <div className="text-[11px] font-medium text-[#64748B] uppercase">
                       Open Reviews
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-emerald-50/50 border border-emerald-200/60">
-                    <div className="text-xl font-black text-emerald-900">{staff.publishedCount}</div>
-                    <div className="text-[10px] font-bold text-emerald-700 uppercase mt-0.5">
+                  <div className="p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <div className="text-lg font-bold text-[#0F172A] tabular-nums">
+                      {staff.publishedCount}
+                    </div>
+                    <div className="text-[11px] font-medium text-[#64748B] uppercase">
                       Published Reports
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Role Assignment Selector */}
+              {/* Role Select */}
               <div className="pt-3 border-t border-[#F1F5F9] flex items-center justify-between gap-3">
-                <span className="text-xs font-bold text-[#64748B]">Assign Role:</span>
+                <span className="text-xs font-semibold text-[#64748B]">Assign Role:</span>
                 <select
                   value={staff.role}
-                  onChange={(e) => handleRoleChange(staff.id, e.target.value as UserRole)}
+                  onChange={(e) => handleRoleChangeSelect(staff, e.target.value as UserRole)}
                   disabled={isPending}
-                  className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-bold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="py-1 px-2.5 rounded-lg border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 >
                   <option value={UserRole.STAFF}>STAFF</option>
                   <option value={UserRole.ADMIN}>ADMIN</option>
@@ -322,6 +297,91 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
           );
         })}
       </div>
+
+      {/* Provision Staff Modal */}
+      {showInviteModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in-0 duration-150"
+        >
+          <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-xl w-full max-w-md p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
+              <h3 className="font-bold text-sm text-[#0F172A]">
+                Invite Staff / Admin Member
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowInviteModal(false)}
+                className="text-[#94A3B8] hover:text-[#0F172A] p-1"
+                aria-label="Close dialog"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSendInvite} className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                  Invitee Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="staff@alderwoodvantage.com"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                  Assigned Clearance Role
+                </label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value as UserRole)}
+                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value={UserRole.STAFF}>STAFF (Clinical Evaluator)</option>
+                  <option value={UserRole.ADMIN}>ADMIN (System Administrator)</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F1F5F9]">
+                <button
+                  type="button"
+                  onClick={() => setShowInviteModal(false)}
+                  className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F8FAFC]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending || !inviteEmail.trim()}
+                  className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+                >
+                  {isPending ? "Generating..." : "Generate Invite"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Role Change Confirmation Dialog */}
+      <AdminConfirmationDialog
+        isOpen={!!pendingRoleChange}
+        onClose={() => setPendingRoleChange(null)}
+        onConfirm={handleConfirmRoleChange}
+        title="Change Staff Member Role"
+        description={`Are you sure you want to change this member's clearance role to ${pendingRoleChange?.newRole}? This modifies administrative permissions and dashboard access immediately.`}
+        target={pendingRoleChange ? `${pendingRoleChange.staff.name} (${pendingRoleChange.staff.email})` : undefined}
+        confirmLabel="Confirm Role Change"
+        isDestructive={false}
+        isLoading={isPending}
+      />
     </div>
   );
 }

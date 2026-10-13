@@ -26,7 +26,7 @@ app.use(requestLogger);
 app.get("/", (_req, res) => {
   res.status(200).json({
     status: "online",
-    message: "AuraPath Enterprise Backend API is live",
+    message: "Alderwood Vantage Enterprise Backend API is live",
     health: "/api/v1/health",
   });
 });
@@ -37,7 +37,7 @@ app.get("/api/v1/health", (_req, res) => {
     status: "healthy",
     uptimeSeconds: process.uptime(),
     timestamp: new Date().toISOString(),
-    service: "AuraPath Enterprise Psychometrics Core",
+    service: "Alderwood Vantage Enterprise Psychometrics Core",
     version: "2026.4.0",
   });
 });
@@ -47,6 +47,7 @@ app.use("/api/v1/auth", authRoutes);
 
 // Assessment Engine Routes (Start, Resume, Save Response, Submit & Lock)
 app.use("/api/v1/assessment", assessmentRoutes);
+app.use("/api/v1/attempts", assessmentRoutes);
 
 // Staff (Expert) Portal Routes
 app.use("/api/v1/staff", staffRoutes);
@@ -64,11 +65,11 @@ app.use(errorHandler);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
-    console.log(`[AuraPath API] 🚀 Server running on http://localhost:${PORT}`);
-    console.log(`[AuraPath API] 🩺 Health check available at http://localhost:${PORT}/api/v1/health`);
-    console.log(`[AuraPath API] 🔐 Auth routes available at http://localhost:${PORT}/api/v1/auth`);
-    console.log(`[AuraPath API] 📝 Assessment routes available at http://localhost:${PORT}/api/v1/assessment`);
-    console.log(`[AuraPath API] 🩺 Staff routes available at http://localhost:${PORT}/api/v1/staff`);
+    console.log(`[Alderwood Vantage API] 🚀 Server running on http://localhost:${PORT}`);
+    console.log(`[Alderwood Vantage API] 🩺 Health check available at http://localhost:${PORT}/api/v1/health`);
+    console.log(`[Alderwood Vantage API] 🔐 Auth routes available at http://localhost:${PORT}/api/v1/auth`);
+    console.log(`[Alderwood Vantage API] 📝 Assessment routes available at http://localhost:${PORT}/api/v1/assessment`);
+    console.log(`[Alderwood Vantage API] 🩺 Staff routes available at http://localhost:${PORT}/api/v1/staff`);
   });
 }
 

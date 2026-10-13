@@ -529,8 +529,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
 
-        const user = await prisma.user.findUnique({
-          where: { email: email.trim().toLowerCase() },
+        const normalizedEmail = email.trim().toLowerCase();
+        const altEmail = normalizedEmail.includes("@alderwoodvantage.com")
+          ? normalizedEmail.replace("@alderwoodvantage.com", "@aurapath.com")
+          : normalizedEmail.includes("@aurapath.com")
+            ? normalizedEmail.replace("@aurapath.com", "@alderwoodvantage.com")
+            : normalizedEmail;
+
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: normalizedEmail },
+              { email: altEmail },
+            ],
+          },
           include: { studentProfile: true, staffProfile: true },
         });
 

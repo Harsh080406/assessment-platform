@@ -10,6 +10,7 @@ import {
   StartAssessmentSchema,
 } from "@/lib/validations/assessment";
 import { AssessmentStatus, AttemptStatus, AuditResult, UserRole } from "@prisma/client";
+import { toStudentSectionDTO, toStaffSectionDTO } from "@/lib/serializers/assessment";
 
 export type AssessmentActionResult<T = unknown> = {
   success: boolean;
@@ -149,9 +150,16 @@ export async function getAssessmentAttemptData(attemptId: string) {
       return { success: false, message: "Assessment attempt not found." };
     }
 
-    // Ownership check (Students can only see their own attempt; Staff/Admin can view)
-    if (attempt.userId !== userId && userRole !== UserRole.STAFF && userRole !== UserRole.ADMIN) {
-      return { success: false, message: "You do not have permission to view this assessment attempt." };
+    // Role & Ownership check: Students may only view their own attempt; Staff/Admin may view
+    const isStudent = userRole === UserRole.STUDENT;
+    const isStaffOrAdmin = userRole === UserRole.STAFF || userRole === UserRole.ADMIN;
+
+    if (!isStudent && !isStaffOrAdmin) {
+      return { success: false, message: "Forbidden: Access restricted to students, staff, and administrators." };
+    }
+
+    if (isStudent && attempt.userId !== userId) {
+      return { success: false, message: "Forbidden: You do not have permission to view this assessment attempt." };
     }
 
     const isLocked =
@@ -171,6 +179,10 @@ export async function getAssessmentAttemptData(attemptId: string) {
       };
     });
 
+    const serializedSections = isStaffOrAdmin
+      ? (attempt.assessment?.sections || []).map((sec) => toStaffSectionDTO(sec, savedResponses))
+      : (attempt.assessment?.sections || []).map(toStudentSectionDTO);
+
     return {
       success: true,
       data: {
@@ -188,7 +200,7 @@ export async function getAssessmentAttemptData(attemptId: string) {
           description: attempt.assessment.description,
           version: attempt.assessment.version,
           estimatedDurationMins: attempt.assessment.estimatedDurationMins,
-          sections: attempt.assessment.sections,
+          sections: serializedSections,
         },
         savedResponses,
       },
@@ -359,6 +371,15 @@ export async function submitAssessmentAction(
       data: {
         status: AttemptStatus.SUBMITTED,
         submittedAt: new Date(),
+      },
+    });
+
+    // Notify student of successful submission
+    await prisma.notification.create({
+      data: {
+        userId: session.user.id,
+        type: "SUBMISSION_CONFIRMED",
+        message: `Your responses for "${attempt.assessment.title}" have been locked and submitted for expert evaluation.`,
       },
     });
 

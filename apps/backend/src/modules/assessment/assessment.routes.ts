@@ -10,6 +10,8 @@ router.get("/questions", AssessmentController.getQuestions);
 // Attempt management
 router.post("/start", authenticateJWT, AssessmentController.startOrResume);
 router.get("/attempt/:id", authenticateJWT, AssessmentController.getAttempt);
+router.get("/attempts/:id/questions", authenticateJWT, AssessmentController.getAttemptQuestions);
+router.get("/attempt/:id/questions", authenticateJWT, AssessmentController.getAttemptQuestions);
 router.post("/response", authenticateJWT, AssessmentController.saveResponse);
 router.post("/submit", authenticateJWT, AssessmentController.submit);
 

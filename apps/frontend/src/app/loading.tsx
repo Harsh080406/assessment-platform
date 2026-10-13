@@ -1,6 +1,6 @@
 import CityscapeLoadingScreen from "@/components/loading/CityscapeLoadingScreen";
 
 export default function RootLoading() {
-  return <CityscapeLoadingScreen message="Loading AuraPath platform..." />;
+  return <CityscapeLoadingScreen message="Loading ALDERWOOD VANTAGE platform..." />;
 }
 

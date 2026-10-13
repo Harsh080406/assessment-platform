@@ -7,16 +7,14 @@ import {
   Target,
   Compass,
   Clock,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  Shield,
-  Sparkles,
   Layers,
   ArrowRight,
 } from "lucide-react";
 import StartAssessmentButton from "@/components/StartAssessmentButton";
-import { AttemptStatus } from "@prisma/client";
+import StudentPageHeader from "@/components/student/StudentPageHeader";
+import StudentStatusPill from "@/components/student/StudentStatusPill";
+import StudentProgressBar from "@/components/student/StudentProgressBar";
+import { AssessmentStatus, AttemptStatus } from "@prisma/client";
 
 export default async function StudentAssessmentsPage() {
   const session = await auth();
@@ -27,182 +25,231 @@ export default async function StudentAssessmentsPage() {
 
   const userId = session.user.id;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      attempts: {
-        include: {
-          assessment: true,
-          responses: true,
+  const [user, activeAssessment] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        attempts: {
+          include: {
+            assessment: {
+              include: {
+                sections: {
+                  orderBy: { displayOrder: "asc" },
+                  include: {
+                    _count: {
+                      select: { questions: true },
+                    },
+                  },
+                },
+              },
+            },
+            responses: {
+              select: {
+                questionId: true,
+                answer: true,
+                question: {
+                  select: {
+                    sectionId: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { startedAt: "desc" },
         },
-        orderBy: { startedAt: "desc" },
       },
-    },
-  });
+    }),
+    prisma.assessment.findFirst({
+      where: { status: AssessmentStatus.ACTIVE },
+      include: {
+        sections: {
+          orderBy: { displayOrder: "asc" },
+          include: {
+            _count: {
+              select: { questions: true },
+            },
+          },
+        },
+      },
+    }),
+  ]);
 
   const attempts = user?.attempts || [];
-  const completedAttempts = attempts.filter(
+  const completedAttempt = attempts.find(
     (a) => a.status === AttemptStatus.SUBMITTED || a.status === AttemptStatus.PUBLISHED
   );
   const activeAttempt = attempts.find(
     (a) => a.status === AttemptStatus.IN_PROGRESS || a.status === AttemptStatus.NOT_STARTED
   );
 
-  const isFirstCompleted = completedAttempts.length > 0;
-  const isSecondActive = !!activeAttempt;
+  const targetAttempt = activeAttempt || completedAttempt || null;
+  const isOverallCompleted =
+    !activeAttempt &&
+    completedAttempt &&
+    (completedAttempt.status === AttemptStatus.SUBMITTED ||
+      completedAttempt.status === AttemptStatus.PUBLISHED);
 
-  const tracks = [
+  const sections =
+    targetAttempt?.assessment?.sections ||
+    activeAssessment?.sections ||
+    [];
+
+  // Map each section ID to the count of unique answered questions
+  const answeredCountBySectionId = new Map<string, number>();
+  if (targetAttempt?.responses) {
+    const answeredMap = new Map<string, Set<string>>();
+    for (const resp of targetAttempt.responses) {
+      if (resp.answer !== null && resp.answer !== undefined && resp.question?.sectionId) {
+        const sId = resp.question.sectionId;
+        const set = answeredMap.get(sId) || new Set<string>();
+        set.add(resp.questionId);
+        answeredMap.set(sId, set);
+      }
+    }
+    for (const [sId, set] of answeredMap.entries()) {
+      answeredCountBySectionId.set(sId, set.size);
+    }
+  }
+
+  const trackTemplates = [
     {
       id: "psychometric-diagnostic",
       title: "Psychometric Assessment",
-      subtitle: "Module A • Cognitive Architecture",
+      subtitle: "Module A • Personality, Interests & Values",
       description:
-        "Calibrate core cognitive styles, analytical instincts, and intrinsic motivators across structured psychometric dimensions.",
+        "Calibrates core personality traits, vocational interests, and intrinsic work value hierarchy.",
       icon: Brain,
-      iconBg: "bg-[#FFF2EE]",
-      iconColor: "text-[#FF6B6B]",
-      questions: 12,
-      duration: "15 mins",
-      version: "1.0",
-      status: isFirstCompleted ? "COMPLETED" : "READY",
-      progress: isFirstCompleted ? 100 : 0,
-      tags: ["Cognitive Style", "Analytical Instinct", "Motivation Index"],
+      fallbackQuestions: 42,
+      duration: "25 mins",
+      tags: ["Big Five Personality", "RIASEC Interests", "Work Values"],
     },
     {
       id: "personality-work-style",
       title: "Competency Self-Report",
-      subtitle: "Module B • Behavioral Matrix",
+      subtitle: "Module B • Behavioral Competencies",
       description:
-        "Self-report behavioral competencies, stress response mechanisms, collaboration style, and leadership tendencies.",
+        "Evaluates foundational workplace competencies, analytical problem-solving, and resilience.",
       icon: User,
-      iconBg: "bg-[#F3F4FD]",
-      iconColor: "text-[#6366F1]",
-      questions: 15,
-      duration: "20 mins",
-      version: "1.0",
-      status: isSecondActive ? "IN_PROGRESS" : "READY",
-      progress: isSecondActive ? 60 : 0,
-      tags: ["Work Preferences", "Behavioral Matrix", "Leadership"],
+      fallbackQuestions: 16,
+      duration: "15 mins",
+      tags: ["Analytical Thinking", "Resilience", "Integrity & Ethics"],
     },
     {
       id: "cognitive-analytical",
       title: "Situational Judgment Test",
-      subtitle: "Module C • Scenario Engine",
+      subtitle: "Module C • Workplace Scenarios",
       description:
-        "Tackle real-world workplace scenario dilemmas, ethical trade-offs, and critical decision-making dynamics.",
+        "Measures real-world judgment and behavioral choices across professional decision-making dilemmas.",
       icon: Target,
-      iconBg: "bg-[#FFF8EE]",
-      iconColor: "text-[#F59E0B]",
-      questions: 10,
-      duration: "15 mins",
-      version: "1.0",
-      status: "READY",
-      progress: 0,
-      tags: ["Scenario Dilemmas", "Ethical Judgment", "Critical Thinking"],
+      fallbackQuestions: 38,
+      duration: "30 mins",
+      tags: ["Workplace Scenarios", "Ethical Judgment", "Critical Decisions"],
     },
     {
       id: "career-domain-fit",
-      title: "Aptitude: Verbal Reasoning",
-      subtitle: "Module D • Verbal & Logic Calibration",
+      title: "Aptitude: Verbal, Numerical & Logical Reasoning",
+      subtitle: "Module D • Cognitive Reasoning",
       description:
-        "Assess verbal comprehension, complex passage deduction, logical inference, and conceptual reasoning precision.",
+        "Objective aptitude battery evaluating verbal deduction, numerical problem-solving, and logical speed.",
       icon: Compass,
-      iconBg: "bg-[#F0F9FF]",
-      iconColor: "text-[#0284C7]",
-      questions: 14,
-      duration: "18 mins",
-      version: "1.0",
-      status: "READY",
-      progress: 0,
-      tags: ["Verbal Deduction", "Comprehension", "Logical Inference"],
+      fallbackQuestions: 30,
+      duration: "35 mins",
+      tags: ["Verbal Reasoning", "Numerical Aptitude", "Logical Reasoning"],
     },
   ];
 
+  const tracks = trackTemplates.map((template, trackIdx) => {
+    const section = sections[trackIdx] || null;
+    const totalQuestions = section?._count?.questions ?? template.fallbackQuestions;
+    const answeredCount = isOverallCompleted
+      ? totalQuestions
+      : section
+      ? answeredCountBySectionId.get(section.id) ?? 0
+      : 0;
+
+    const isCompleted =
+      isOverallCompleted || (totalQuestions > 0 && answeredCount >= totalQuestions);
+    const isInProgress = !isCompleted && answeredCount > 0;
+    const progress = isCompleted
+      ? 100
+      : totalQuestions > 0
+      ? Math.round((answeredCount / totalQuestions) * 100)
+      : 0;
+
+    return {
+      ...template,
+      questions: totalQuestions,
+      answeredCount,
+      progress,
+      isCompleted,
+      isInProgress,
+      status: isCompleted ? "COMPLETED" : isInProgress ? "IN_PROGRESS" : "READY",
+    };
+  });
+
+  // Find the primary next action module index
+  const nextActiveIndex = tracks.findIndex((t) => t.isInProgress) !== -1
+    ? tracks.findIndex((t) => t.isInProgress)
+    : tracks.findIndex((t) => !t.isCompleted);
+
   return (
-    <main className="w-full space-y-8">
-      {/* Page Header */}
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-6 bg-[#FF6B6B] rounded-full inline-block" />
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
-            Assessment Center
-          </h1>
-        </div>
-        <p className="text-sm text-[#64748B] max-w-3xl leading-relaxed">
-          The 4 core evaluation modules designed to diagnose cognitive tendencies, behavioral competencies, situational judgment, and verbal reasoning capabilities.
-        </p>
-      </div>
+    <div className="w-full space-y-6 sm:space-y-8">
+      {/* Standard Unified Header */}
+      <StudentPageHeader
+        title="Assessment modules"
+        description="Four foundational evaluation modules calibrated to map your cognitive and leadership potential."
+      />
 
-      {/* Methodology Alert Banner */}
-      <div className="bg-[#FFF8F5] border border-[#FED7CC] rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-start gap-4">
-          <div className="w-11 h-11 rounded-xl bg-[#FF6B6B] text-white flex items-center justify-center shrink-0 shadow-xs">
-            <Shield className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-extrabold text-sm sm:text-base text-black">
-              Certified Human-Led Evaluation Methodology
-            </h3>
-            <p className="text-xs text-black font-bold mt-0.5 leading-relaxed max-w-2xl">
-              Unlike automated bot tests, your submitted responses are reviewed by licensed career counselors and psychometric experts to formulate your customized guidance report.
-            </p>
-          </div>
-        </div>
-        <div className="shrink-0 flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-[#FCD2C7] text-xs font-bold text-black">
-          <Sparkles className="w-4 h-4 text-black" />
-          <span className="text-black font-bold">Manual Expert Signoff</span>
-        </div>
-      </div>
-
-      {/* Assessment Tracks Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {tracks.map((track) => {
+      {/* 2-Column Responsive Card Grid (1 col mobile, 2 cols tablet & laptop) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+        {tracks.map((track, trackIdx) => {
           const Icon = track.icon;
           const isCompleted = track.status === "COMPLETED";
           const isInProgress = track.status === "IN_PROGRESS";
+          const isPrimaryNext = trackIdx === nextActiveIndex;
+
+          const buttonLabel = isCompleted
+            ? "Review responses"
+            : isInProgress
+            ? "Continue module"
+            : "Start module";
 
           return (
             <div
               key={track.id}
-              className="bg-white border border-[#CBD5E1] rounded-2xl p-6 sm:p-7 flex flex-col justify-between hover:shadow-xl hover:border-[#FF6B6B]/60 hover:-translate-y-1.5 transition-all duration-300 group cursor-pointer"
+              className="bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all shadow-xs hover:shadow-sm"
             >
-              <div>
-                {/* Top Badge & Icon */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl ${track.iconBg} ${track.iconColor} flex items-center justify-center shadow-xs`}>
-                    <Icon className="w-6 h-6" />
+              <div className="space-y-3.5">
+                {/* Top Row: Neutral Icon Tile + Status Pill */}
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#F1F5F9] border border-[#E2E8F0] text-[#0F172A] flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[#0F172A]" />
                   </div>
 
-                  <span
-                    className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
-                      isCompleted
-                        ? "bg-emerald-50 text-emerald-800 border-emerald-300 font-extrabold"
-                        : isInProgress
-                        ? "bg-[#EEF2FF] text-[#4F46E5] border-[#E0E7FE] font-extrabold"
-                        : "bg-gray-50 text-black border-gray-300"
-                    }`}
-                  >
-                    {isCompleted ? "Completed" : isInProgress ? "In Progress" : "Available"}
-                  </span>
+                  <StudentStatusPill status={track.status} />
                 </div>
 
                 {/* Subtitle & Title */}
-                <div className="text-[11px] font-black uppercase tracking-wider text-black mb-1">
-                  {track.subtitle}
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] block">
+                    {track.subtitle}
+                  </span>
+                  <h2 className="text-base sm:text-lg font-bold text-[#0F172A] mt-0.5 tracking-tight">
+                    {track.title}
+                  </h2>
                 </div>
-                <h2 className="text-lg font-extrabold text-black mb-2 tracking-tight">
-                  {track.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-black font-semibold leading-relaxed mb-4">
+
+                {/* 2-line Description */}
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed line-clamp-2">
                   {track.description}
                 </p>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {track.tags.map((tag) => (
+                {/* Up to 3 Quiet Topic Tags */}
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {track.tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[11px] font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] px-2.5 py-1 rounded-md"
+                      className="text-[11px] font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] px-2.5 py-0.5 rounded-md"
                     >
                       {tag}
                     </span>
@@ -210,40 +257,41 @@ export default async function StudentAssessmentsPage() {
                 </div>
               </div>
 
-              {/* Progress & Launch Bar */}
-              <div className="space-y-4 pt-4 border-t border-[#F1F5F9]">
-                {/* Meta details */}
-                <div className="flex items-center justify-between text-xs text-[#64748B]">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
-                      {track.duration}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5" />
-                      {track.questions} Questions
-                    </span>
-                  </div>
-                  <span className="font-mono text-[11px] font-semibold text-[#94A3B8]">v{track.version}</span>
+              {/* Progress & Launch Row */}
+              <div className="space-y-3.5 pt-4 mt-4 border-t border-[#F1F5F9]">
+                {/* Meta Row: Duration + Questions */}
+                <div className="flex items-center gap-3 text-xs text-[#64748B]">
+                  <span className="flex items-center gap-1 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-[#94A3B8]" />
+                    {track.duration}
+                  </span>
+                  <span className="flex items-center gap-1 font-medium">
+                    <Layers className="w-3.5 h-3.5 text-[#94A3B8]" />
+                    {track.questions} questions
+                  </span>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full h-2 bg-[#F1F5F9] rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      isCompleted ? "bg-emerald-500 w-full" : isInProgress ? "bg-[#4F46E5] w-3/5" : "w-0"
-                    }`}
-                  />
-                </div>
+                <StudentProgressBar
+                  value={track.progress}
+                  detail={
+                    isCompleted
+                      ? "100% complete"
+                      : isInProgress
+                      ? `${track.answeredCount} of ${track.questions} answered`
+                      : "Ready to start"
+                  }
+                  showPercentage={true}
+                />
 
-                {/* Action Trigger */}
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-xs font-bold text-[#0F172A]">
-                    {isCompleted ? "100% Completed" : isInProgress ? "60% Completed" : "Ready to Begin"}
-                  </span>
+                {/* Single State-Dependent Action Button */}
+                <div className="pt-1">
                   <StartAssessmentButton
-                    label={isCompleted ? "Review Responses" : isInProgress ? "Resume Quest" : "Start Quest"}
-                    className="px-4 py-2 text-xs rounded-lg shadow-xs"
+                    label={buttonLabel}
+                    variant={isPrimaryNext ? "primary" : "secondary"}
+                    className="w-full text-xs font-semibold"
+                    sectionIndex={trackIdx}
+                    moduleId={track.id}
                   />
                 </div>
               </div>
@@ -251,6 +299,6 @@ export default async function StudentAssessmentsPage() {
           );
         })}
       </div>
-    </main>
+    </div>
   );
 }

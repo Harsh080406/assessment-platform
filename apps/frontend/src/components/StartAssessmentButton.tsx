@@ -11,6 +11,9 @@ interface StartAssessmentButtonProps {
   label?: string;
   variant?: "primary" | "secondary" | "card";
   assessmentId?: string;
+  sectionIndex?: number;
+  sectionId?: string;
+  moduleId?: string;
 }
 
 export default function StartAssessmentButton({
@@ -18,6 +21,9 @@ export default function StartAssessmentButton({
   label,
   variant = "primary",
   assessmentId,
+  sectionIndex,
+  sectionId,
+  moduleId,
 }: StartAssessmentButtonProps) {
   const router = useRouter();
   const { openAuth } = useAuth();
@@ -28,7 +34,15 @@ export default function StartAssessmentButton({
     try {
       const res = await startOrResumeAssessmentAction(assessmentId);
       if (res.success && res.data) {
-        router.push(`/take/${res.data.attemptId}`);
+        const queryParam =
+          sectionIndex !== undefined
+            ? `?section=${sectionIndex}`
+            : sectionId
+            ? `?section=${sectionId}`
+            : moduleId
+            ? `?module=${moduleId}`
+            : "";
+        router.push(`/take/${res.data.attemptId}${queryParam}`);
       } else {
         if (res.message?.toLowerCase().includes("unauthorized") || res.message?.toLowerCase().includes("sign in")) {
           openAuth("login");
@@ -47,6 +61,8 @@ export default function StartAssessmentButton({
   if (variant === "card") {
     return (
       <button
+        type="button"
+        suppressHydrationWarning
         onClick={handleStart}
         disabled={isLoading}
         className={`inline-flex items-center gap-1 text-xs font-extrabold text-[#FF6B6B] hover:text-[#F95858] hover:underline cursor-pointer disabled:opacity-50 ${className}`}
@@ -67,12 +83,14 @@ export default function StartAssessmentButton({
 
   return (
     <button
+      type="button"
+      suppressHydrationWarning
       onClick={handleStart}
       disabled={isLoading}
-      className={`inline-flex items-center justify-center gap-2 font-semibold text-btn rounded-2xl transition-all cursor-pointer disabled:opacity-60 ${
-        variant === "primary"
-          ? "bg-[#FF6B6B] hover:bg-[#F95858] text-white shadow-[0_10px_25px_rgba(255,107,107,0.35)] active:scale-[0.98]"
-          : "bg-white border border-[#E2E8F0] hover:bg-gray-50 text-[#191F2D]"
+      className={`inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all cursor-pointer min-h-[44px] disabled:opacity-60 ${
+        variant === "secondary"
+          ? "bg-white border border-[#CBD5E1] hover:bg-[#F8FAFC] text-[#0F172A] shadow-2xs"
+          : "bg-[#FF6B6B] hover:bg-[#E05353] text-white shadow-2xs active:scale-[0.99]"
       } ${className}`}
     >
       {isLoading ? (
@@ -83,7 +101,7 @@ export default function StartAssessmentButton({
       ) : (
         <>
           <span>{label || "Start Assessment"}</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 shrink-0" />
         </>
       )}
     </button>

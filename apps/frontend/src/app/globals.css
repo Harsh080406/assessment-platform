@@ -12,7 +12,7 @@
      ═══════════════════════════════════════════════ */
 
   /* Base / Neutrals */
-  --color-base: #FBFBF9;
+  --color-canvas: #FBFBF9;
   --color-surface: #FFFFFF;
   --color-border: #E2E0DB;
   --color-border-strong: #C8C5BD;
@@ -57,7 +57,7 @@
 }
 
 /* ═══════════════════════════════════════════════
-   AuraPath Typography Hierarchy Tokens & Classes
+   Alderwood Vantage Typography Hierarchy Tokens & Classes
    ═══════════════════════════════════════════════ */
 
 /* Hero Heading (48–56px desktop, 32–40px mobile) - 700-800 weight */

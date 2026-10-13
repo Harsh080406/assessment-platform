@@ -7,16 +7,20 @@ import { AlertCircle, ArrowLeft } from "lucide-react";
 
 interface TakeAssessmentProps {
   params: Promise<{ attemptId: string }>;
+  searchParams?: Promise<{ section?: string; module?: string }>;
 }
 
-export default async function TakeAssessmentPage({ params }: TakeAssessmentProps) {
+export default async function TakeAssessmentPage({ params, searchParams }: TakeAssessmentProps) {
   const session = await auth();
+  const { attemptId } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const sectionParam = resolvedSearchParams.section || resolvedSearchParams.module;
+
   if (!session?.user?.id) {
-    const { attemptId } = await params;
-    redirect(`/login?callbackUrl=/take/${attemptId}`);
+    const query = sectionParam ? `?section=${sectionParam}` : "";
+    redirect(`/login?callbackUrl=/take/${attemptId}${query}`);
   }
 
-  const { attemptId } = await params;
   const result = await getAssessmentAttemptData(attemptId);
 
   if (!result.success || !result.data) {
@@ -42,5 +46,10 @@ export default async function TakeAssessmentPage({ params }: TakeAssessmentProps
     );
   }
 
-  return <AssessmentRunner initialData={result.data} />;
+  return (
+    <AssessmentRunner
+      initialData={result.data}
+      initialSectionParam={sectionParam}
+    />
+  );
 }

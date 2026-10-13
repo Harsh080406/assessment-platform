@@ -30,7 +30,7 @@ export default async function AdminLayout({
     ? `${user.studentProfile.firstName} ${user.studentProfile.lastName}`.trim()
     : session.user.name || "System Governor";
 
-  const adminEmail = user?.email || session.user.email || "admin@aurapath.com";
+  const adminEmail = user?.email || session.user.email || "admin@alderwoodvantage.com";
 
   const adminInitials =
     adminName
@@ -40,12 +40,19 @@ export default async function AdminLayout({
       .slice(0, 2)
       .toUpperCase() || "AG";
 
+  const pendingApprovalsCount = await prisma.report.count({
+    where: {
+      status: "PENDING_APPROVAL",
+    },
+  });
+
   return (
     <AdminLayoutShell
       adminName={adminName}
       adminEmail={adminEmail}
       adminInitials={adminInitials}
       avatarUrl={user?.studentProfile?.avatarUrl}
+      pendingApprovalsCount={pendingApprovalsCount}
     >
       {children}
     </AdminLayoutShell>

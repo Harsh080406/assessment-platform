@@ -6,16 +6,16 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const updateProfileSchema = z.object({
-  firstName: z.string().min(1, "First name is required").max(50),
-  lastName: z.string().min(1, "Last name is required").max(50),
+  firstName: z.string().trim().min(1, "First name is required").max(50),
+  lastName: z.string().trim().min(1, "Last name is required").max(50),
   avatarUrl: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   dateOfBirth: z.string().nullable().optional(),
   country: z.string().nullable().optional(),
-  school: z.string().nullable().optional(),
-  grade: z.string().nullable().optional(),
-  educationLevel: z.string().nullable().optional(),
-  bio: z.string().nullable().optional(),
+  school: z.string().trim().min(1, "School or institution name is required").max(120),
+  grade: z.string().trim().min(1, "Current class / grade is required"),
+  educationLevel: z.string().trim().min(1, "Education stage is required"),
+  bio: z.string().trim().min(1, "Target career aspirations & interests are required").max(2000),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

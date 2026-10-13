@@ -1,4 +1,4 @@
-﻿export interface SendEmailOptions {
+export interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
@@ -36,16 +36,16 @@ export class ConsoleEmailService implements IEmailService {
 
     return this.sendEmail({
       to,
-      subject: "Verify your AuraPath account",
+      subject: "Verify your Alderwood Vantage account",
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
-          <h2>Welcome to AuraPath!</h2>
+          <h2>Welcome to Alderwood Vantage!</h2>
           <p>Please click the link below to verify your email address:</p>
           <p><a href="${verifyUrl}" style="background-color: #A9B4E8; color: #000; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">Verify Email Address</a></p>
           <p>Or copy this link: ${verifyUrl}</p>
         </div>
       `,
-      text: `Welcome to AuraPath! Verify your email at: ${verifyUrl}`,
+      text: `Welcome to Alderwood Vantage! Verify your email at: ${verifyUrl}`,
     });
   }
 
@@ -59,17 +59,17 @@ export class ConsoleEmailService implements IEmailService {
 
     return this.sendEmail({
       to,
-      subject: "Reset your AuraPath password",
+      subject: "Reset your Alderwood Vantage password",
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
-          <h2>AuraPath Password Reset</h2>
+          <h2>Alderwood Vantage Password Reset</h2>
           <p>You requested a password reset. Click below to choose a new password:</p>
           <p><a href="${resetUrl}" style="background-color: #A9B4E8; color: #000; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">Reset Password</a></p>
           <p>Or copy this link: ${resetUrl}</p>
           <p>If you did not request this, you can safely ignore this email.</p>
         </div>
       `,
-      text: `Reset your AuraPath password at: ${resetUrl}`,
+      text: `Reset your Alderwood Vantage password at: ${resetUrl}`,
     });
   }
 
@@ -82,17 +82,17 @@ export class ConsoleEmailService implements IEmailService {
 
     return this.sendEmail({
       to,
-      subject: "Your AuraPath Security Sign-in Code",
+      subject: "Your Alderwood Vantage Security Sign-in Code",
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
-          <h2>AuraPath One-Time Sign In Code</h2>
+          <h2>Alderwood Vantage One-Time Sign In Code</h2>
           <p>Your one-time security code is:</p>
           <h1 style="letter-spacing: 5px; font-size: 32px; background: #EEF1FB; padding: 12px; display: inline-block; border-radius: 8px;">${code}</h1>
           <p>This code expires in 10 minutes and can only be used once.</p>
           <p>If you did not request this code, please ignore this email.</p>
         </div>
       `,
-      text: `Your AuraPath security sign-in code is: ${code}. Valid for 10 minutes.`,
+      text: `Your Alderwood Vantage security sign-in code is: ${code}. Valid for 10 minutes.`,
     });
   }
 }

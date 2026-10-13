@@ -57,14 +57,6 @@ export default function StudentParentDecoder() {
       <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-6xl mx-auto">
         {/* Unified Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-black transition-colors mb-5 bg-white px-4 py-2 rounded-xl border border-[#E2E0DB] shadow-sm hover:bg-[#EEF1FB]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-black" />
-            <span className="text-black">Back to Home</span>
-          </Link>
-
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase bg-[#A9B4E8] text-black px-4 py-1.5 rounded-full mb-3 shadow-sm">
               <Compass className="w-4 h-4 stroke-[2.2] text-black" />
@@ -149,7 +141,7 @@ export default function StudentParentDecoder() {
                 Calibrated against 180+ modern disciplines
               </span>
               <Link
-                href="/assessment"
+                href="/register"
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white text-black hover:bg-[#EEF1FB] font-black text-xs flex items-center justify-center gap-1.5 border border-[#E2E0DB] shadow-sm transition-all"
               >
                 <span>Discover Your Edge</span>

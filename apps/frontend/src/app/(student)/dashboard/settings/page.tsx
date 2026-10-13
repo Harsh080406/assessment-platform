@@ -1,8 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import StudentPageHeader from "@/components/student/StudentPageHeader";
 import SettingsClient from "./SettingsClient";
-import { Settings as SettingsIcon, Shield } from "lucide-react";
 
 export default async function StudentSettingsPage() {
   const session = await auth();
@@ -40,22 +41,37 @@ export default async function StudentSettingsPage() {
   };
 
   return (
-    <main className="w-full space-y-8">
-      {/* Header */}
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-6 bg-[#FF6B6B] rounded-full inline-block" />
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-            Account & Profile Settings
-          </h1>
-        </div>
-        <p className="text-sm text-[#64748B] max-w-3xl leading-relaxed">
-          Update your personal details, profile photo, and academic background. These details are utilized by our psychometric evaluators to customize your career report.
-        </p>
+    <div className="w-full space-y-6 sm:space-y-8">
+      {/* Standard Unified Header */}
+      <StudentPageHeader
+        title="Account & profile settings"
+        description="Update your personal details, academic background, and security preferences."
+      />
+
+      {/* Underlined Tab Navigation (horizontally scrollable on mobile) */}
+      <div className="border-b border-[#E2E8F0]">
+        <nav
+          aria-label="Settings sections"
+          className="flex items-center gap-6 overflow-x-auto no-scrollbar -mb-px"
+        >
+          <Link
+            href="/dashboard/settings"
+            aria-current="page"
+            className="pb-3 text-sm font-semibold border-b-2 border-[#4F46E5] text-[#0F172A] whitespace-nowrap cursor-pointer"
+          >
+            Profile & academic
+          </Link>
+          <Link
+            href="/dashboard/settings/security"
+            className="pb-3 text-sm font-medium border-b-2 border-transparent text-[#64748B] hover:text-[#0F172A] hover:border-slate-300 transition-colors whitespace-nowrap cursor-pointer"
+          >
+            Security & sessions
+          </Link>
+        </nav>
       </div>
 
       {/* Settings Client Form */}
       <SettingsClient initialData={initialData} />
-    </main>
+    </div>
   );
 }

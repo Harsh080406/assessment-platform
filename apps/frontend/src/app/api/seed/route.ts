@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { seedDatabase } from "@/../prisma/seed";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Seed route disabled in production" }, { status: 403 });
@@ -17,12 +19,15 @@ export async function GET() {
         { email: data.staff.email, role: data.staff.role, password: "Password123!" },
         { email: data.admin.email, role: data.admin.role, password: "Password123!" },
       ],
-      assessment: {
-        id: data.assessment.id,
-        title: data.assessment.title,
-        version: data.assessment.version,
-        sectionsCount: data.assessment.sections.length,
-      },
+      assessment: data.assessment
+        ? {
+            id: data.assessment.id,
+            title: data.assessment.title,
+            version: data.assessment.version,
+            sectionsCount: 4,
+            totalQuestions: data.totalQuestionsCount,
+          }
+        : null,
     });
   } catch (error) {
     console.error("[Seed error]:", error);

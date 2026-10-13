@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import Link from "next/link";
 import {
   Users,
@@ -6,19 +5,46 @@ import {
   UserCog,
   Layers,
   ScrollText,
+  Timer,
+  Shield,
+  Settings,
+  Mail,
   Clock,
   CheckCircle2,
   AlertCircle,
-  ShieldAlert,
+  AlertTriangle,
   ArrowRight,
+  ChevronRight,
   TrendingUp,
 } from "lucide-react";
-import { getAdminDashboardStatsAction } from "@/app/actions/admin";
+import {
+  getAdminDashboardStatsAction,
+  getAdminSlaMonitoringAction,
+} from "@/app/actions/admin";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import AdminStatCard from "@/components/admin/AdminStatCard";
+import type { LucideIcon } from "lucide-react";
+
+interface ShortcutItem {
+  title: string;
+  desc: string;
+  href: string;
+  icon: LucideIcon;
+  badge?: string;
+  badgeVariant?: "amber" | "red";
+}
+
+interface ShortcutGroup {
+  group: string;
+  items: ShortcutItem[];
+}
 
 export default async function AdminConsolePage() {
-  const session = await auth();
+  const [statsRes, slaRes] = await Promise.all([
+    getAdminDashboardStatsAction(),
+    getAdminSlaMonitoringAction(),
+  ]);
 
-  const statsRes = await getAdminDashboardStatsAction();
   const stats = statsRes.success && statsRes.data
     ? statsRes.data
     : {
@@ -30,199 +56,329 @@ export default async function AdminConsolePage() {
         totalStaff: 0,
       };
 
+  const totalOverdue =
+    slaRes.success && slaRes.data ? slaRes.data.summary.totalOverdue : 0;
+
+  // Shortcut items grouped like the sidebar
+  const shortcutGroups: ShortcutGroup[] = [
+    {
+      group: "Operations",
+      items: [
+        {
+          title: "Report approvals",
+          desc: "Review candidate reports awaiting administrative signoff",
+          href: "/console/reports",
+          icon: FileCheck,
+          badge: stats.reportsPendingApproval > 0 ? `${stats.reportsPendingApproval} pending` : undefined,
+          badgeVariant: "amber" as const,
+        },
+        {
+          title: "SLA monitoring",
+          desc: "Track turnaround times and reassign stalled evaluations",
+          href: "/console/sla",
+          icon: Timer,
+          badge: totalOverdue > 0 ? `${totalOverdue} overdue` : undefined,
+          badgeVariant: "red" as const,
+        },
+      ],
+    },
+    {
+      group: "People",
+      items: [
+        {
+          title: "User governance",
+          desc: "Manage candidate student accounts, status, and credentials",
+          href: "/console/users",
+          icon: Users,
+        },
+        {
+          title: "Staff & workload",
+          desc: "Allocate evaluator caseloads and manage internal RBAC roles",
+          href: "/console/staff",
+          icon: UserCog,
+        },
+      ],
+    },
+    {
+      group: "Assessments & Templates",
+      items: [
+        {
+          title: "Assessments",
+          desc: "Govern assessment question banks and copy-on-write versioning",
+          href: "/console/assessments",
+          icon: Layers,
+        },
+        {
+          title: "Email templates",
+          desc: "Configure transaction email subjects, bodies, and merge tags",
+          href: "/console/notifications",
+          icon: Mail,
+        },
+      ],
+    },
+    {
+      group: "Security & System",
+      items: [
+        {
+          title: "Audit trail",
+          desc: "Inspect immutable audit logs and security-critical events",
+          href: "/console/audit-logs",
+          icon: ScrollText,
+        },
+        {
+          title: "Security center",
+          desc: "Oversee privileged accounts, MFA status, and session security",
+          href: "/console/security",
+          icon: Shield,
+        },
+        {
+          title: "System settings",
+          desc: "Configure global SLA turnaround windows and feature flags",
+          href: "/console/settings",
+          icon: Settings,
+        },
+      ],
+    },
+  ];
+
   return (
-    <div className="w-full space-y-6 sm:space-y-8">
-      {/* 1. Governance Context Banner */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-xs font-bold text-red-700">
-            <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-            <span>Super Admin Access • Role: {session?.user?.role || "ADMIN"}</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
-            Platform Administration Console
-          </h1>
-          <p className="text-sm text-[#64748B] leading-relaxed">
-            Global governance workspace. Oversee student profiles, staff assignments, report approvals, engine assessment versioning, and immutable audit logs.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+    <div className="w-full space-y-6">
+      {/* 1. Standard Page Header */}
+      <AdminPageHeader
+        title="Platform Administration Overview"
+        description="Global governance workspace for operations, candidate accounts, evaluation SLAs, and system configurations."
+        action={
           <Link
             href="/console/reports"
-            className="px-4 py-2.5 rounded-xl bg-[#0F172A] hover:bg-black text-white text-xs font-extrabold shadow-xs transition-all flex items-center gap-2 whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold transition-colors shadow-xs"
           >
-            <span>Review Pending Reports ({stats.reportsPendingApproval})</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#FF6B6B]" />
+            <span>Review pending reports</span>
+            {stats.reportsPendingApproval > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-400 text-slate-900 tabular-nums">
+                {stats.reportsPendingApproval}
+              </span>
+            )}
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
-      </div>
+        }
+      />
 
-      {/* 2. Platform-Wide Counts Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
-        {/* Total Students */}
-        <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#64748B]">Total Students</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-              <Users className="w-4 h-4" />
+      {/* 2. Needs Attention Strip (neutral unless > 0) */}
+      <section aria-labelledby="needs-attention-heading" className="space-y-2">
+        <h2 id="needs-attention-heading" className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+          Needs Attention
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Pending Reviews */}
+          <Link
+            href="/console/sla"
+            className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 ${
+              stats.pendingReviews > 0
+                ? "bg-amber-50/60 border-amber-200 hover:border-amber-300"
+                : "bg-white border-[#E2E8F0] hover:border-[#CBD5E1]"
+            }`}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                  stats.pendingReviews > 0
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]"
+                }`}
+              >
+                <Clock className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-[#0F172A] truncate">
+                  Evaluations in Progress
+                </div>
+                <div className="text-[11px] text-[#64748B]">
+                  Active in staff clinical pipeline
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-[#0F172A]">{stats.totalStudents}</div>
-          <p className="text-[11px] font-medium text-[#94A3B8] mt-1">Registered candidate profiles</p>
-        </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`text-base font-bold tabular-nums ${stats.pendingReviews > 0 ? "text-amber-800" : "text-[#0F172A]"}`}>
+                {stats.pendingReviews}
+              </span>
+              <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
+            </div>
+          </Link>
 
-        {/* Total Attempts */}
-        <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#64748B]">Total Attempts</span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-[#0F172A]">{stats.totalAttempts}</div>
-          <p className="text-[11px] font-medium text-[#94A3B8] mt-1">Assessments initiated</p>
-        </div>
-
-        {/* Pending Reviews */}
-        <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#64748B]">Pending Reviews</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-[#0F172A]">{stats.pendingReviews}</div>
-          <p className="text-[11px] font-medium text-[#94A3B8] mt-1">Intake & Under Review queue</p>
-        </div>
-
-        {/* Reports Pending Approval */}
-        <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#64748B]">Pending Signoff</span>
-            <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-              <AlertCircle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-[#0F172A]">{stats.reportsPendingApproval}</div>
-          <p className="text-[11px] font-medium text-[#94A3B8] mt-1">PDFs awaiting admin approval</p>
-        </div>
-
-        {/* Reports Published */}
-        <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#64748B]">Published Reports</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-[#0F172A]">{stats.reportsPublished}</div>
-          <p className="text-[11px] font-medium text-[#94A3B8] mt-1">Certified reports active</p>
-        </div>
-      </div>
-
-      {/* 3. Phase 4 Governance Hub Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Report Approval Queue */}
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#CBD5E1] transition-all">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-              <FileCheck className="w-5 h-5" />
-            </div>
-            <h3 className="text-base font-bold text-[#0F172A]">Report Approval & Publishing</h3>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Preview expert uploaded PDF reports, trigger Approve/Reject actions, and publish certified reports directly to candidate dashboards.
-            </p>
-          </div>
+          {/* Pending Signoff */}
           <Link
             href="/console/reports"
-            className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#0F172A] hover:text-white transition-all group"
+            className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 ${
+              stats.reportsPendingApproval > 0
+                ? "bg-amber-50/60 border-amber-200 hover:border-amber-300"
+                : "bg-white border-[#E2E8F0] hover:border-[#CBD5E1]"
+            }`}
           >
-            <span>Open Report Queue ({stats.reportsPendingApproval} pending)</span>
-            <ArrowRight className="w-4 h-4 text-[#4F46E5] group-hover:text-[#FF6B6B]" />
-          </Link>
-        </div>
-
-        {/* User Governance */}
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#CBD5E1] transition-all">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-              <Users className="w-5 h-5" />
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                  stats.reportsPendingApproval > 0
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]"
+                }`}
+              >
+                <AlertCircle className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-[#0F172A] truncate">
+                  Pending Admin Signoff
+                </div>
+                <div className="text-[11px] text-[#64748B]">
+                  Completed reports awaiting approval
+                </div>
+              </div>
             </div>
-            <h3 className="text-base font-bold text-[#0F172A]">User Management & Access</h3>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Search candidate database, disable/re-enable student accounts, and trigger password access reset routines.
-            </p>
-          </div>
-          <Link
-            href="/console/users"
-            className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#0F172A] hover:text-white transition-all group"
-          >
-            <span>Manage Candidate Users ({stats.totalStudents})</span>
-            <ArrowRight className="w-4 h-4 text-[#4F46E5] group-hover:text-[#FF6B6B]" />
-          </Link>
-        </div>
-
-        {/* Staff & Workload */}
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#CBD5E1] transition-all">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
-              <UserCog className="w-5 h-5" />
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`text-base font-bold tabular-nums ${stats.reportsPendingApproval > 0 ? "text-amber-800" : "text-[#0F172A]"}`}>
+                {stats.reportsPendingApproval}
+              </span>
+              <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
             </div>
-            <h3 className="text-base font-bold text-[#0F172A]">Staff Workload & RBAC</h3>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Assign evaluator roles (Student, Staff, Admin), monitor evaluator active review workloads, and control team access.
-            </p>
-          </div>
-          <Link
-            href="/console/staff"
-            className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#0F172A] hover:text-white transition-all group"
-          >
-            <span>Manage Staff & Workload ({stats.totalStaff})</span>
-            <ArrowRight className="w-4 h-4 text-[#4F46E5] group-hover:text-[#FF6B6B]" />
           </Link>
-        </div>
 
-        {/* Assessment Engine Versioning */}
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#CBD5E1] transition-all">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-              <Layers className="w-5 h-5" />
-            </div>
-            <h3 className="text-base font-bold text-[#0F172A]">Assessment Engine & Copy-on-Write</h3>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              CRUD assessment dilemmas & questions. Editing questions with existing responses automatically generates a NEW version (v+1) without mutating past student data.
-            </p>
-          </div>
+          {/* Breached SLA */}
           <Link
-            href="/console/assessments"
-            className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#0F172A] hover:text-white transition-all group"
+            href="/console/sla"
+            className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 ${
+              totalOverdue > 0
+                ? "bg-red-50/60 border-red-200 hover:border-red-300"
+                : "bg-white border-[#E2E8F0] hover:border-[#CBD5E1]"
+            }`}
           >
-            <span>Open Assessment Versioning</span>
-            <ArrowRight className="w-4 h-4 text-[#4F46E5] group-hover:text-[#FF6B6B]" />
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                  totalOverdue > 0
+                    ? "bg-red-100 text-red-700"
+                    : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]"
+                }`}
+              >
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-[#0F172A] truncate">
+                  SLA Breached Evaluations
+                </div>
+                <div className="text-[11px] text-[#64748B]">
+                  Past turnaround guarantee window
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`text-base font-bold tabular-nums ${totalOverdue > 0 ? "text-red-700" : "text-[#0F172A]"}`}>
+                {totalOverdue}
+              </span>
+              <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
+            </div>
           </Link>
         </div>
+      </section>
 
-        {/* Audit Trail Log */}
-        <div className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#CBD5E1] transition-all md:col-span-2 lg:col-span-2">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-              <ScrollText className="w-5 h-5" />
-            </div>
-            <h3 className="text-base font-bold text-[#0F172A]">System Audit Trail Viewer</h3>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Filterable audit log table recording system logins, report state transitions, account status updates, question version creations, and cryptographic event logs.
-            </p>
-          </div>
-          <Link
-            href="/console/audit-logs"
-            className="inline-flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#0F172A] hover:text-white transition-all group"
-          >
-            <span>View Immutable Audit Logs</span>
-            <ArrowRight className="w-4 h-4 text-[#4F46E5] group-hover:text-[#FF6B6B]" />
-          </Link>
+      {/* 3. Platform Summary: One row of neutral stat cards (5-up desktop, 2-up mobile) */}
+      <section aria-labelledby="platform-summary-heading" className="space-y-2">
+        <h2 id="platform-summary-heading" className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+          Platform Metrics Summary
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+          <AdminStatCard
+            label="Total Students"
+            value={stats.totalStudents}
+            subtext="Registered candidate accounts"
+            icon={Users}
+          />
+          <AdminStatCard
+            label="Total Attempts"
+            value={stats.totalAttempts}
+            subtext="Assessments started"
+            icon={TrendingUp}
+          />
+          <AdminStatCard
+            label="Pending Reviews"
+            value={stats.pendingReviews}
+            subtext="Active in intake queue"
+            icon={Clock}
+          />
+          <AdminStatCard
+            label="Pending Signoff"
+            value={stats.reportsPendingApproval}
+            subtext="PDFs awaiting approval"
+            icon={AlertCircle}
+          />
+          <AdminStatCard
+            label="Published Reports"
+            value={stats.reportsPublished}
+            subtext="Certified active reports"
+            icon={CheckCircle2}
+            className="col-span-2 lg:col-span-1"
+          />
         </div>
-      </div>
+      </section>
+
+      {/* 4. Shortcuts: Compact grid of simple link rows grouped like the sidebar */}
+      <section aria-labelledby="shortcuts-heading" className="space-y-3">
+        <h2 id="shortcuts-heading" className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+          Platform Administration Shortcuts
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {shortcutGroups.map((group) => (
+            <div
+              key={group.group}
+              className="bg-white rounded-xl border border-[#E2E8F0] p-4 space-y-2 flex flex-col justify-between"
+            >
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] pb-1 border-b border-[#F1F5F9]">
+                {group.group}
+              </div>
+
+              <div className="space-y-1.5 flex-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="p-2 rounded-lg hover:bg-[#F8FAFC] border border-transparent hover:border-[#E2E8F0] transition-all flex items-center justify-between gap-2.5 group"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-7 h-7 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center text-[#64748B] group-hover:text-[#0F172A] shrink-0">
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-[#0F172A] group-hover:text-indigo-600 transition-colors truncate">
+                            {item.title}
+                          </div>
+                          <div className="text-[11px] text-[#64748B] truncate">
+                            {item.desc}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {item.badge && (
+                          <span
+                            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold border ${
+                              item.badgeVariant === "red"
+                                ? "bg-red-50 text-red-700 border-red-200"
+                                : "bg-amber-50 text-amber-700 border-amber-200"
+                            }`}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
+                        <ChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#0F172A] group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

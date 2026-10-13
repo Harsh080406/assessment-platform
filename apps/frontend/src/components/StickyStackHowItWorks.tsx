@@ -12,6 +12,7 @@ import {
   Compass,
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface QuestCard {
   id: string;
@@ -60,7 +61,7 @@ const QUESTS: QuestCard[] = [
     hudBadgeValue: "Cognitive Processing & Analytics",
     hudPreviewText: "Zero anxiety • 100% student private",
     ctaText: "Start Module A",
-    ctaLink: "/assessment",
+    ctaLink: "/register",
   },
   {
     id: "quest-2",
@@ -86,7 +87,7 @@ const QUESTS: QuestCard[] = [
     hudBadgeValue: "Behavioral & Leadership Drivers",
     hudPreviewText: "Measures natural workplace instincts",
     ctaText: "Start Module B",
-    ctaLink: "/assessment",
+    ctaLink: "/register",
   },
   {
     id: "quest-3",
@@ -112,7 +113,7 @@ const QUESTS: QuestCard[] = [
     hudBadgeValue: "Practical Dilemma Synthesis",
     hudPreviewText: "Real-world Scenario Evaluation",
     ctaText: "Start Module C",
-    ctaLink: "/assessment",
+    ctaLink: "/register",
   },
   {
     id: "quest-4",
@@ -138,7 +139,7 @@ const QUESTS: QuestCard[] = [
     hudBadgeValue: "Verbal Reasoning & Inference",
     hudPreviewText: "Critical Thinking Calibration",
     ctaText: "Start Module D",
-    ctaLink: "/assessment",
+    ctaLink: "/register",
   },
 ];
 
@@ -151,6 +152,7 @@ interface QuestCardItemProps {
 }
 
 function QuestCardItem({ quest, index, total, scrollProgress, isDesktop }: QuestCardItemProps) {
+  const { openAuth } = useAuth();
   const isLast = index === total - 1;
 
   const start = index * 0.25 + 0.12;
@@ -320,8 +322,12 @@ function QuestCardItem({ quest, index, total, scrollProgress, isDesktop }: Quest
             </div>
 
             <Link
-              href={quest.ctaLink}
-              className="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#FF6B6B] hover:bg-[#F95858] text-white shadow-xs hover:shadow-md transition-all active:scale-[0.98] group/btn"
+              href="/register"
+              onClick={(e) => {
+                e.preventDefault();
+                openAuth("signup");
+              }}
+              className="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 bg-[#FF6B6B] hover:bg-[#F95858] text-white shadow-xs hover:shadow-md transition-all active:scale-[0.98] group/btn cursor-pointer"
             >
               <span className="text-white font-bold">{quest.ctaText}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5] text-white group-hover/btn:translate-x-1 transition-transform" />
@@ -378,14 +384,6 @@ export default function StickyStackHowItWorks() {
       <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-[1600px] mx-auto">
         {/* Unified Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:bg-[#F8FAFC] transition-colors mb-5 bg-white px-3.5 py-2 rounded-xl border border-[#E2E8F0] shadow-xs"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-black" />
-            <span className="text-black">Back to Home</span>
-          </Link>
-
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-wider uppercase bg-[#EEF2FF] text-black border border-[#E0E7FE] px-3.5 py-1.5 rounded-full mb-3 shadow-xs">
               <Compass className="w-3.5 h-3.5 stroke-[2.2] text-[#4F46E5]" />

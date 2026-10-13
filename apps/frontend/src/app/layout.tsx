@@ -17,9 +17,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "AuraPath — What Are You Actually Built For? | Psychometric Matrix",
+  title: "ALDERWOOD VANTAGE — Find Your Vantage | Raising Leaders, Not Just Employees",
   description:
-    "Calibrate your cognitive architecture, behavioral traits, and calibrated career trajectory with human-certified expert evaluations.",
+    "A comprehensive, academically validated assessment designed by corporate leadership and HR professionals. Reveals the leader, innovator, and builder in every student—and maps what it takes to get there.",
 };
 
 export default function RootLayout({

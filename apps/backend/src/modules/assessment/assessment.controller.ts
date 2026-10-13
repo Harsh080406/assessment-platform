@@ -5,8 +5,10 @@ import {
   SaveResponseSchema,
   SubmitAssessmentSchema,
   StartAssessmentSchema,
+  toStudentSectionDTO,
+  toStaffSectionDTO,
 } from "@aurapath/shared";
-import { AttemptStatus } from "@prisma/client";
+import { AttemptStatus, UserRole } from "@prisma/client";
 
 export class AssessmentController {
   /**
@@ -136,6 +138,22 @@ export class AssessmentController {
         return;
       }
 
+      if (req.user) {
+        const isStudent = req.user.role === UserRole.STUDENT;
+        const isAdmin = req.user.role === UserRole.ADMIN;
+        const isStaff = req.user.role === UserRole.STAFF;
+
+        if (!isStudent && !isAdmin && !isStaff) {
+          res.status(403).json({ success: false, message: "Forbidden: Access restricted." });
+          return;
+        }
+
+        if (isStudent && attempt.userId !== req.user.id) {
+          res.status(403).json({ success: false, message: "Forbidden: You do not own this assessment attempt." });
+          return;
+        }
+      }
+
       const isLocked = attempt.status === AttemptStatus.SUBMITTED;
 
       const savedResponses: Record<string, { answer: any; questionVersion: number; answeredAt: Date }> = {};
@@ -148,6 +166,13 @@ export class AssessmentController {
           };
         });
       }
+
+      const isStaffOrAdmin = req.user?.role === UserRole.STAFF || req.user?.role === UserRole.ADMIN;
+      const serializedSections = attempt.assessment
+        ? (isStaffOrAdmin
+            ? attempt.assessment.sections.map((sec: any) => toStaffSectionDTO(sec, savedResponses))
+            : attempt.assessment.sections.map(toStudentSectionDTO))
+        : [];
 
       res.status(200).json({
         success: true,
@@ -167,10 +192,80 @@ export class AssessmentController {
                 description: attempt.assessment.description,
                 version: attempt.assessment.version,
                 estimatedDurationMins: attempt.assessment.estimatedDurationMins,
-                sections: attempt.assessment.sections,
+                sections: serializedSections,
               }
             : null,
           savedResponses,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get Student-Facing Questions for an Attempt: GET /api/v1/assessment/attempts/:id/questions
+   * Serialized strictly through toStudentSectionDTO (omits all scoring keys)
+   */
+  public static async getAttemptQuestions(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const attemptId = String(req.params.id);
+      if (!attemptId) {
+        res.status(400).json({ success: false, message: "Attempt ID parameter required." });
+        return;
+      }
+
+      const attempt: any = await prisma.assessmentAttempt.findUnique({
+        where: { id: attemptId },
+        include: {
+          assessment: {
+            include: {
+              sections: {
+                orderBy: { displayOrder: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { displayOrder: "asc" },
+                    include: {
+                      options: { orderBy: { displayOrder: "asc" } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!attempt) {
+        res.status(404).json({ success: false, message: "Attempt not found." });
+        return;
+      }
+
+      if (req.user) {
+        const isStudent = req.user.role === UserRole.STUDENT;
+        const isAdmin = req.user.role === UserRole.ADMIN;
+
+        if (!isStudent && !isAdmin) {
+          res.status(403).json({ success: false, message: "Forbidden: Access restricted to STUDENT or ADMIN." });
+          return;
+        }
+
+        if (isStudent && attempt.userId !== req.user.id) {
+          res.status(403).json({ success: false, message: "Forbidden: You do not own this assessment attempt." });
+          return;
+        }
+      }
+
+      const sections = attempt.assessment?.sections || [];
+      const studentSections = sections.map(toStudentSectionDTO);
+
+      res.status(200).json({
+        success: true,
+        data: {
+          attemptId: attempt.id,
+          assessmentId: attempt.assessmentId,
+          version: attempt.assessmentVersion,
+          sections: studentSections,
         },
       });
     } catch (error) {
@@ -197,6 +292,12 @@ export class AssessmentController {
 
       if (!attempt) {
         res.status(404).json({ success: false, message: "Attempt not found." });
+        return;
+      }
+
+      // Ownership check: Student may only modify their own attempt
+      if (req.user && req.user.role === UserRole.STUDENT && attempt.userId !== req.user.id) {
+        res.status(403).json({ success: false, message: "Forbidden: You do not own this assessment attempt." });
         return;
       }
 
@@ -273,6 +374,12 @@ export class AssessmentController {
 
       if (!attempt) {
         res.status(404).json({ success: false, message: "Attempt not found." });
+        return;
+      }
+
+      // Ownership check: Student may only submit their own attempt
+      if (req.user && req.user.role === UserRole.STUDENT && attempt.userId !== req.user.id) {
+        res.status(403).json({ success: false, message: "Forbidden: You do not own this assessment attempt." });
         return;
       }
 

@@ -40,11 +40,11 @@ enum AssessmentStatus {
 }
 
 enum QuestionType {
-  SINGLE_CHOICE
-  MULTI_CHOICE
-  LIKERT
-  YES_NO
-  RANKING
+  LIKERT_5          // Big Five, Competency Self-Report — 1-5 scale, no listed options
+  RATING_5          // RIASEC Interests — 1-5 enjoyment scale, no listed options
+  FORCED_RANKING    // Work Values — rank all items in the section 1..N, no ties
+  SJT_DUAL_SELECT   // Situational Judgment — pick Most Effective AND Least Effective from 4 options
+  MCQ_SINGLE_CORRECT // Aptitude — 4 options, one correct answer
 }
 
 enum AttemptStatus {
@@ -178,6 +178,7 @@ model AssessmentSection {
   assessmentId String
   title        String
   description  String?
+  subCategory  String?    // e.g. "Personality" | "Interests" | "Values" | "Verbal" | "Numerical" | "Logical", null if section has no sub-grouping
   displayOrder Int
   createdAt    DateTime   @default(now())
 
@@ -188,18 +189,23 @@ model AssessmentSection {
 }
 
 model Question {
-  id           String            @id @default(cuid())
-  sectionId    String
-  version      Int               @default(1)
-  questionText String
-  questionType QuestionType
-  displayOrder Int
-  required     Boolean           @default(true)
-  createdAt    DateTime          @default(now())
+  id                     String            @id @default(cuid())
+  sectionId              String
+  version                Int               @default(1)
+  questionText           String
+  questionType           QuestionType
+  category               String            // e.g. "Openness", "Critical Thinking", "Verbal Reasoning"
+  reverseKeyed           Boolean           @default(false)   // LIKERT_5 only
+  correctOptionId        String?           // MCQ_SINGLE_CORRECT only — staff-reference only, never serialized to student
+  mostEffectiveOptionId  String?           // SJT_DUAL_SELECT only — staff-reference only
+  leastEffectiveOptionId String?           // SJT_DUAL_SELECT only — staff-reference only
+  displayOrder           Int
+  required               Boolean           @default(true)
+  createdAt              DateTime          @default(now())
 
-  section      AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  options      QuestionOption[]
-  responses    Response[]
+  section                AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  options                QuestionOption[]
+  responses              Response[]
 
   @@index([sectionId, displayOrder])
 }

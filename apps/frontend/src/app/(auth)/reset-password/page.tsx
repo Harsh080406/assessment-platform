@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Lock, ArrowRight, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { ResetPasswordSchema } from "@/lib/validations/auth";
 import { resetPasswordAction } from "@/app/actions/auth";
@@ -61,9 +62,17 @@ function ResetPasswordForm() {
     <div className="min-h-screen flex items-center justify-center bg-[#FBFBF9] p-4 text-black font-sans selection:bg-[#A9B4E8]">
       <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-10 border border-[#E2E0DB] shadow-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-3">
+          <Link href="/" className="inline-flex items-center gap-2 mb-3">
+            <Image
+              src="/AlderwoodVANTAGE.svg"
+              alt="Alderwood Vantage Logo"
+              width={70}
+              height={55}
+              draggable={false}
+              className="h-14 sm:h-16 w-auto object-contain shrink-0"
+            />
             <span className="font-[family-name:var(--font-dm-sans)] text-2xl font-black tracking-tight text-black">
-              Aura<span className="text-[#7C89CC]">Path</span>
+              Alderwood <span className="text-[#FF6B6B]">Vantage</span>
             </span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">

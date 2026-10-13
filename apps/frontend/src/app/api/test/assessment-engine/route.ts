@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 import { auth } from "@/auth";
 import {
   startOrResumeAssessmentAction,
@@ -29,7 +31,7 @@ export async function GET() {
   try {
     // 1. Get or create a test student user
     let testUser = await prisma.user.findFirst({
-      where: { email: "student@aurapath.com" },
+      where: { OR: [{ email: "student@alderwoodvantage.com" }, { email: "student@aurapath.com" }] },
     });
 
     if (!testUser) {

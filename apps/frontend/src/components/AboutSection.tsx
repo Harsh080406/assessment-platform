@@ -10,14 +10,14 @@ export default function AboutSection() {
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-[#EEF2FF] text-[#4F46E5] border border-[#E0E7FE] px-4 py-1.5 rounded-full mb-3 shadow-xs">
-            <span>Why AuraPath</span>
+            <span>Why Alderwood Vantage</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight leading-tight">
             NOT ANOTHER TEST. <br />
             <span className="underline decoration-[#FF6B6B] underline-offset-8">A CLARITY ENGINE.</span>
           </h2>
           <p className="text-black font-bold text-sm sm:text-base mt-3 max-w-xl mx-auto leading-relaxed px-1">
-            Legacy tests ask if you like math or office desks. AuraPath calibrates your natural problem-solving instinct against 2026+ career frontiers.
+            Legacy tests ask if you like math or office desks. Alderwood Vantage calibrates your natural problem-solving instinct against 2026+ career frontiers.
           </p>
         </div>
 
@@ -122,10 +122,10 @@ export default function AboutSection() {
 
           <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full lg:w-auto">
             <Link
-              href="/quests"
+              href="/packages"
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white text-black hover:bg-[#EEF1FB] font-extrabold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2"
             >
-              <span>Explore The 4 Modules</span>
+              <span>Explore Packages</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </Link>
           </div>

@@ -104,7 +104,7 @@ export default function HowItWorks() {
               <div className="mt-6 pt-4 border-t border-slate-100 text-xs font-semibold flex items-center justify-between">
                 <span className={`${item.textColor}`}>{item.timeTag}</span>
                 <Link
-                  href="/assessment"
+                  href="/register"
                   className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-slate-900"
                 >
                   <ArrowUpRight className="w-4 h-4" />

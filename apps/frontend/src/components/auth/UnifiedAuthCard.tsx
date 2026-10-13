@@ -736,7 +736,7 @@ export default function UnifiedAuthCard({
                     <button
                       type="button"
                       onClick={() => {
-                        setLoginEmail("admin@aurapath.com");
+                        setLoginEmail("admin@alderwoodvantage.com");
                         setLoginPassword("Password123!");
                       }}
                       className="px-2 py-1.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-extrabold text-[11px] transition-all cursor-pointer text-center"
@@ -746,7 +746,7 @@ export default function UnifiedAuthCard({
                     <button
                       type="button"
                       onClick={() => {
-                        setLoginEmail("staff@aurapath.com");
+                        setLoginEmail("staff@alderwoodvantage.com");
                         setLoginPassword("Password123!");
                       }}
                       className="px-2 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-[11px] transition-all cursor-pointer text-center"
@@ -756,7 +756,7 @@ export default function UnifiedAuthCard({
                     <button
                       type="button"
                       onClick={() => {
-                        setLoginEmail("student@aurapath.com");
+                        setLoginEmail("student@alderwoodvantage.com");
                         setLoginPassword("Password123!");
                       }}
                       className="px-2 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-[11px] transition-all cursor-pointer text-center"

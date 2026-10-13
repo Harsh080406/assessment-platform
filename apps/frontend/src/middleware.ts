@@ -37,6 +37,16 @@ export async function middleware(request: NextRequest) {
     const isAuthenticated = !!token && !isExpired;
     const userRole = (token?.role as string) || null;
 
+    // Redirect legacy /assessment route to /register
+    if (pathname === "/assessment" || pathname.startsWith("/assessment/")) {
+      return NextResponse.redirect(new URL("/register", request.url));
+    }
+
+    // Redirect legacy marketing /careers route to /about
+    if (pathname === "/careers" || pathname.startsWith("/careers/")) {
+      return NextResponse.redirect(new URL("/about", request.url));
+    }
+
     // 3. Route Category Classifications
     const isAuthRoute =
       pathname.startsWith("/login") ||
@@ -53,8 +63,9 @@ export async function middleware(request: NextRequest) {
 
     const isMarketingRoute =
       pathname === "/" ||
-      pathname.startsWith("/assessment") ||
-      pathname.startsWith("/careers") ||
+      pathname.startsWith("/about") ||
+      pathname.startsWith("/contact") ||
+      pathname.startsWith("/how-it-works") ||
       pathname.startsWith("/quests") ||
       pathname.startsWith("/decoder");
 
@@ -75,6 +86,10 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("callbackUrl", pathname);
         return NextResponse.redirect(loginUrl);
+      }
+
+      if (userRole === "ADMIN" && pathname.startsWith("/dashboard")) {
+        return NextResponse.redirect(new URL("/console", request.url));
       }
 
       if (userRole === "STAFF") {

@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import StaffLayoutShell from "@/components/staff/StaffLayoutShell";
+import { getStaffDashboardStatsAction } from "@/app/actions/staff";
 
 export default async function StaffLayout({
   children,
@@ -19,18 +20,23 @@ export default async function StaffLayout({
     redirect("/unauthorized");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      studentProfile: true,
-    },
-  });
+  const [user, statsRes] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: {
+        studentProfile: true,
+      },
+    }),
+    getStaffDashboardStatsAction(),
+  ]);
+
+  const stats = statsRes.success && statsRes.data ? statsRes.data : undefined;
 
   const staffName = user?.studentProfile
     ? `${user.studentProfile.firstName} ${user.studentProfile.lastName}`.trim()
     : session.user.name || "Staff Evaluator";
 
-  const staffEmail = user?.email || session.user.email || "staff@aurapath.com";
+  const staffEmail = user?.email || session.user.email || "staff@alderwoodvantage.com";
 
   const staffInitials =
     staffName
@@ -47,6 +53,7 @@ export default async function StaffLayout({
       staffInitials={staffInitials}
       role={session.user.role}
       avatarUrl={user?.studentProfile?.avatarUrl}
+      stats={stats}
     >
       {children}
     </StaffLayoutShell>

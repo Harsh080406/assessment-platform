@@ -4,15 +4,16 @@ import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import MarqueeTicker from "@/components/MarqueeTicker";
-import SocialProof from "@/components/SocialProof";
-import AboutSection from "@/components/AboutSection";
-import CtaBanner from "@/components/CtaBanner";
+import VantageProblemSection from "@/components/VantageProblemSection";
+import WhyVantageSection from "@/components/WhyVantageSection";
+import ReviewsSection from "@/components/ReviewsSection";
+import FaqSection from "@/components/FaqSection";
 import Footer from "@/components/Footer";
 import FloatingQuickAction from "@/components/FloatingQuickAction";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] selection:bg-[#A9B4E8] selection:text-black">
+    <div className="min-h-screen flex flex-col bg-[#FBFBF9] text-black font-[family-name:var(--font-inter)] selection:bg-[#FED7CC] selection:text-black">
       {/* 1. Sticky Top Scroll Progress Tracker */}
       <ScrollProgress />
 
@@ -21,29 +22,32 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* 3. Hero Section */}
+        {/* 3. Hero Section (Tagline, Headline, Sub-headline, CTAs, Credibility Bar) */}
         <Hero />
 
         {/* 4. Metric Ticker 1 */}
         <MarqueeTicker theme="dark" />
 
-        {/* 5. Real Student Dilemmas */}
-        <SocialProof />
+        {/* 5. The Problem (3 Points: Marks/Pressure, 10-min Quizzes, Leadership Demands) */}
+        <VantageProblemSection />
 
-        {/* 6. Metric Ticker 2 */}
+        {/* 6. Why Alderwood Vantage (4 Points: Depth, Academic Rigor, Leadership-led, 5-Year Roadmap) */}
+        <WhyVantageSection />
+
+        {/* 7. Reviews & Real Outcomes (3 Fake Reviews) */}
+        <ReviewsSection />
+
+        {/* 8. Metric Ticker 2 */}
         <MarqueeTicker theme="light" reverse />
 
-        {/* 7. About AuraPath */}
-        <AboutSection />
-
-        {/* 8. Call-to-Action Banner */}
-        <CtaBanner />
+        {/* 10. Frequently Asked Questions */}
+        <FaqSection />
       </main>
 
-      {/* 9. Footer */}
+      {/* 15. Footer */}
       <Footer />
 
-      {/* 10. Floating Quick Action */}
+      {/* 16. Floating Quick Action */}
       <FloatingQuickAction />
     </div>
   );

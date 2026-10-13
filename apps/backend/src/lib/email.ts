@@ -1,4 +1,4 @@
-﻿export interface SendEmailOptions {
+export interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
@@ -31,7 +31,7 @@ export class ConsoleEmailService implements IEmailService {
     console.log("=======================================================\n");
     return this.sendEmail({
       to,
-      subject: "Verify your AuraPath account",
+      subject: "Verify your Alderwood Vantage account",
       html: `<p>Verify your email at <a href="${verifyUrl}">${verifyUrl}</a></p>`,
       text: `Verify your email: ${verifyUrl}`,
     });
@@ -46,7 +46,7 @@ export class ConsoleEmailService implements IEmailService {
     console.log("=======================================================\n");
     return this.sendEmail({
       to,
-      subject: "Reset your AuraPath password",
+      subject: "Reset your Alderwood Vantage password",
       html: `<p>Reset your password at <a href="${resetUrl}">${resetUrl}</a></p>`,
       text: `Reset your password: ${resetUrl}`,
     });
@@ -60,7 +60,7 @@ export class ConsoleEmailService implements IEmailService {
     console.log("=======================================================\n");
     return this.sendEmail({
       to,
-      subject: "Your AuraPath Login Code",
+      subject: "Your Alderwood Vantage Login Code",
       html: `<h2>Your Security Code: ${code}</h2>`,
       text: `Your security code is: ${code}`,
     });

@@ -1,4 +1,4 @@
-﻿export interface SendSmsOptions {
+export interface SendSmsOptions {
   to: string;
   message: string;
 }
@@ -30,7 +30,7 @@ export class ConsoleSmsService implements ISmsService {
 
     return this.sendSms({
       to,
-      message: `Your AuraPath security verification code is: ${code}. It expires in 10 minutes. Do not share this with anyone.`,
+      message: `Your Alderwood Vantage security verification code is: ${code}. It expires in 10 minutes. Do not share this with anyone.`,
     });
   }
 }

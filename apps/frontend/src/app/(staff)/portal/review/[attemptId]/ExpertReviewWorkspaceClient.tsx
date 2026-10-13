@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Shield,
   User,
@@ -17,6 +17,15 @@ import {
   BookOpen,
   ArrowRight,
   Eye,
+  Check,
+  X,
+  ArrowLeftRight,
+  BarChart2,
+  ListOrdered,
+  Layers,
+  HelpCircle,
+  Target,
+  GraduationCap,
 } from "lucide-react";
 import { AttemptStatus, ReportStatus } from "@prisma/client";
 import { updateSubmissionStatusAction, uploadSubmissionReportAction } from "@/app/actions/staff";
@@ -25,6 +34,7 @@ interface VersionedQuestion {
   id: string;
   questionText: string;
   questionType: string;
+  category?: string;
   version: number;
   displayOrder: number;
   required: boolean;
@@ -33,19 +43,87 @@ interface VersionedQuestion {
   options: { id: string; optionText: string; displayOrder: number }[];
   studentAnswer: any;
   answeredAt?: string;
+  reverseKeyed?: boolean;
+  correctOptionId?: string | null;
+  mostEffectiveOptionId?: string | null;
+  leastEffectiveOptionId?: string | null;
 }
 
 interface SectionDetail {
   id: string;
   title: string;
   description?: string | null;
+  subCategory?: string | null;
   questions: VersionedQuestion[];
+}
+
+const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+function getCandidateMcqSelection(studentAnswer: any): string | null {
+  if (!studentAnswer) return null;
+  if (typeof studentAnswer === "string") return studentAnswer;
+  if (typeof studentAnswer === "object") {
+    return studentAnswer.selected || studentAnswer.selectedOptionId || studentAnswer.id || null;
+  }
+  return null;
+}
+
+function getCandidateSjtSelection(studentAnswer: any): string | null {
+  if (!studentAnswer) return null;
+  if (typeof studentAnswer === "string") return studentAnswer;
+  if (typeof studentAnswer === "object") {
+    return (
+      studentAnswer.selected ||
+      studentAnswer.selectedOptionId ||
+      studentAnswer.mostEffective ||
+      studentAnswer.most ||
+      studentAnswer.id ||
+      null
+    );
+  }
+  return null;
+}
+
+function getCandidateLikertValue(studentAnswer: any): number | null {
+  if (studentAnswer === null || studentAnswer === undefined) return null;
+  if (typeof studentAnswer === "number") return studentAnswer;
+  if (typeof studentAnswer === "object" && typeof studentAnswer.value === "number") {
+    return studentAnswer.value;
+  }
+  const parsed = parseInt(String(studentAnswer), 10);
+  return isNaN(parsed) ? null : parsed;
+}
+
+function getCandidateForcedRank(studentAnswer: any): number | null {
+  if (studentAnswer === null || studentAnswer === undefined) return null;
+  if (typeof studentAnswer === "number") return studentAnswer;
+  if (typeof studentAnswer === "object" && typeof studentAnswer.rank === "number") {
+    return studentAnswer.rank;
+  }
+  const parsed = parseInt(String(studentAnswer), 10);
+  return isNaN(parsed) ? null : parsed;
+}
+
+function getOptionLabel(
+  options: { id: string; optionText: string }[],
+  optId: string | null | undefined
+): { letter: string; text: string } {
+  if (!optId) return { letter: "-", text: "None recorded" };
+  const idx = options.findIndex((o) => o.id === optId);
+  if (idx !== -1) {
+    return {
+      letter: OPTION_LETTERS[idx] || String(idx + 1),
+      text: options[idx].optionText,
+    };
+  }
+  return { letter: "?", text: optId };
 }
 
 interface ReportItem {
   id: string;
   version: number;
   status: ReportStatus;
+  rejectionReason?: string | null;
   fileReference: string;
   uploadedBy: string;
   uploadedAt: string;
@@ -75,6 +153,8 @@ interface SubmissionDetail {
     grade?: string | null;
     country?: string | null;
     educationLevel?: string | null;
+    bio?: string | null;
+    dateOfBirth?: string | null;
   };
   sections: SectionDetail[];
   reports: ReportItem[];
@@ -173,17 +253,115 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
 
   const activeSection = submission.sections.find((s) => s.id === activeSectionId) || submission.sections[0];
 
+  // Section-Level Objective Reference Calculations (Human Expert Evaluation Aids)
+  const aptitudeQuestions = useMemo(() => {
+    return activeSection?.questions.filter((q) => q.questionType === "MCQ_SINGLE_CORRECT") || [];
+  }, [activeSection]);
+
+  const aptitudeStats = useMemo(() => {
+    if (aptitudeQuestions.length === 0) return null;
+    let answered = 0;
+    let correct = 0;
+    const byCategory: Record<string, { total: number; correct: number }> = {};
+
+    aptitudeQuestions.forEach((q) => {
+      const selectedId = getCandidateMcqSelection(q.studentAnswer);
+      const isAnswered = Boolean(selectedId);
+      const isCorrect = isAnswered && Boolean(q.correctOptionId && selectedId === q.correctOptionId);
+
+      if (isAnswered) answered++;
+      if (isCorrect) correct++;
+
+      const cat = q.category || "General Aptitude";
+      if (!byCategory[cat]) {
+        byCategory[cat] = { total: 0, correct: 0 };
+      }
+      byCategory[cat].total++;
+      if (isCorrect) byCategory[cat].correct++;
+    });
+
+    return {
+      total: aptitudeQuestions.length,
+      answered,
+      correct,
+      percentage: Math.round((correct / aptitudeQuestions.length) * 100),
+      byCategory,
+    };
+  }, [aptitudeQuestions]);
+
+  const sjtQuestions = useMemo(() => {
+    return activeSection?.questions.filter((q) => q.questionType === "SJT_DUAL_SELECT") || [];
+  }, [activeSection]);
+
+  const sjtStats = useMemo(() => {
+    if (sjtQuestions.length === 0) return null;
+    let answered = 0;
+
+    sjtQuestions.forEach((q) => {
+      const selected = getCandidateSjtSelection(q.studentAnswer);
+      if (selected) answered++;
+    });
+
+    return {
+      total: sjtQuestions.length,
+      answered,
+    };
+  }, [sjtQuestions]);
+
+  const forcedQuestions = useMemo(() => {
+    return activeSection?.questions.filter((q) => q.questionType === "FORCED_RANKING") || [];
+  }, [activeSection]);
+
+  const rankedValuesHierarchy = useMemo(() => {
+    if (forcedQuestions.length === 0) return null;
+    return [...forcedQuestions].sort((a, b) => {
+      const rankA = getCandidateForcedRank(a.studentAnswer) ?? 999;
+      const rankB = getCandidateForcedRank(b.studentAnswer) ?? 999;
+      return rankA - rankB;
+    });
+  }, [forcedQuestions]);
+
   const totalAnswered = submission.sections.reduce((acc, sec) => {
     return acc + sec.questions.filter((q) => q.studentAnswer !== null && q.studentAnswer !== undefined).length;
   }, 0);
 
   const totalQuestions = submission.sections.reduce((acc, sec) => acc + sec.questions.length, 0);
 
+  const latestRejectedReport = submission.reports?.find(
+    (r) => r.status === ReportStatus.REJECTED && r.rejectionReason
+  );
+
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* Candidate Overview Card */}
-      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 sm:p-7 shadow-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      {/* Revision Feedback Callout (Priority 2a) */}
+      {latestRejectedReport && (
+        <div className="p-5 bg-red-50 border-2 border-red-200 rounded-2xl flex items-start gap-4 shadow-xs">
+          <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <div className="space-y-2 flex-1">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-sm font-extrabold text-red-950">
+                Action Required: Administrator Revision Requested
+              </h3>
+              <span className="text-[11px] font-bold text-red-700 font-mono bg-red-100/70 px-2 py-0.5 rounded-md border border-red-200">
+                v{latestRejectedReport.version} Rejected
+              </span>
+            </div>
+            <div className="p-3.5 bg-white/90 rounded-xl border border-red-200 text-xs text-red-950 font-medium leading-relaxed">
+              &quot;{latestRejectedReport.rejectionReason}&quot;
+            </div>
+            <p className="text-[11px] text-red-800 font-medium">
+              Please review the feedback above, revise the evaluation diagnosis, and upload an updated certified PDF below.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Candidate Overview & Verified Academic Profile */}
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 sm:p-7 shadow-xs space-y-6">
+        {/* Top Header Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-[#F1F5F9] pb-5">
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-2xl bg-[#0F172A] text-white flex items-center justify-center font-extrabold text-xl shrink-0 shadow-xs">
               {studentFullName.charAt(0).toUpperCase()}
@@ -193,7 +371,10 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                 <h1 className="text-2xl font-black text-[#0F172A] tracking-tight">
                   {studentFullName}
                 </h1>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  Verified Candidate
+                </span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
                   ID: {submission.student.id.slice(-6)}
                 </span>
               </div>
@@ -203,19 +384,17 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                     <User className="w-3.5 h-3.5 text-[#94A3B8]" /> {submission.student.email}
                   </span>
                 )}
-                {submission.student.school && (
-                  <span className="flex items-center gap-1">
-                    <School className="w-3.5 h-3.5 text-[#94A3B8]" /> {submission.student.school} {submission.student.grade ? `(Grade ${submission.student.grade})` : ""}
-                  </span>
+                {submission.student.phone && (
+                  <span>• {submission.student.phone}</span>
                 )}
                 {submission.student.country && (
-                  <span>Country: {submission.student.country}</span>
+                  <span>• Country: {submission.student.country}</span>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] text-xs">
+          <div className="flex flex-wrap items-center gap-4 bg-[#F8FAFC] p-3.5 sm:p-4 rounded-xl border border-[#E2E8F0] text-xs">
             <div>
               <span className="text-[10px] uppercase font-bold text-[#94A3B8] block">Assessment</span>
               <span className="font-extrabold text-[#0F172A]">{submission.attempt.assessmentTitle}</span>
@@ -241,6 +420,66 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                 {totalAnswered} / {totalQuestions} answered
               </span>
             </div>
+          </div>
+        </div>
+
+        {/* Academic Profile Details Grid */}
+        <div className="space-y-3 pt-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#0F172A] flex items-center gap-1.5">
+              <GraduationCap className="w-4 h-4 text-[#4F46E5]" />
+              <span>Student Academic Profile</span>
+            </span>
+            <span className="text-[11px] font-medium text-[#64748B]">
+              Normative Benchmark Calibration
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            {/* School / Institution */}
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block">
+                School or Institution Name
+              </span>
+              <div className="font-bold text-xs sm:text-sm text-[#0F172A] truncate">
+                {submission.student.school || "Not specified"}
+              </div>
+            </div>
+
+            {/* Current Class / Grade */}
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block">
+                Current Class / Grade
+              </span>
+              <div className="font-bold text-xs sm:text-sm text-[#0F172A]">
+                {submission.student.grade || "Not specified"}
+              </div>
+            </div>
+
+            {/* Education Stage */}
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1">
+              <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block">
+                Education Stage
+              </span>
+              <div className="font-bold text-xs sm:text-sm text-[#0F172A]">
+                {submission.student.educationLevel || "Not specified"}
+              </div>
+            </div>
+          </div>
+
+          {/* Target Career Aspirations & Interests */}
+          <div className="p-4 rounded-xl bg-[#EEF2FF]/60 border border-[#C7D2FE] space-y-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#3730A3]">
+              <Sparkles className="w-4 h-4 text-[#4F46E5]" />
+              <span>Target Career Aspirations & Passions</span>
+            </div>
+            <p className="text-xs sm:text-sm text-[#1E1B4B] leading-relaxed">
+              {submission.student.bio ? (
+                submission.student.bio
+              ) : (
+                <span className="text-slate-400 italic">No specific career aspirations provided.</span>
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -354,12 +593,12 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-6">
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
               <div>
-                <h2 className="text-lg font-bold text-[#0F172A]">Candidate Trajectory Reader</h2>
-                <p className="text-xs text-[#64748B]">Inspect response selections across dilemma quests.</p>
+                <h2 className="text-lg font-bold text-[#0F172A]">Student Answers (Module-Wise)</h2>
+                <p className="text-xs text-[#64748B]">Inspect the candidate&apos;s submitted responses for each evaluation module.</p>
               </div>
 
               <span className="text-xs font-bold px-3 py-1 bg-[#F8FAFC] text-[#0F172A] rounded-lg border border-[#E2E8F0]">
-                {submission.sections.length} Quests Total
+                {submission.sections.length} Modules Total
               </span>
             </div>
 
@@ -382,51 +621,602 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
 
             {/* Active Quest Questions List */}
             {activeSection ? (
-              <div className="space-y-4 pt-2">
-                {activeSection.questions.map((q, qIdx) => (
-                  <div
-                    key={q.id}
-                    className="p-4 sm:p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-3"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <h4 className="text-xs sm:text-sm font-bold text-[#0F172A] leading-snug">
-                        <span className="text-[#4F46E5] mr-1.5 font-mono">Q{qIdx + 1}.</span>
-                        {q.questionText}
-                      </h4>
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-white text-[#64748B] border border-[#E2E8F0] shrink-0">
-                        {q.questionType}
-                      </span>
+              <div className="space-y-6 pt-2">
+                {/* 1. Aptitude Objective Reference Summary (if section contains MCQ) */}
+                {aptitudeStats && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 shadow-xs space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0">
+                          <Target className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-extrabold text-[#0F172A]">
+                            Aptitude Objective Reference Data
+                          </h3>
+                          <p className="text-[11px] text-[#64748B]">
+                            Mathematical accuracy tally against benchmark answer keys. Evaluation aid for expert review.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-left sm:text-right bg-white sm:bg-transparent px-3 py-1.5 sm:p-0 rounded-xl border sm:border-0 border-indigo-200">
+                        <span className="text-[10px] uppercase font-bold text-[#64748B] block">Overall Accuracy</span>
+                        <span className="text-base font-black text-indigo-700 font-mono">
+                          {aptitudeStats.correct} / {aptitudeStats.total} Correct ({aptitudeStats.percentage}%)
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Options Grid */}
-                    <div className="space-y-1.5 pt-1">
-                      {q.options.map((opt) => {
-                        const isSelected =
-                          q.studentAnswer === opt.id ||
-                          q.studentAnswer?.selectedOptionId === opt.id ||
-                          q.studentAnswer === opt.optionText;
+                    {/* Subcategory Accuracy Breakdown Pills */}
+                    <div className="pt-2 border-t border-indigo-200/60 flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-500 mr-1">Subcategory Breakdown:</span>
+                      {Object.entries(aptitudeStats.byCategory).map(([cat, stats]) => (
+                        <span
+                          key={cat}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-white text-slate-800 border border-indigo-200 shadow-2xs font-mono"
+                        >
+                          <span className="font-semibold text-slate-600 font-sans">{cat}:</span>
+                          <span className="text-indigo-600">{stats.correct}/{stats.total}</span>
+                          <span className="text-[10px] text-slate-400">({Math.round((stats.correct / stats.total) * 100)}%)</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
+                {/* 2. SJT Summary (if section contains SJT) */}
+                {sjtStats && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] shadow-xs flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-[#0F172A] text-white flex items-center justify-center font-bold shrink-0">
+                        <Layers className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-[#0F172A]">
+                          Situational Judgment Responses
+                        </h3>
+                        <p className="text-[11px] text-[#64748B]">
+                          Candidate decisions recorded across situational workplace dilemmas.
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-xs font-bold text-[#0F172A] bg-white px-3 py-1.5 rounded-xl border border-[#CBD5E1] font-mono shrink-0">
+                      {sjtStats.answered} / {sjtStats.total} Scenarios Answered
+                    </span>
+                  </div>
+                )}
+
+                {/* 3. Work Values Hierarchy Overview (if section contains FORCED_RANKING) */}
+                {rankedValuesHierarchy && rankedValuesHierarchy.length > 0 && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs space-y-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-[#0F172A] text-white flex items-center justify-center font-bold shrink-0">
+                        <ListOrdered className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-extrabold text-[#0F172A]">
+                          Candidate Work Values Hierarchy (Ranks 1 to 10)
+                        </h3>
+                        <p className="text-[11px] text-[#64748B]">
+                          Objective ranking order assigned by candidate. Evaluator reference view.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                      {rankedValuesHierarchy.map((q) => {
+                        const rank = getCandidateForcedRank(q.studentAnswer);
+                        const isTop = typeof rank === "number" && rank <= 3;
+                        const isMid = typeof rank === "number" && rank > 3 && rank <= 7;
                         return (
                           <div
-                            key={opt.id}
-                            className={`p-2.5 rounded-lg text-xs font-medium border transition-all flex items-center justify-between ${
-                              isSelected
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-bold"
-                                : "bg-white border-[#E2E8F0] text-[#64748B]"
+                            key={q.id}
+                            className={`p-2.5 rounded-xl border text-xs flex items-center justify-between gap-3 ${
+                              isTop
+                                ? "bg-emerald-50/70 border-emerald-300 text-emerald-950 font-bold"
+                                : isMid
+                                ? "bg-indigo-50/40 border-indigo-200 text-slate-800 font-medium"
+                                : "bg-white border-slate-200 text-slate-600 font-normal"
                             }`}
                           >
-                            <span>{opt.optionText}</span>
-                            {isSelected && (
-                              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-600 text-white">
-                                Selected Option
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <span
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center font-mono font-black text-xs shrink-0 ${
+                                  isTop
+                                    ? "bg-emerald-600 text-white"
+                                    : isMid
+                                    ? "bg-indigo-600 text-white"
+                                    : "bg-slate-200 text-slate-700"
+                                }`}
+                              >
+                                #{rank ?? "?"}
                               </span>
-                            )}
+                              <span className="truncate">{q.questionText}</span>
+                            </div>
+
+                            <span
+                              className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shrink-0 ${
+                                isTop
+                                  ? "bg-emerald-200/80 text-emerald-900"
+                                  : isMid
+                                  ? "bg-indigo-100 text-indigo-800"
+                                  : "bg-slate-100 text-slate-600"
+                              }`}
+                            >
+                              {isTop ? "Top Priority" : isMid ? "Mid Priority" : "Lower Priority"}
+                            </span>
                           </div>
                         );
                       })}
                     </div>
                   </div>
-                ))}
+                )}
+
+                {/* Per-Question Detailed Cards */}
+                <div className="space-y-4">
+                  {activeSection.questions.map((q, qIdx) => {
+                    // Question Type 1: MCQ_SINGLE_CORRECT (Aptitude)
+                    if (q.questionType === "MCQ_SINGLE_CORRECT") {
+                      const selectedId = getCandidateMcqSelection(q.studentAnswer);
+                      const isAnswered = Boolean(selectedId);
+                      const isCorrect = isAnswered && Boolean(q.correctOptionId && selectedId === q.correctOptionId);
+                      const selectedOptionInfo = getOptionLabel(q.options, selectedId);
+                      const correctOptionInfo = getOptionLabel(q.options, q.correctOptionId);
+
+                      return (
+                        <div
+                          key={q.id}
+                          className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-xs space-y-4"
+                        >
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-[#4F46E5] font-mono">
+                                  Q{qIdx + 1}.
+                                </span>
+                                {q.category && (
+                                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                    {q.category}
+                                  </span>
+                                )}
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                  {q.questionType}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-[#0F172A] leading-snug pt-1">
+                                {q.questionText}
+                              </h4>
+                            </div>
+
+                            {/* Status Indicator Pill */}
+                            <div>
+                              {!isAnswered ? (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                                  ○ Unanswered
+                                </span>
+                              ) : isCorrect ? (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                  <Check className="w-3.5 h-3.5" /> Correct
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300">
+                                  <X className="w-3.5 h-3.5" /> Incorrect
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Options List */}
+                          <div className="space-y-1.5 pt-1">
+                            {q.options.map((opt, optIdx) => {
+                              const letter = OPTION_LETTERS[optIdx] || String(optIdx + 1);
+                              const isCandidateChoice = selectedId === opt.id;
+                              const isBenchmarkKey = q.correctOptionId === opt.id;
+
+                              let cardStyle = "bg-white border-[#E2E8F0] text-[#64748B]";
+                              if (isCandidateChoice && isBenchmarkKey) {
+                                cardStyle = "bg-emerald-50 border-emerald-400 text-emerald-950 font-bold";
+                              } else if (isCandidateChoice && !isBenchmarkKey) {
+                                cardStyle = "bg-rose-50 border-rose-300 text-rose-950 font-medium";
+                              } else if (!isCandidateChoice && isBenchmarkKey) {
+                                cardStyle = "bg-emerald-50/40 border-emerald-300 border-dashed text-emerald-900";
+                              }
+
+                              return (
+                                <div
+                                  key={opt.id}
+                                  className={`p-3 rounded-xl text-xs border transition-all flex items-center justify-between gap-3 ${cardStyle}`}
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <span
+                                      className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold text-[11px] shrink-0 ${
+                                        isCandidateChoice
+                                          ? isBenchmarkKey
+                                            ? "bg-emerald-600 text-white"
+                                            : "bg-rose-600 text-white"
+                                          : isBenchmarkKey
+                                          ? "bg-emerald-200 text-emerald-900"
+                                          : "bg-slate-100 text-slate-600"
+                                      }`}
+                                    >
+                                      {letter}
+                                    </span>
+                                    <span>{opt.optionText}</span>
+                                  </div>
+
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    {isCandidateChoice && (
+                                      <span
+                                        className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                                          isBenchmarkKey
+                                            ? "bg-emerald-600 text-white"
+                                            : "bg-rose-600 text-white"
+                                        }`}
+                                      >
+                                        Candidate Choice
+                                      </span>
+                                    )}
+                                    {isBenchmarkKey && (
+                                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                        ✓ Correct Key
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Objective Readout Summary Box */}
+                          <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-[#64748B] block">Candidate Answer</span>
+                              <span className="font-bold text-[#0F172A]">
+                                {isAnswered ? (
+                                  <>Option {selectedOptionInfo.letter}: <span className="font-medium text-slate-700">{selectedOptionInfo.text}</span></>
+                                ) : (
+                                  <span className="text-slate-400 italic">No answer recorded</span>
+                                )}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-[#64748B] block">Benchmark Answer Key</span>
+                              <span className="font-bold text-emerald-800">
+                                Option {correctOptionInfo.letter}: <span className="font-medium text-emerald-700">{correctOptionInfo.text}</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Question Type 2: SJT (Situational Judgment Test - Single Selected Option)
+                    if (q.questionType === "SJT_DUAL_SELECT") {
+                      const selectedId = getCandidateSjtSelection(q.studentAnswer);
+                      const isAnswered = Boolean(selectedId);
+                      const selectedOptionInfo = getOptionLabel(q.options, selectedId);
+
+                      return (
+                        <div
+                          key={q.id}
+                          className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-xs space-y-4"
+                        >
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-[#4F46E5] font-mono">
+                                  Q{qIdx + 1}.
+                                </span>
+                                {q.category && (
+                                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                    {q.category}
+                                  </span>
+                                )}
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-[#EEF2FF] text-[#4F46E5] border border-[#C7D2FE]">
+                                  Situational Judgment
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-[#0F172A] leading-snug pt-1">
+                                {q.questionText}
+                              </h4>
+                            </div>
+
+                            {/* Status Pill */}
+                            <div>
+                              {isAnswered ? (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                  <Check className="w-3.5 h-3.5" /> Answer Recorded
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                                  Unanswered
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Scenario Options List */}
+                          <div className="space-y-2 pt-1">
+                            {q.options.map((opt, optIdx) => {
+                              const letter = OPTION_LETTERS[optIdx] || String(optIdx + 1);
+                              const isSelected = selectedId === opt.id;
+
+                              return (
+                                <div
+                                  key={opt.id}
+                                  className={`p-3.5 rounded-xl text-xs border transition-all flex items-center justify-between gap-3 ${
+                                    isSelected
+                                      ? "bg-[#EEF2FF] border-[#4F46E5] text-[#0F172A] font-semibold ring-1 ring-[#4F46E5]/30 shadow-2xs"
+                                      : "bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <span
+                                      className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold text-[11px] shrink-0 ${
+                                        isSelected
+                                          ? "bg-[#4F46E5] text-white"
+                                          : "bg-white border border-[#CBD5E1] text-slate-700"
+                                      }`}
+                                    >
+                                      {letter}
+                                    </span>
+                                    <span className={isSelected ? "text-[#0F172A] font-medium" : "text-[#475569]"}>
+                                      {opt.optionText}
+                                    </span>
+                                  </div>
+
+                                  {isSelected && (
+                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-[#4F46E5] text-white shrink-0 shadow-2xs">
+                                      Selected Option
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Selected Option Summary Readout */}
+                          <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] text-xs">
+                            <span className="text-[10px] uppercase font-bold text-[#64748B] block">
+                              Student&apos;s Selected Response
+                            </span>
+                            <div className="font-bold text-[#0F172A] text-sm mt-0.5">
+                              {isAnswered ? (
+                                <>
+                                  Option {selectedOptionInfo.letter}:{" "}
+                                  <span className="font-normal text-[#334155]">{selectedOptionInfo.text}</span>
+                                </>
+                              ) : (
+                                <span className="text-slate-400 italic font-normal text-xs">No option selected</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Question Type 3: LIKERT_5 / RATING_5 (Psychometric / Competency)
+                    if (q.questionType === "LIKERT_5" || q.questionType === "RATING_5") {
+                      const rawScore = getCandidateLikertValue(q.studentAnswer);
+                      const isAnswered = typeof rawScore === "number";
+                      const directionalScore =
+                        q.reverseKeyed && isAnswered ? 6 - rawScore : rawScore;
+
+                      return (
+                        <div
+                          key={q.id}
+                          className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-xs space-y-4"
+                        >
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-[#4F46E5] font-mono">
+                                  Q{qIdx + 1}.
+                                </span>
+                                {q.category && (
+                                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                    {q.category}
+                                  </span>
+                                )}
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+                                  {q.questionType}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-[#0F172A] leading-snug pt-1">
+                                {q.questionText}
+                              </h4>
+                            </div>
+
+                            {/* Reverse Keying Indicator Badge */}
+                            <div>
+                              {q.reverseKeyed ? (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                                  <ArrowLeftRight className="w-3.5 h-3.5" /> Reverse-Keyed Item
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                                  Standard Direction
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 5-Point Scale Visual Steps */}
+                          <div className="space-y-2 pt-1">
+                            <div className="grid grid-cols-5 gap-2">
+                              {[1, 2, 3, 4, 5].map((val) => {
+                                const isSelected = isAnswered && rawScore === val;
+                                return (
+                                  <div
+                                    key={val}
+                                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                                      isSelected
+                                        ? "bg-[#0F172A] text-white border-[#0F172A] shadow-xs font-bold ring-2 ring-[#0F172A]/20"
+                                        : "bg-slate-50 text-slate-500 border-slate-200"
+                                    }`}
+                                  >
+                                    <div className="text-base font-black font-mono">{val}</div>
+                                    <div className="text-[9px] uppercase tracking-wider truncate mt-0.5">
+                                      {val === 1
+                                        ? "Min (1)"
+                                        : val === 3
+                                        ? "Mid (3)"
+                                        : val === 5
+                                        ? "Max (5)"
+                                        : `Level ${val}`}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Objective Evaluator Reference Card */}
+                          <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] space-y-2 text-xs">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-[#64748B] block">
+                                  Candidate Raw Response
+                                </span>
+                                <span className="font-extrabold text-[#0F172A] text-sm font-mono">
+                                  {isAnswered ? `${rawScore} / 5` : <span className="text-slate-400 italic font-sans font-normal text-xs">Unanswered</span>}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-[#64748B] block">
+                                  Directional Construct Index (Reference)
+                                </span>
+                                <span className="font-extrabold text-indigo-700 text-sm font-mono">
+                                  {isAnswered ? (
+                                    q.reverseKeyed ? (
+                                      <>Index {directionalScore} <span className="text-xs font-normal text-slate-500 font-sans">(6 - {rawScore})</span></>
+                                    ) : (
+                                      `Index ${directionalScore} (Standard)`
+                                    )
+                                  ) : (
+                                    <span className="text-slate-400 italic font-sans font-normal text-xs">-</span>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+
+                            {q.reverseKeyed && (
+                              <p className="text-[11px] text-amber-800 bg-amber-50/80 p-2 rounded-lg border border-amber-200/80">
+                                <strong>Evaluator Reference Note:</strong> Stored candidate response is unmodified ({rawScore}). Inversion index ({directionalScore}) is calculated exclusively as an objective evaluator aid.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Question Type 4: FORCED_RANKING (Work Values)
+                    if (q.questionType === "FORCED_RANKING") {
+                      const rank = getCandidateForcedRank(q.studentAnswer);
+                      const isRanked = typeof rank === "number";
+                      const isTop = isRanked && rank <= 3;
+                      const isMid = isRanked && rank > 3 && rank <= 7;
+
+                      return (
+                        <div
+                          key={q.id}
+                          className="p-5 rounded-2xl border border-[#E2E8F0] bg-white shadow-xs space-y-3"
+                        >
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-[#4F46E5] font-mono">
+                                  Q{qIdx + 1}.
+                                </span>
+                                {q.category && (
+                                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                                    {q.category}
+                                  </span>
+                                )}
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  {q.questionType}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-[#0F172A] leading-snug pt-1">
+                                {q.questionText}
+                              </h4>
+                            </div>
+
+                            {/* Assigned Rank Badge */}
+                            <div>
+                              <span
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black font-mono border ${
+                                  isTop
+                                    ? "bg-emerald-600 text-white border-emerald-700 shadow-2xs"
+                                    : isMid
+                                    ? "bg-indigo-600 text-white border-indigo-700 shadow-2xs"
+                                    : "bg-slate-100 text-slate-700 border-slate-300"
+                                }`}
+                              >
+                                Assigned Rank: #{rank ?? "Unranked"} of 10
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] text-xs flex items-center justify-between">
+                            <span className="text-slate-500">Value Hierarchy Tier:</span>
+                            <span className="font-bold text-[#0F172A]">
+                              {isTop ? "Top Priority (Ranks 1–3)" : isMid ? "Mid Priority (Ranks 4–7)" : "Lower Priority (Ranks 8–10)"}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Fallback for any other type
+                    return (
+                      <div
+                        key={q.id}
+                        className="p-4 sm:p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="text-xs sm:text-sm font-bold text-[#0F172A] leading-snug">
+                            <span className="text-[#4F46E5] mr-1.5 font-mono">Q{qIdx + 1}.</span>
+                            {q.questionText}
+                          </h4>
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-white text-[#64748B] border border-[#E2E8F0] shrink-0">
+                            {q.questionType}
+                          </span>
+                        </div>
+
+                        {/* Options Grid */}
+                        <div className="space-y-1.5 pt-1">
+                          {q.options.map((opt) => {
+                            const isSelected =
+                              q.studentAnswer === opt.id ||
+                              q.studentAnswer?.selectedOptionId === opt.id ||
+                              q.studentAnswer === opt.optionText;
+
+                            return (
+                              <div
+                                key={opt.id}
+                                className={`p-2.5 rounded-lg text-xs font-medium border transition-all flex items-center justify-between ${
+                                  isSelected
+                                    ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-bold"
+                                    : "bg-white border-[#E2E8F0] text-[#64748B]"
+                                }`}
+                              >
+                                <span>{opt.optionText}</span>
+                                {isSelected && (
+                                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-600 text-white">
+                                    Selected Option
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : null}
           </div>

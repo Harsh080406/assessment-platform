@@ -35,92 +35,48 @@ async function resetAdmin() {
   console.log("Connecting to database with URL:", process.env.DATABASE_URL?.replace(/:[^:@]+@/, ":****@"));
   const passwordHash = await bcrypt.hash("Password123!", 12);
 
-  // 1. Upsert Admin
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@aurapath.com" },
-    update: {
-      passwordHash,
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-    create: {
-      email: "admin@aurapath.com",
-      passwordHash,
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-  });
+  const accounts = [
+    { email: "admin@aurapath.com", role: UserRole.ADMIN },
+    { email: "staff@aurapath.com", role: UserRole.STAFF },
+    { email: "student@aurapath.com", role: UserRole.STUDENT },
+    { email: "admin@alderwoodvantage.com", role: UserRole.ADMIN },
+    { email: "staff@alderwoodvantage.com", role: UserRole.STAFF },
+    { email: "student@alderwoodvantage.com", role: UserRole.STUDENT },
+  ];
 
-  const adminAuth = await prisma.authMethod.findFirst({
-    where: { userId: admin.id, type: AuthType.PASSWORD },
-  });
-  if (!adminAuth) {
-    await prisma.authMethod.create({
-      data: { userId: admin.id, type: AuthType.PASSWORD },
+  for (const acc of accounts) {
+    const user = await prisma.user.upsert({
+      where: { email: acc.email },
+      update: {
+        passwordHash,
+        role: acc.role,
+        status: UserStatus.ACTIVE,
+        emailVerified: new Date(),
+      },
+      create: {
+        email: acc.email,
+        passwordHash,
+        role: acc.role,
+        status: UserStatus.ACTIVE,
+        emailVerified: new Date(),
+      },
     });
-  }
 
-  // 2. Upsert Staff
-  const staff = await prisma.user.upsert({
-    where: { email: "staff@aurapath.com" },
-    update: {
-      passwordHash,
-      role: UserRole.STAFF,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-    create: {
-      email: "staff@aurapath.com",
-      passwordHash,
-      role: UserRole.STAFF,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-  });
-
-  const staffAuth = await prisma.authMethod.findFirst({
-    where: { userId: staff.id, type: AuthType.PASSWORD },
-  });
-  if (!staffAuth) {
-    await prisma.authMethod.create({
-      data: { userId: staff.id, type: AuthType.PASSWORD },
+    const auth = await prisma.authMethod.findFirst({
+      where: { userId: user.id, type: AuthType.PASSWORD },
     });
-  }
-
-  // 3. Upsert Student
-  const student = await prisma.user.upsert({
-    where: { email: "student@aurapath.com" },
-    update: {
-      passwordHash,
-      role: UserRole.STUDENT,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-    create: {
-      email: "student@aurapath.com",
-      passwordHash,
-      role: UserRole.STUDENT,
-      status: UserStatus.ACTIVE,
-      emailVerified: new Date(),
-    },
-  });
-
-  const studentAuth = await prisma.authMethod.findFirst({
-    where: { userId: student.id, type: AuthType.PASSWORD },
-  });
-  if (!studentAuth) {
-    await prisma.authMethod.create({
-      data: { userId: student.id, type: AuthType.PASSWORD },
-    });
+    if (!auth) {
+      await prisma.authMethod.create({
+        data: { userId: user.id, type: AuthType.PASSWORD },
+      });
+    }
   }
 
   console.log("✓ Successfully verified & updated credentials in database:");
   console.log("  ----------------------------------------------");
-  console.log("  ADMIN:   admin@aurapath.com   / Password123!");
-  console.log("  STAFF:   staff@aurapath.com   / Password123!");
-  console.log("  STUDENT: student@aurapath.com / Password123!");
+  console.log("  ADMIN:   admin@alderwoodvantage.com   / Password123!");
+  console.log("  STAFF:   staff@alderwoodvantage.com   / Password123!");
+  console.log("  STUDENT: student@alderwoodvantage.com / Password123!");
   console.log("  ----------------------------------------------");
 
   await prisma.$disconnect();

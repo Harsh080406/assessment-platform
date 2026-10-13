@@ -1,0 +1,2833 @@
+{
+  "version": 1,
+  "title": "AuraPath Comprehensive Cognitive & Competency Assessment",
+  "description": "Multi-dimensional psychometric, competency, situational judgment, and aptitude diagnostic battery.",
+  "totalQuestions": 126,
+  "estimatedDurationMins": 45,
+  "sections": [
+    {
+      "title": "Psychometric Assessment",
+      "description": "Evaluates Big Five personality traits, Holland RIASEC vocational interests, and core work values.",
+      "subCategory": null,
+      "displayOrder": 1,
+      "expectedCount": 42
+    },
+    {
+      "title": "Competency Self-Report",
+      "description": "Self-report evaluation across 16 foundational professional and cognitive competencies.",
+      "subCategory": null,
+      "displayOrder": 2,
+      "expectedCount": 16
+    },
+    {
+      "title": "Situational Judgment Test",
+      "description": "Real-world dilemma scenarios measuring judgment, decision quality, and collaborative instincts.",
+      "subCategory": null,
+      "displayOrder": 3,
+      "expectedCount": 38
+    },
+    {
+      "title": "Aptitude",
+      "description": "Objective evaluation of Verbal Reasoning, Numerical Reasoning, and Logical Reasoning.",
+      "subCategory": null,
+      "displayOrder": 4,
+      "expectedCount": 30
+    }
+  ],
+  "questions": [
+    {
+      "itemCode": "Q1",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Openness",
+      "questionText": "I enjoy exploring new ideas even if they seem impractical at first.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q2",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Openness",
+      "questionText": "I prefer trying new approaches over sticking to familiar methods.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q3",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Openness",
+      "questionText": "I find abstract or theoretical discussions genuinely interesting.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q4",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Openness",
+      "questionText": "I rarely feel curious about topics outside my usual interests.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": true,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q5",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Conscientiousness",
+      "questionText": "I like to plan my day before I start it.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q6",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Conscientiousness",
+      "questionText": "I complete tasks I start, even once the novelty wears off.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q7",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Conscientiousness",
+      "questionText": "I keep my belongings, notes, and schedule reasonably organized.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q8",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Conscientiousness",
+      "questionText": "I often leave tasks unfinished until the very last moment.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": true,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q9",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Extraversion",
+      "questionText": "I feel energized after spending time with a large group of people.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q10",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Extraversion",
+      "questionText": "I'm usually the one who starts conversations in a new group.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q11",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Extraversion",
+      "questionText": "I enjoy being the center of attention at social events.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q12",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Extraversion",
+      "questionText": "I prefer spending most of my free time alone.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": true,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q13",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Agreeableness",
+      "questionText": "I go out of my way to make others feel comfortable.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q14",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Agreeableness",
+      "questionText": "I find it easy to trust people I've just met.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q15",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Agreeableness",
+      "questionText": "I try to see things from the other person's point of view, even during disagreements.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q16",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Agreeableness",
+      "questionText": "I often prioritize being right over keeping the peace.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": true,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q17",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Emotional Stability",
+      "questionText": "I stay calm even when things don't go as planned.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q18",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Emotional Stability",
+      "questionText": "Small setbacks don't affect my mood for long.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q19",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Emotional Stability",
+      "questionText": "I rarely feel overwhelmed by everyday pressures.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Q20",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Personality",
+      "category": "Emotional Stability",
+      "questionText": "I get anxious easily when facing uncertainty.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": true,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I1",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Realistic",
+      "questionText": "Repairing a broken appliance or gadget.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I2",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Realistic",
+      "questionText": "Working hands-on with tools or machinery.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I3",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Investigative",
+      "questionText": "Solving a complex puzzle or brain teaser just for fun.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I4",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Investigative",
+      "questionText": "Researching a topic in depth purely out of curiosity.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I5",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Artistic",
+      "questionText": "Creating something original — art, music, writing, or design.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I6",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Artistic",
+      "questionText": "Expressing an idea in an unconventional, non-standard way.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I7",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Social",
+      "questionText": "Helping a friend work through a personal problem.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I8",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Social",
+      "questionText": "Teaching or explaining a concept to someone who's struggling with it.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I9",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Enterprising",
+      "questionText": "Convincing a group to support an idea you believe in.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I10",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Enterprising",
+      "questionText": "Taking charge of organizing a group project or event.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I11",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Conventional",
+      "questionText": "Organizing information into clear systems (spreadsheets, files, folders).",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "I12",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Interests",
+      "category": "Conventional",
+      "questionText": "Following a clear, established process rather than improvising.",
+      "questionType": "RATING_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V1",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Autonomy",
+      "questionText": "Having freedom to decide how you do your own work.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V2",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Financial Security",
+      "questionText": "Having a stable, predictable income.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V3",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Recognition / Status",
+      "questionText": "Being respected and acknowledged for your achievements.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V4",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Impact / Helping Others",
+      "questionText": "Feeling like your work genuinely helps people.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V5",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Creative Expression",
+      "questionText": "Being able to bring original ideas to life.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V6",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Structure / Stability",
+      "questionText": "Having clear expectations and a predictable routine.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V7",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Leadership / Influence",
+      "questionText": "Guiding or influencing others' decisions.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V8",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Continuous Learning",
+      "questionText": "Constantly acquiring new skills and knowledge.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V9",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Work-Life Balance",
+      "questionText": "Having enough time and energy for life outside work.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "V10",
+      "sectionTitle": "Psychometric Assessment",
+      "subCategory": "Values",
+      "category": "Competition / Achievement",
+      "questionText": "Measuring yourself against goals or other people and winning.",
+      "questionType": "FORCED_RANKING",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp1",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Critical Thinking",
+      "questionText": "Before agreeing with a popular opinion in class/group, I usually check if it actually makes sense to me.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp2",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Creativity & Innovation",
+      "questionText": "When given a project with no fixed format, I enjoy designing my own approach rather than following a template.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp3",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Decision Quality",
+      "questionText": "When I have to choose between two good options under time pressure, I can usually decide without much stress.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp4",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Learning Agility",
+      "questionText": "I can usually figure out a new app/tool/system by experimenting, without needing a manual.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp5",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Goal Orientation",
+      "questionText": "I usually know exactly what I want to achieve this month, not just this year.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp6",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Initiative",
+      "questionText": "If I notice a problem in a group project that isn't 'my part,' I usually step in anyway.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp7",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Time Management",
+      "questionText": "I usually finish assignments with enough time to review them, not right before the deadline.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp8",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Resilience & Perseverance",
+      "questionText": "After doing badly in an exam/competition, I usually bounce back and try again within a few days.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp9",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Communication",
+      "questionText": "When explaining something technical to a non-expert (like a parent), I can usually simplify it without losing the point.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp10",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Collaboration & Teamwork",
+      "questionText": "In group work, I'm equally comfortable leading or supporting, depending on what's needed.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp11",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Influencing",
+      "questionText": "When I disagree with a group decision, I can usually get others to reconsider by explaining my reasoning well.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp12",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Empathy",
+      "questionText": "I usually notice when a friend or teammate is upset, even if they don't say it directly.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp13",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Adaptability",
+      "questionText": "When plans change suddenly (e.g., exam date moved, project scope changed), I adjust without much stress.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp14",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Self-Awareness",
+      "questionText": "I can list two things I'm genuinely not good at, without just picking fake weaknesses.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp15",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Integrity & Ethics",
+      "questionText": "If I made a mistake that no one else noticed, I'd still mention it.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "Comp16",
+      "sectionTitle": "Competency Self-Report",
+      "subCategory": null,
+      "category": "Stress Tolerance",
+      "questionText": "During exam week or high-pressure deadlines, I can usually still think clearly.",
+      "questionType": "LIKERT_5",
+      "reverseKeyed": false,
+      "options": [],
+      "correctKey": null,
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "SJT1",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Critical Thinking",
+      "questionText": "A WhatsApp forward claims a well-known scholarship is being discontinued this year. Everyone in your friend group is panicking and sharing it further.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Share it immediately to warn others before it's too late."
+        },
+        {
+          "label": "B",
+          "text": "Check the scholarship's official website or social media before reacting."
+        },
+        {
+          "label": "C",
+          "text": "Ask a senior/teacher if they've heard anything about it."
+        },
+        {
+          "label": "D",
+          "text": "Ignore it completely since forwards are usually fake anyway."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT2",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Critical Thinking",
+      "questionText": "Your group project's data shows a surprising result that contradicts what you expected going in.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Report the surprising result as-is since that's what the data shows."
+        },
+        {
+          "label": "B",
+          "text": "Quietly adjust the data slightly so it matches the expected pattern."
+        },
+        {
+          "label": "C",
+          "text": "Double-check your method for errors before either reporting or dismissing the result."
+        },
+        {
+          "label": "D",
+          "text": "Drop that data point since it doesn't fit the story you wanted to tell."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "C",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT3",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Critical Thinking",
+      "questionText": "A classmate strongly insists their opinion on a controversial current-affairs topic is 'just common sense' and gets annoyed when questioned.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Agree to avoid conflict, even though you're not fully convinced."
+        },
+        {
+          "label": "B",
+          "text": "Ask them what evidence their view is based on, out of genuine curiosity."
+        },
+        {
+          "label": "C",
+          "text": "Argue back with an opposing opinion just as forcefully."
+        },
+        {
+          "label": "D",
+          "text": "Change the subject to avoid the tension."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT4",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Creativity & Innovation",
+      "questionText": "Your team's project brief is unusually open-ended — 'present a solution to reduce food waste on campus,' with no fixed format required.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Ask the professor/mentor exactly what format they expect, to be safe."
+        },
+        {
+          "label": "B",
+          "text": "Follow the same PowerPoint format your class always uses for projects."
+        },
+        {
+          "label": "C",
+          "text": "Brainstorm 3–4 completely different approaches before picking a direction."
+        },
+        {
+          "label": "D",
+          "text": "Copy the structure of a similar project you've seen online."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "C",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT5",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Creativity & Innovation",
+      "questionText": "You're stuck on a design/assignment problem and your usual approach isn't working.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Keep trying the same approach with small tweaks."
+        },
+        {
+          "label": "B",
+          "text": "Look at how a completely unrelated field solves a similar type of problem for inspiration."
+        },
+        {
+          "label": "C",
+          "text": "Ask someone else to just do that part for you."
+        },
+        {
+          "label": "D",
+          "text": "Take a break and come back to it later without changing approach."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT6",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Decision Quality",
+      "questionText": "You've been offered two summer opportunities: a confirmed paid internship starting in 3 days, and a more prestigious unpaid research role that hasn't confirmed a start date and may fall through.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Take the paid internship immediately since it's confirmed and reliable."
+        },
+        {
+          "label": "B",
+          "text": "Ask the research contact for a firm decision date, and commit to the internship if you don't hear back in 24–48 hrs."
+        },
+        {
+          "label": "C",
+          "text": "Wait for the research opportunity as long as possible since it's more prestigious, risking losing both."
+        },
+        {
+          "label": "D",
+          "text": "Take the research opportunity on hope, without checking if it's confirmed."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT7",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Decision Quality",
+      "questionText": "Halfway through a group project, you realize your team's chosen approach has a major flaw, but changing course now would cost significant time.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Continue with the current approach since you've already invested time in it."
+        },
+        {
+          "label": "B",
+          "text": "Flag the flaw to the team immediately and discuss whether to adjust or continue."
+        },
+        {
+          "label": "C",
+          "text": "Quietly try to fix the flaw yourself without telling the team."
+        },
+        {
+          "label": "D",
+          "text": "Wait until closer to the deadline to see if the flaw actually causes a real problem."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT8",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Decision Quality",
+      "questionText": "You have to choose electives/subjects for next semester. One option is what you're genuinely interested in; another is what most of your friends are choosing.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Choose based on what your friends are picking, since group study will help."
+        },
+        {
+          "label": "B",
+          "text": "Research both options properly (course content, outcomes) before deciding."
+        },
+        {
+          "label": "C",
+          "text": "Pick your interest area without checking course specifics, since you already 'know' you'll like it."
+        },
+        {
+          "label": "D",
+          "text": "Flip a coin since both options seem fine."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "D"
+    },
+    {
+      "itemCode": "SJT9",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Learning Agility",
+      "questionText": "You're given a new software tool for a project with no formal training provided, and the deadline is in 4 days.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Wait for someone to teach you properly before starting."
+        },
+        {
+          "label": "B",
+          "text": "Explore the tool yourself using tutorials/forums while starting on simpler parts of the task."
+        },
+        {
+          "label": "C",
+          "text": "Ask a friend to do the parts requiring the new tool."
+        },
+        {
+          "label": "D",
+          "text": "Use an older, familiar tool instead, even if it's not ideal for the task."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT10",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Learning Agility",
+      "questionText": "Feedback on your last assignment pointed out a recurring mistake in how you structure your arguments.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Note it down and consciously check for that mistake in your next assignment."
+        },
+        {
+          "label": "B",
+          "text": "Feel discouraged but don't change your approach next time."
+        },
+        {
+          "label": "C",
+          "text": "Ask a friend to proofread for that specific issue next time, without addressing it yourself."
+        },
+        {
+          "label": "D",
+          "text": "Assume it was a one-off and move on without reflecting on it."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT11",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Goal Orientation",
+      "questionText": "At the start of the semester, you set a goal to improve your grade in a difficult subject, but 6 weeks in, you haven't tracked any progress.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Keep the goal in mind generally and hope things improve by exam time."
+        },
+        {
+          "label": "B",
+          "text": "Set a specific target (e.g., score X in the next test) and a plan to check progress weekly."
+        },
+        {
+          "label": "C",
+          "text": "Give up on the goal since it's already halfway through the semester."
+        },
+        {
+          "label": "D",
+          "text": "Study a bit more than usual without a specific target or check-in plan."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT12",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Goal Orientation",
+      "questionText": "You want to build a skill (e.g., public speaking) over the next few months but have a busy schedule.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Wait for a 'less busy' time to start, since consistent effort feels hard right now."
+        },
+        {
+          "label": "B",
+          "text": "Break the goal into small weekly practice sessions that fit your current schedule."
+        },
+        {
+          "label": "C",
+          "text": "Sign up for an intensive one-time workshop and consider the goal 'done' after that."
+        },
+        {
+          "label": "D",
+          "text": "Mention the goal to friends for accountability, without a concrete plan."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT13",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Initiative",
+      "questionText": "You're doing a 3-week internship. You finish your assigned task on day 2 of a 5-day task list because it was simpler than expected. Your supervisor is in back-to-back meetings and hasn't given you the next task yet.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Wait for the supervisor to notice you're free and assign the next task."
+        },
+        {
+          "label": "B",
+          "text": "Message the supervisor asking what to do next, and meanwhile review your earlier work for improvements."
+        },
+        {
+          "label": "C",
+          "text": "Ask a co-intern what they're doing and just start helping them without checking."
+        },
+        {
+          "label": "D",
+          "text": "Take a break since your assigned work for the day is technically done."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT14",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Initiative",
+      "questionText": "You notice a recurring problem in how your college club/committee organizes events (e.g., last-minute planning), but it's not officially 'your responsibility.'",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Mention it to friends but not to anyone who could actually fix it."
+        },
+        {
+          "label": "B",
+          "text": "Propose a simple fix to the committee lead, even though it's not your role."
+        },
+        {
+          "label": "C",
+          "text": "Say nothing since it's not your job to fix."
+        },
+        {
+          "label": "D",
+          "text": "Complain about it after events go wrong, without proposing solutions."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT15",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Time Management",
+      "questionText": "You have three assignments due the same week, and you've realized this only 4 days before the first deadline.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Start with whichever assignment feels easiest, and hope you finish the rest in time."
+        },
+        {
+          "label": "B",
+          "text": "List all three, estimate time needed for each, and build a day-by-day plan."
+        },
+        {
+          "label": "C",
+          "text": "Focus entirely on the first deadline and worry about the rest after."
+        },
+        {
+          "label": "D",
+          "text": "Try to do parts of all three simultaneously without a clear plan."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "D"
+    },
+    {
+      "itemCode": "SJT16",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Time Management",
+      "questionText": "You consistently find yourself starting assignments the night before they're due, even though you know about them weeks in advance.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Accept this as just 'how you work' since you usually still finish on time."
+        },
+        {
+          "label": "B",
+          "text": "Set earlier personal deadlines and use a planner to track upcoming work."
+        },
+        {
+          "label": "C",
+          "text": "Blame the workload for not leaving you enough time."
+        },
+        {
+          "label": "D",
+          "text": "Try to start earlier next time, without a specific system change."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT17",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Resilience & Perseverance",
+      "questionText": "You did poorly on an important exam/competition despite preparing seriously.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Take a short break to process it, then review what went wrong and adjust your approach for next time."
+        },
+        {
+          "label": "B",
+          "text": "Conclude that you're just not good at this subject/skill and consider giving up on it."
+        },
+        {
+          "label": "C",
+          "text": "Blame the exam/competition for being unfair, without reviewing your own preparation."
+        },
+        {
+          "label": "D",
+          "text": "Immediately jump back into the same prep routine without reflecting on what didn't work."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT18",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Resilience & Perseverance",
+      "questionText": "A club/team you're part of loses an important competition after months of preparation.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Feel disappointed for a while, then discuss with the team what to improve for next time."
+        },
+        {
+          "label": "B",
+          "text": "Quit the club/team since the effort clearly 'didn't pay off.'"
+        },
+        {
+          "label": "C",
+          "text": "Move on quickly without any discussion of what happened."
+        },
+        {
+          "label": "D",
+          "text": "Blame specific teammates for the loss."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT19",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Communication",
+      "questionText": "You need to explain a technical topic from your coursework to a family member who has no background in it.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Use the same explanation and terms you'd use with a classmate."
+        },
+        {
+          "label": "B",
+          "text": "Simplify the explanation using everyday examples, and check if they followed."
+        },
+        {
+          "label": "C",
+          "text": "Give a very short, vague answer since a full explanation would take too long."
+        },
+        {
+          "label": "D",
+          "text": "Simplify the explanation but don't check if they actually understood."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT20",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Communication",
+      "questionText": "You're writing a group report and one section, written by a teammate, is confusing and hard to follow.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Rewrite it yourself without telling them, to save time and avoid awkwardness."
+        },
+        {
+          "label": "B",
+          "text": "Point out specific confusing parts to them and suggest how to clarify."
+        },
+        {
+          "label": "C",
+          "text": "Leave it as-is since it's 'their part' of the report."
+        },
+        {
+          "label": "D",
+          "text": "Mention generally that 'this section needs work' without specifics."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT21",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Communication",
+      "questionText": "During a group presentation, you notice the audience looks confused partway through your explanation.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Continue as planned, since stopping might look unprofessional."
+        },
+        {
+          "label": "B",
+          "text": "Pause, ask if anything needs clarifying, and adjust your explanation."
+        },
+        {
+          "label": "C",
+          "text": "Speed up to finish the section faster."
+        },
+        {
+          "label": "D",
+          "text": "Simplify only the very next sentence, then continue as originally planned."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT22",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Collaboration & Teamwork",
+      "questionText": "In a 4-person group project, one member consistently submits their part late, forcing others to rush. The deadline is in 2 days.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Call a quick group conversation, calmly flag the pattern, and ask what support they need to stay on track."
+        },
+        {
+          "label": "B",
+          "text": "Quietly redo their part yourself without saying anything, to avoid conflict."
+        },
+        {
+          "label": "C",
+          "text": "Complain about them to the other two members without addressing them directly."
+        },
+        {
+          "label": "D",
+          "text": "Send a group message reminding everyone of the deadline, without singling anyone out."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "B"
+    },
+    {
+      "itemCode": "SJT23",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Collaboration & Teamwork",
+      "questionText": "You strongly disagree with the direction your group has chosen for a project, but you're outvoted 3-to-1.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Go along with the group's direction, but do the minimum required for your part."
+        },
+        {
+          "label": "B",
+          "text": "State your concern once clearly, and if outvoted, commit fully to making the chosen direction work."
+        },
+        {
+          "label": "C",
+          "text": "Keep raising the same objection repeatedly during execution."
+        },
+        {
+          "label": "D",
+          "text": "Quietly work on your preferred approach on the side, in case it's needed later."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT24",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Collaboration & Teamwork",
+      "questionText": "Your group project needs both a 'big picture' thinker and someone to manage details/logistics. You're naturally the ideas person, but the team currently lacks someone handling logistics.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Stick to generating ideas since that's your strength, and hope someone else handles logistics."
+        },
+        {
+          "label": "B",
+          "text": "Take on the logistics role yourself for this project, since the team needs it."
+        },
+        {
+          "label": "C",
+          "text": "Suggest the team find someone else for logistics, without offering to help find them."
+        },
+        {
+          "label": "D",
+          "text": "Do a bit of both, without fully committing to logistics tasks."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT25",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Influencing",
+      "questionText": "You believe your group should change their project topic, but the group already seems attached to the current one.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Insist on your topic being better without giving specific reasons."
+        },
+        {
+          "label": "B",
+          "text": "Present 2–3 concrete reasons your topic would work better, tailored to what the group cares about."
+        },
+        {
+          "label": "C",
+          "text": "Go along with the group's choice without raising your view at all."
+        },
+        {
+          "label": "D",
+          "text": "Mention your preference once vaguely, then drop it if there's any pushback."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT26",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Influencing",
+      "questionText": "You want your college club to try a new event format that hasn't been done before, but senior members prefer the traditional format.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Propose a small pilot version of the new format alongside the traditional one, to demonstrate its value with low risk."
+        },
+        {
+          "label": "B",
+          "text": "Push hard for full adoption of the new format right away."
+        },
+        {
+          "label": "C",
+          "text": "Drop the idea after the first pushback from seniors."
+        },
+        {
+          "label": "D",
+          "text": "Complain to peers about the club being resistant to change."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT27",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Empathy",
+      "questionText": "A teammate has been unusually quiet and less responsive in group chats over the past week, though they haven't said anything is wrong.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Assume they're just busy and continue as normal."
+        },
+        {
+          "label": "B",
+          "text": "Check in with them privately to ask if everything's okay."
+        },
+        {
+          "label": "C",
+          "text": "Mention to the group that they've been 'missing in action' lately."
+        },
+        {
+          "label": "D",
+          "text": "Wait for them to bring it up themselves if something's wrong."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT28",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Empathy",
+      "questionText": "A friend did poorly in an exam and seems upset, but you did well in the same exam.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Avoid mentioning your own result at all until they bring it up."
+        },
+        {
+          "label": "B",
+          "text": "Acknowledge their disappointment first, and be thoughtful about when/how you share your own result."
+        },
+        {
+          "label": "C",
+          "text": "Share your good result right away, assuming they'll be happy for you."
+        },
+        {
+          "label": "D",
+          "text": "Downplay your own result significantly to avoid the topic entirely, even later when they ask."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT29",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Adaptability",
+      "questionText": "Your project's format requirements are changed by the professor two days before the deadline, requiring significant rework.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Express frustration to the professor about the late change before doing anything else."
+        },
+        {
+          "label": "B",
+          "text": "Quickly assess what needs to change, replan your remaining time, and adjust."
+        },
+        {
+          "label": "C",
+          "text": "Continue with the original format and hope it's still accepted."
+        },
+        {
+          "label": "D",
+          "text": "Panic and rush to redo everything without a clear new plan."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT30",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Adaptability",
+      "questionText": "You're assigned to a new group for a project after your previous group was reshuffled, and you don't know any of the new members well.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Wait for others to take the lead on introductions and coordination."
+        },
+        {
+          "label": "B",
+          "text": "Proactively introduce yourself and ask how the group wants to organize work."
+        },
+        {
+          "label": "C",
+          "text": "Stick mostly to yourself until you get to know them naturally over time."
+        },
+        {
+          "label": "D",
+          "text": "Ask to be moved back to your old group."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "D"
+    },
+    {
+      "itemCode": "SJT31",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Adaptability",
+      "questionText": "Midway through an internship, your assigned project is cancelled and you're given a completely different, unfamiliar task area.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Express disappointment about the change to your supervisor and ask for the old project back."
+        },
+        {
+          "label": "B",
+          "text": "Ask clarifying questions about the new task and start researching the unfamiliar area immediately."
+        },
+        {
+          "label": "C",
+          "text": "Do the minimum required on the new task since it wasn't what you signed up for."
+        },
+        {
+          "label": "D",
+          "text": "Try to keep working on the old project informally alongside the new one."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT32",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Self-Awareness",
+      "questionText": "A friend gives you feedback that you tend to dominate group discussions without realizing it.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Dismiss the feedback since you feel you're just being enthusiastic, not dominating."
+        },
+        {
+          "label": "B",
+          "text": "Reflect on it, and consciously try to pause more and invite others' input in the next discussion."
+        },
+        {
+          "label": "C",
+          "text": "Feel hurt and avoid group discussions with that friend going forward."
+        },
+        {
+          "label": "D",
+          "text": "Agree it might be true but don't change your behavior."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT33",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Self-Awareness",
+      "questionText": "You're choosing between two elective courses. One aligns with a personal strength; the other seems more 'impressive' on paper but doesn't match how you actually like to work.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Choose the impressive-sounding one since it will look better."
+        },
+        {
+          "label": "B",
+          "text": "Honestly assess which one fits how you actually work and learn best, and choose that."
+        },
+        {
+          "label": "C",
+          "text": "Ask friends what they're choosing and go with the more popular option."
+        },
+        {
+          "label": "D",
+          "text": "Choose the impressive one but plan to put in less effort since it doesn't excite you."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT34",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Integrity & Ethics",
+      "questionText": "You accidentally submit an old draft instead of your final assignment. Your professor doesn't notice and grades it normally with a decent score.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Say nothing — the grade is fine and it's not worth the risk of drawing attention."
+        },
+        {
+          "label": "B",
+          "text": "Email the professor, explain the mistake, and ask if you can resubmit the correct version."
+        },
+        {
+          "label": "C",
+          "text": "Mention it casually to a friend but not the professor."
+        },
+        {
+          "label": "D",
+          "text": "Wait and see if it becomes a problem before deciding what to do."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT35",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Integrity & Ethics",
+      "questionText": "During a group project, you did significantly more work than two of your three teammates, but the professor will grade the group as a whole.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Quietly ensure your name appears first/most prominently on the report, without discussing contribution."
+        },
+        {
+          "label": "B",
+          "text": "Raise the contribution gap honestly with the professor or team beforehand, not just at grading time."
+        },
+        {
+          "label": "C",
+          "text": "Say nothing and just accept the shared grade, even if it feels unfair."
+        },
+        {
+          "label": "D",
+          "text": "Deliberately reduce your own effort next time to 'match' the low-contributing teammates."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "D"
+    },
+    {
+      "itemCode": "SJT36",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Stress Tolerance",
+      "questionText": "You have two major exams and a project deadline all in the same week — more than you can realistically do at full quality.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Push through all three at full effort, sleep very little, and hope for the best."
+        },
+        {
+          "label": "B",
+          "text": "Rank the three by weight/importance, allocate time accordingly, and accept one will get less polish."
+        },
+        {
+          "label": "C",
+          "text": "Panic and end up doing a rushed, low-quality job on all three."
+        },
+        {
+          "label": "D",
+          "text": "Ask for an extension on one, if the option exists, and communicate proactively."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "C"
+    },
+    {
+      "itemCode": "SJT37",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Stress Tolerance",
+      "questionText": "You make a visible mistake during a presentation in front of your class or a panel.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Freeze up and struggle to continue for the rest of the presentation."
+        },
+        {
+          "label": "B",
+          "text": "Briefly acknowledge it if needed, then calmly continue with the rest of the presentation."
+        },
+        {
+          "label": "C",
+          "text": "Apologize repeatedly throughout the rest of the presentation."
+        },
+        {
+          "label": "D",
+          "text": "Rush through the remaining content to finish as quickly as possible."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "B",
+      "leastEffectiveKey": "A"
+    },
+    {
+      "itemCode": "SJT38",
+      "sectionTitle": "Situational Judgment Test",
+      "subCategory": null,
+      "category": "Adaptability / Stress Tolerance",
+      "questionText": "You're told an hour before a scheduled group presentation that the time slot has moved up by a day, and you're not fully ready.",
+      "questionType": "SJT_DUAL_SELECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Present with what you currently have prepared, and calmly flag which parts are still work-in-progress."
+        },
+        {
+          "label": "B",
+          "text": "Ask to postpone the presentation entirely until you feel fully ready."
+        },
+        {
+          "label": "C",
+          "text": "Try to rush and finish full preparation in the remaining hour, high stress and risk of errors."
+        },
+        {
+          "label": "D",
+          "text": "Skip the presentation slot and take whatever penalty follows."
+        }
+      ],
+      "correctKey": null,
+      "mostEffectiveKey": "A",
+      "leastEffectiveKey": "D"
+    },
+    {
+      "itemCode": "VR1",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Analogy",
+      "questionText": "Doctor : Hospital :: Teacher : ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Student"
+        },
+        {
+          "label": "B",
+          "text": "School"
+        },
+        {
+          "label": "C",
+          "text": "Classroom"
+        },
+        {
+          "label": "D",
+          "text": "Book"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR2",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Analogy",
+      "questionText": "Author : Book :: Composer : ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Music"
+        },
+        {
+          "label": "B",
+          "text": "Instrument"
+        },
+        {
+          "label": "C",
+          "text": "Symphony"
+        },
+        {
+          "label": "D",
+          "text": "Orchestra"
+        }
+      ],
+      "correctKey": "C",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR3",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Sentence Completion",
+      "questionText": "The new policy was met with ______ resistance from employees, forcing management to reconsider its rollout.",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "negligible"
+        },
+        {
+          "label": "B",
+          "text": "considerable"
+        },
+        {
+          "label": "C",
+          "text": "favorable"
+        },
+        {
+          "label": "D",
+          "text": "anticipated"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR4",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Odd Word Out",
+      "questionText": "Which word does NOT belong with the others?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Meticulous"
+        },
+        {
+          "label": "B",
+          "text": "Careless"
+        },
+        {
+          "label": "C",
+          "text": "Painstaking"
+        },
+        {
+          "label": "D",
+          "text": "Thorough"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR5",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Critical Reasoning",
+      "questionText": "\"All students who study diligently pass their exams. Ravi passed his exam. Therefore, Ravi studied diligently.\" This argument is:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Logically valid"
+        },
+        {
+          "label": "B",
+          "text": "A logical fallacy (affirming the consequent)"
+        },
+        {
+          "label": "C",
+          "text": "Impossible to determine"
+        },
+        {
+          "label": "D",
+          "text": "Valid only if Ravi is average"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR6",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Reading Comprehension",
+      "questionText": "\"Urban green spaces have been shown to reduce stress levels among city residents, yet many municipal budgets continue to prioritize infrastructure over park development.\" The passage primarily suggests that:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Green spaces are ineffective"
+        },
+        {
+          "label": "B",
+          "text": "There's a mismatch between known benefits and budget priorities"
+        },
+        {
+          "label": "C",
+          "text": "Infrastructure is unnecessary"
+        },
+        {
+          "label": "D",
+          "text": "Stress is unrelated to environment"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR7",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Vocabulary in Context",
+      "questionText": "\"Her explanation was so lucid that even the complex topic became easy to understand.\" 'Lucid' most nearly means:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Confusing"
+        },
+        {
+          "label": "B",
+          "text": "Clear"
+        },
+        {
+          "label": "C",
+          "text": "Lengthy"
+        },
+        {
+          "label": "D",
+          "text": "Technical"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR8",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Critical Reasoning",
+      "questionText": "\"If it rains, the match will be postponed. It is not raining. Therefore, the match will not be postponed.\" This reasoning is:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Valid"
+        },
+        {
+          "label": "B",
+          "text": "A fallacy (denying the antecedent)"
+        },
+        {
+          "label": "C",
+          "text": "Circular"
+        },
+        {
+          "label": "D",
+          "text": "Cannot be determined"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR9",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Analogy",
+      "questionText": "Optimist : Hopeful :: Pessimist : ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Cheerful"
+        },
+        {
+          "label": "B",
+          "text": "Doubtful"
+        },
+        {
+          "label": "C",
+          "text": "Confident"
+        },
+        {
+          "label": "D",
+          "text": "Excited"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "VR10",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Verbal",
+      "category": "Reading Comprehension",
+      "questionText": "\"While remote work has increased flexibility for many employees, it has also blurred the boundary between personal and professional time, leading some to report higher stress despite fewer commuting hours.\" According to the passage, remote work has:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Only positive effects"
+        },
+        {
+          "label": "B",
+          "text": "Both benefits and drawbacks"
+        },
+        {
+          "label": "C",
+          "text": "No effect on stress"
+        },
+        {
+          "label": "D",
+          "text": "Increased commuting time"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR1",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Percentages",
+      "questionText": "A shirt originally priced at ₹1,200 is discounted by 25%, and then an additional 10% is taken off the discounted price. What is the final price?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "₹810"
+        },
+        {
+          "label": "B",
+          "text": "₹840"
+        },
+        {
+          "label": "C",
+          "text": "₹900"
+        },
+        {
+          "label": "D",
+          "text": "₹792"
+        }
+      ],
+      "correctKey": "A",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR2",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Ratios",
+      "questionText": "The ratio of boys to girls in a class is 3:5. If there are 40 students in total, how many are girls?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "15"
+        },
+        {
+          "label": "B",
+          "text": "20"
+        },
+        {
+          "label": "C",
+          "text": "25"
+        },
+        {
+          "label": "D",
+          "text": "30"
+        }
+      ],
+      "correctKey": "C",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR3",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Percentages",
+      "questionText": "If a company's revenue grew from ₹50 lakh to ₹65 lakh in a year, what was the percentage growth?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "20%"
+        },
+        {
+          "label": "B",
+          "text": "25%"
+        },
+        {
+          "label": "C",
+          "text": "30%"
+        },
+        {
+          "label": "D",
+          "text": "15%"
+        }
+      ],
+      "correctKey": "C",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR4",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Averages",
+      "questionText": "A student scored 72, 85, 90, and 68 in four tests. What is the average score?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "76.25"
+        },
+        {
+          "label": "B",
+          "text": "78.75"
+        },
+        {
+          "label": "C",
+          "text": "80"
+        },
+        {
+          "label": "D",
+          "text": "79.5"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR5",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Number Series",
+      "questionText": "2, 6, 12, 20, 30, ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "40"
+        },
+        {
+          "label": "B",
+          "text": "42"
+        },
+        {
+          "label": "C",
+          "text": "38"
+        },
+        {
+          "label": "D",
+          "text": "44"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR6",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Time & Work",
+      "questionText": "If 6 workers can complete a task in 8 days, how many days will 4 workers take to complete the same task, assuming equal work rate?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "10"
+        },
+        {
+          "label": "B",
+          "text": "12"
+        },
+        {
+          "label": "C",
+          "text": "14"
+        },
+        {
+          "label": "D",
+          "text": "16"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR7",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Simple Interest",
+      "questionText": "What is the simple interest on ₹20,000 at 8% per annum for 3 years?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "₹4,800"
+        },
+        {
+          "label": "B",
+          "text": "₹4,000"
+        },
+        {
+          "label": "C",
+          "text": "₹5,200"
+        },
+        {
+          "label": "D",
+          "text": "₹6,000"
+        }
+      ],
+      "correctKey": "A",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR8",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Speed & Distance",
+      "questionText": "A train travels 60 km in 45 minutes. What is its speed in km/h?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "75"
+        },
+        {
+          "label": "B",
+          "text": "80"
+        },
+        {
+          "label": "C",
+          "text": "70"
+        },
+        {
+          "label": "D",
+          "text": "90"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR9",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Profit & Loss",
+      "questionText": "A trader bought an item for ₹800 and sold it for ₹960. What is the profit percentage?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "15%"
+        },
+        {
+          "label": "B",
+          "text": "20%"
+        },
+        {
+          "label": "C",
+          "text": "18%"
+        },
+        {
+          "label": "D",
+          "text": "25%"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "NR10",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Numerical",
+      "category": "Data Interpretation",
+      "questionText": "In a survey of 200 students, 60% preferred online classes. How many students preferred offline classes?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "60"
+        },
+        {
+          "label": "B",
+          "text": "80"
+        },
+        {
+          "label": "C",
+          "text": "100"
+        },
+        {
+          "label": "D",
+          "text": "120"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR1",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Number Series",
+      "questionText": "Which number should come next? 3, 9, 27, 81, ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "162"
+        },
+        {
+          "label": "B",
+          "text": "243"
+        },
+        {
+          "label": "C",
+          "text": "324"
+        },
+        {
+          "label": "D",
+          "text": "729"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR2",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Odd One Out",
+      "questionText": "Which of these does not belong with the others?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Square"
+        },
+        {
+          "label": "B",
+          "text": "Triangle"
+        },
+        {
+          "label": "C",
+          "text": "Circle"
+        },
+        {
+          "label": "D",
+          "text": "Cube"
+        }
+      ],
+      "correctKey": "D",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR3",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Syllogism",
+      "questionText": "All roses are flowers. Some flowers fade quickly. Therefore:",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "All roses fade quickly"
+        },
+        {
+          "label": "B",
+          "text": "Some roses fade quickly"
+        },
+        {
+          "label": "C",
+          "text": "No valid conclusion can be drawn"
+        },
+        {
+          "label": "D",
+          "text": "All flowers are roses"
+        }
+      ],
+      "correctKey": "C",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR4",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Coding-Decoding",
+      "questionText": "If CAT is coded as DBU, how is DOG coded using the same rule (each letter shifted +1)?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "EPH"
+        },
+        {
+          "label": "B",
+          "text": "EPI"
+        },
+        {
+          "label": "C",
+          "text": "FQH"
+        },
+        {
+          "label": "D",
+          "text": "EQH"
+        }
+      ],
+      "correctKey": "A",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR5",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Blood Relations",
+      "questionText": "Pointing to a photograph, Rahul said, 'She is the daughter of my grandfather's only son.' Assuming Rahul is that son, how is the girl related to Rahul?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Sister"
+        },
+        {
+          "label": "B",
+          "text": "Cousin"
+        },
+        {
+          "label": "C",
+          "text": "Daughter"
+        },
+        {
+          "label": "D",
+          "text": "Niece"
+        }
+      ],
+      "correctKey": "A",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR6",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Analogy",
+      "questionText": "Book is to Library as Painting is to ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Artist"
+        },
+        {
+          "label": "B",
+          "text": "Museum"
+        },
+        {
+          "label": "C",
+          "text": "Frame"
+        },
+        {
+          "label": "D",
+          "text": "Canvas"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR7",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Direction Sense",
+      "questionText": "Facing north, Meena turns 90° clockwise, then 180°. Which direction is she facing now?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "South"
+        },
+        {
+          "label": "B",
+          "text": "West"
+        },
+        {
+          "label": "C",
+          "text": "North"
+        },
+        {
+          "label": "D",
+          "text": "East"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR8",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Letter Series",
+      "questionText": "Z, X, V, T, ?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "S"
+        },
+        {
+          "label": "B",
+          "text": "R"
+        },
+        {
+          "label": "C",
+          "text": "Q"
+        },
+        {
+          "label": "D",
+          "text": "P"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR9",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Statement & Assumption",
+      "questionText": "Statement: 'All employees must complete the training by Friday.' Assumption: 'Some employees may not know about the Friday deadline.' Is this assumption implicit in the statement?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "Yes, it is implicit"
+        },
+        {
+          "label": "B",
+          "text": "No, it is not implicit"
+        },
+        {
+          "label": "C",
+          "text": "Cannot be determined"
+        },
+        {
+          "label": "D",
+          "text": "The statement contradicts the assumption"
+        }
+      ],
+      "correctKey": "B",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    },
+    {
+      "itemCode": "LR10",
+      "sectionTitle": "Aptitude",
+      "subCategory": "Logical",
+      "category": "Coding Pattern",
+      "questionText": "In a certain code, MONDAY is written as NPOEBZ (each letter shifted +1). How would TUESDAY be written using the same rule?",
+      "questionType": "MCQ_SINGLE_CORRECT",
+      "reverseKeyed": false,
+      "options": [
+        {
+          "label": "A",
+          "text": "UVFTEBZ"
+        },
+        {
+          "label": "B",
+          "text": "UVGTFCZ"
+        },
+        {
+          "label": "C",
+          "text": "UVFTECZ"
+        },
+        {
+          "label": "D",
+          "text": "TVFTEBZ"
+        }
+      ],
+      "correctKey": "A",
+      "mostEffectiveKey": null,
+      "leastEffectiveKey": null
+    }
+  ]
+}

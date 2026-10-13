@@ -1,17 +1,52 @@
-import { PrismaClient, UserRole, UserStatus, AuthType, AssessmentStatus, QuestionType } from "@prisma/client";
+import {
+  PrismaClient,
+  UserRole,
+  UserStatus,
+  AuthType,
+  AssessmentStatus,
+  QuestionType,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
-/**
- * PHASE 2 SEED SCRIPT
- * Creates:
- * 1. Test users for student, staff, and admin roles.
- * 2. One sample Assessment (3 sections, 10 placeholder questions mixing SINGLE_CHOICE and LIKERT).
- *
- * NOTE: This sample assessment contains placeholder questions for development.
- * Final 75 psychometric assessment questions are client-provided per PROMPT.md §9.
- */
+interface ParsedOption {
+  label: "A" | "B" | "C" | "D";
+  text: string;
+}
+
+interface ParsedQuestionItem {
+  itemCode: string;
+  sectionTitle: string;
+  subCategory: string | null;
+  category: string;
+  questionText: string;
+  questionType: "LIKERT_5" | "RATING_5" | "FORCED_RANKING" | "SJT_DUAL_SELECT" | "MCQ_SINGLE_CORRECT";
+  reverseKeyed: boolean;
+  options: ParsedOption[];
+  correctKey: "A" | "B" | "C" | "D" | null;
+  mostEffectiveKey: "A" | "B" | "C" | "D" | null;
+  leastEffectiveKey: "A" | "B" | "C" | "D" | null;
+}
+
+interface QuestionBankData {
+  version: number;
+  title: string;
+  description: string;
+  totalQuestions: number;
+  estimatedDurationMins: number;
+  sections: {
+    title: string;
+    description: string;
+    subCategory: string | null;
+    displayOrder: number;
+    expectedCount: number;
+  }[];
+  questions: ParsedQuestionItem[];
+}
+
 export async function seedDatabase() {
   console.log("🌱 Starting database seeding...");
 
@@ -83,277 +118,217 @@ export async function seedDatabase() {
   });
   console.log("✓ Seeded Admin user: admin@aurapath.com");
 
-  // 4. Seed Sample Assessment (with Versioning)
-  const assessmentTitle = "AuraPath Pathfinder Psychometric Assessment";
-  const assessmentVersion = 1;
+  // 4. Load Real Question Bank JSON from packages/shared/seed-data
+  const jsonPath = path.resolve(__dirname, "../../../packages/shared/seed-data/question-bank-v1.json");
+  if (!fs.existsSync(jsonPath)) {
+    throw new Error(`Question bank seed data not found at: ${jsonPath}`);
+  }
 
-  let assessment = await prisma.assessment.findUnique({
+  const bankData: QuestionBankData = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+  console.log(`📖 Loaded ${bankData.questions.length} questions from: ${jsonPath}`);
+
+  // Archive any old placeholder assessment
+  await prisma.assessment.updateMany({
+    where: {
+      title: { not: bankData.title },
+      status: AssessmentStatus.ACTIVE,
+    },
+    data: { status: AssessmentStatus.ARCHIVED },
+  });
+
+  // 5. Upsert Real Assessment
+  const assessment = await prisma.assessment.upsert({
     where: {
       title_version: {
-        title: assessmentTitle,
-        version: assessmentVersion,
+        title: bankData.title,
+        version: bankData.version,
       },
     },
-    include: {
-      sections: {
-        include: {
-          questions: {
-            include: {
-              options: true,
+    update: {
+      description: bankData.description,
+      status: AssessmentStatus.ACTIVE,
+      estimatedDurationMins: bankData.estimatedDurationMins,
+    },
+    create: {
+      title: bankData.title,
+      description: bankData.description,
+      version: bankData.version,
+      status: AssessmentStatus.ACTIVE,
+      estimatedDurationMins: bankData.estimatedDurationMins,
+    },
+  });
+
+  console.log(`✓ Active Assessment: "${assessment.title}" (v${assessment.version}, id: ${assessment.id})`);
+
+  // 6. Seed Sections and Questions
+  for (const secMeta of bankData.sections) {
+    const section = await prisma.assessmentSection.upsert({
+      where: {
+        id: `${assessment.id}-sec-${secMeta.displayOrder}`,
+      },
+      update: {
+        title: secMeta.title,
+        description: secMeta.description,
+        subCategory: secMeta.subCategory,
+        displayOrder: secMeta.displayOrder,
+      },
+      create: {
+        id: `${assessment.id}-sec-${secMeta.displayOrder}`,
+        assessmentId: assessment.id,
+        title: secMeta.title,
+        description: secMeta.description,
+        subCategory: secMeta.subCategory,
+        displayOrder: secMeta.displayOrder,
+      },
+    });
+
+    const secQuestions = bankData.questions.filter((q) => q.sectionTitle === secMeta.title);
+    console.log(`Seeding ${secQuestions.length} questions for "${secMeta.title}"...`);
+
+    // Clean existing questions for this section if re-running
+    const existingQuestions = await prisma.question.findMany({
+      where: { sectionId: section.id },
+      select: { id: true },
+    });
+    if (existingQuestions.length > 0) {
+      const qIds = existingQuestions.map((q) => q.id);
+      await prisma.questionOption.deleteMany({ where: { questionId: { in: qIds } } });
+      await prisma.question.deleteMany({ where: { id: { in: qIds } } });
+    }
+
+    for (let qIdx = 0; qIdx < secQuestions.length; qIdx++) {
+      const qData = secQuestions[qIdx];
+
+      // 1. Create Question
+      const question = await prisma.question.create({
+        data: {
+          sectionId: section.id,
+          version: 1,
+          questionText: qData.questionText,
+          questionType: qData.questionType as QuestionType,
+          category: qData.category,
+          reverseKeyed: qData.reverseKeyed,
+          displayOrder: qIdx + 1,
+          required: true,
+        },
+      });
+
+      // 2. Create Options if present
+      if (qData.options && qData.options.length > 0) {
+        const createdOptions = [];
+        for (let optIdx = 0; optIdx < qData.options.length; optIdx++) {
+          const opt = qData.options[optIdx];
+          const createdOpt = await prisma.questionOption.create({
+            data: {
+              questionId: question.id,
+              optionText: opt.text,
+              displayOrder: optIdx + 1, // 1=A, 2=B, 3=C, 4=D
             },
-          },
+          });
+          createdOptions.push({ label: opt.label, id: createdOpt.id });
+        }
+
+        // 3. Link staff-reference scoring keys
+        if (qData.questionType === "MCQ_SINGLE_CORRECT" && qData.correctKey) {
+          const correctOpt = createdOptions.find((o) => o.label === qData.correctKey);
+          if (correctOpt) {
+            await prisma.question.update({
+              where: { id: question.id },
+              data: { correctOptionId: correctOpt.id },
+            });
+          }
+        } else if (qData.questionType === "SJT_DUAL_SELECT") {
+          const mostOpt = createdOptions.find((o) => o.label === qData.mostEffectiveKey);
+          const leastOpt = createdOptions.find((o) => o.label === qData.leastEffectiveKey);
+          await prisma.question.update({
+            where: { id: question.id },
+            data: {
+              mostEffectiveOptionId: mostOpt?.id || null,
+              leastEffectiveOptionId: leastOpt?.id || null,
+            },
+          });
+        }
+      }
+    }
+  }
+
+  // 7. Verify Counts
+  console.log("\n==================== VERIFICATION SUMMARY ====================");
+  const allSections = await prisma.assessmentSection.findMany({
+    where: { assessmentId: assessment.id },
+    orderBy: { displayOrder: "asc" },
+    include: {
+      questions: {
+        select: {
+          id: true,
+          questionType: true,
+          category: true,
+          reverseKeyed: true,
+          correctOptionId: true,
+          mostEffectiveOptionId: true,
+          leastEffectiveOptionId: true,
         },
       },
     },
   });
 
-  if (!assessment) {
-    assessment = await prisma.assessment.create({
-      data: {
-        title: assessmentTitle,
-        description:
-          "A comprehensive 3-part diagnostic evaluating cognitive problem-solving styles, workplace interaction preferences, and intrinsic career motivators.",
-        version: assessmentVersion,
-        status: AssessmentStatus.ACTIVE,
-        estimatedDurationMins: 20,
-        sections: {
-          create: [
-            // SECTION 1: Cognitive Styles & Problem Solving
-            {
-              title: "Section 1: Cognitive Styles & Problem Solving",
-              description:
-                "Explores how you process complex information, decompose ambiguous problems, and synthesize solutions.",
-              displayOrder: 1,
-              questions: {
-                create: [
-                  {
-                    version: 1,
-                    questionText:
-                      "I prefer breaking complex challenges into structured, step-by-step logic before taking concrete action.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 1,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "When facing an unfamiliar problem with missing data, what is your default approach?",
-                    questionType: QuestionType.SINGLE_CHOICE,
-                    displayOrder: 2,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Methodical research and historical data gathering", displayOrder: 1 },
-                        { optionText: "Intuitive experimentation and rapid trial-and-error", displayOrder: 2 },
-                        { optionText: "Collaborative brainstorming with peers or domain experts", displayOrder: 3 },
-                        { optionText: "Abstract conceptual modeling and theoretical deduction", displayOrder: 4 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "I enjoy analyzing abstract patterns and theoretical frameworks more than executing repetitive tasks.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 3,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-            // SECTION 2: Work Environment & Team Dynamics
-            {
-              title: "Section 2: Work Environment & Interpersonal Dynamics",
-              description:
-                "Evaluates your optimal team configuration, communication rhythm, and conflict-resolution style.",
-              displayOrder: 2,
-              questions: {
-                create: [
-                  {
-                    version: 1,
-                    questionText:
-                      "Which work environment consistently produces your highest creative and analytical output?",
-                    questionType: QuestionType.SINGLE_CHOICE,
-                    displayOrder: 1,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Quiet, solitary deep-work focus time", displayOrder: 1 },
-                        { optionText: "High-energy cross-functional team sprints", displayOrder: 2 },
-                        { optionText: "Structured mentorship with continuous feedback loops", displayOrder: 3 },
-                        { optionText: "Fast-paced, autonomous environment with high ownership", displayOrder: 4 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "I feel energized when presenting ideas or negotiating with external stakeholders.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 2,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "I find it easy to adapt when project requirements pivot unexpectedly mid-stream.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 3,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "When resolving a disagreement between team members, what is your primary focus?",
-                    questionType: QuestionType.SINGLE_CHOICE,
-                    displayOrder: 4,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Objective facts and empirical evidence", displayOrder: 1 },
-                        { optionText: "Interpersonal harmony and empathetic alignment", displayOrder: 2 },
-                        { optionText: "Pragmatic compromise to maintain forward momentum", displayOrder: 3 },
-                        { optionText: "Adherence to established principles and standards", displayOrder: 4 },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-            // SECTION 3: Career Motivators & Value Alignment
-            {
-              title: "Section 3: Career Motivators & Value Alignment",
-              description:
-                "Identifies your core intrinsic motivators and long-term career aspirations.",
-              displayOrder: 3,
-              questions: {
-                create: [
-                  {
-                    version: 1,
-                    questionText:
-                      "Making a measurable societal or ethical impact is more important to me than prestige or maximum compensation.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 1,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "Which outcome provides you with the deepest sense of professional fulfillment?",
-                    questionType: QuestionType.SINGLE_CHOICE,
-                    displayOrder: 2,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Inventing an innovative zero-to-one product or theory", displayOrder: 1 },
-                        { optionText: "Mastering deep technical craft and precision", displayOrder: 2 },
-                        { optionText: "Leading, inspiring, and empowering a high-performing team", displayOrder: 3 },
-                        { optionText: "Driving commercial scale, growth, and global footprint", displayOrder: 4 },
-                      ],
-                    },
-                  },
-                  {
-                    version: 1,
-                    questionText:
-                      "I thrive in environments where I have high autonomy and minimal direct oversight.",
-                    questionType: QuestionType.LIKERT,
-                    displayOrder: 3,
-                    required: true,
-                    options: {
-                      create: [
-                        { optionText: "Strongly Disagree", displayOrder: 1 },
-                        { optionText: "Disagree", displayOrder: 2 },
-                        { optionText: "Neutral", displayOrder: 3 },
-                        { optionText: "Agree", displayOrder: 4 },
-                        { optionText: "Strongly Agree", displayOrder: 5 },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-      include: {
-        sections: {
-          include: {
-            questions: {
-              include: {
-                options: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    console.log("✓ Created Sample Assessment (v1) with 3 sections and 10 questions.");
-  } else {
-    console.log("✓ Sample Assessment already exists.");
+  let totalQuestionsCount = 0;
+  for (const s of allSections) {
+    console.log(`\nSection ${s.displayOrder}: "${s.title}" — Total: ${s.questions.length}`);
+    totalQuestionsCount += s.questions.length;
+
+    // Breakdown for Psychometric
+    if (s.title === "Psychometric Assessment") {
+      const likert5 = s.questions.filter((q) => q.questionType === "LIKERT_5");
+      const rating5 = s.questions.filter((q) => q.questionType === "RATING_5");
+      const forced = s.questions.filter((q) => q.questionType === "FORCED_RANKING");
+      const reverseKeyed = s.questions.filter((q) => q.reverseKeyed);
+      console.log(`  • Big Five Personality (LIKERT_5): ${likert5.length} (Reverse-keyed: ${reverseKeyed.length})`);
+      console.log(`  • RIASEC Interests (RATING_5): ${rating5.length}`);
+      console.log(`  • Work Values (FORCED_RANKING): ${forced.length}`);
+    }
+
+    // Breakdown for Competency
+    if (s.title === "Competency Self-Report") {
+      console.log(`  • Competency Items (LIKERT_5): ${s.questions.length}`);
+    }
+
+    // Breakdown for SJT
+    if (s.title === "Situational Judgment Test") {
+      const withBothKeys = s.questions.filter((q) => q.mostEffectiveOptionId && q.leastEffectiveOptionId);
+      console.log(`  • SJT Dual-Select Items: ${s.questions.length} (Keyed correctly: ${withBothKeys.length})`);
+    }
+
+    // Breakdown for Aptitude
+    if (s.title === "Aptitude") {
+      const withCorrectKey = s.questions.filter((q) => q.correctOptionId);
+      console.log(`  • Aptitude Items (MCQ_SINGLE_CORRECT): ${s.questions.length} (Keyed correctly: ${withCorrectKey.length})`);
+    }
   }
+
+  console.log(`\nTOTAL QUESTIONS SEEDED: ${totalQuestionsCount} (Target: 126)`);
+  console.log("==============================================================\n");
 
   return {
     student,
     staff,
     admin,
     assessment,
+    totalQuestionsCount,
   };
 }
 
-seedDatabase()
-  .then(async () => {
-    console.log("Seeding complete.");
-    await prisma.$disconnect();
-    process.exit(0);
-  })
-  .catch(async (e) => {
-    console.error("Seeding failed:", e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
+// Only auto-run when directly executed from CLI
+if (typeof require !== "undefined" && require.main === module) {
+  seedDatabase()
+    .then(async () => {
+      console.log("Seeding complete.");
+      await prisma.$disconnect();
+      process.exit(0);
+    })
+    .catch(async (e) => {
+      console.error("Seeding failed:", e);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}

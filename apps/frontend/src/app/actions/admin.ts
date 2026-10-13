@@ -13,6 +13,7 @@ import {
   UserStatus,
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { computeSlaInfo, DEFAULT_SLA_DAYS } from "@/lib/sla";
 
 export type AdminActionResult<T = unknown> = {
   success: boolean;
@@ -111,6 +112,16 @@ export async function getAdminReportQueueAction(statusFilter: string = "ALL"): P
       uploadedAt: string;
       publishedAt: string | null;
       previewUrl: string;
+      versionHistory: Array<{
+        id: string;
+        version: number;
+        uploadedBy: string;
+        uploadedAt: string;
+        status: ReportStatus;
+        rejectionReason: string | null;
+        fileReference: string;
+        previewUrl: string;
+      }>;
     }>;
   }>
 > {
@@ -133,6 +144,9 @@ export async function getAdminReportQueueAction(statusFilter: string = "ALL"): P
               },
             },
             assessment: true,
+            reports: {
+              orderBy: { version: "desc" },
+            },
           },
         },
       },
@@ -157,6 +171,17 @@ export async function getAdminReportQueueAction(statusFilter: string = "ALL"): P
           }
         }
 
+        const versionHistory = (r.attempt.reports || []).map((v) => ({
+          id: v.id,
+          version: v.version,
+          uploadedBy: v.uploadedBy,
+          uploadedAt: v.uploadedAt.toISOString(),
+          status: v.status,
+          rejectionReason: v.rejectionReason,
+          fileReference: v.fileReference,
+          previewUrl: `/api/reports/download?reportId=${v.id}`,
+        }));
+
         return {
           id: r.id,
           attemptId: r.attemptId,
@@ -172,6 +197,7 @@ export async function getAdminReportQueueAction(statusFilter: string = "ALL"): P
           uploadedAt: r.uploadedAt.toISOString(),
           publishedAt: r.publishedAt ? r.publishedAt.toISOString() : null,
           previewUrl,
+          versionHistory,
         };
       })
     );
@@ -234,11 +260,21 @@ export async function rejectReportAction(reportId: string, comment?: string): Pr
       throw new Error("Report not found.");
     }
 
+    if (!comment || !comment.trim()) {
+      throw new Error("A reason for rejection is required.");
+    }
+
+    const attempt = await prisma.assessmentAttempt.findUnique({
+      where: { id: report.attemptId },
+      include: { assessment: true },
+    });
+
     await prisma.$transaction([
       prisma.report.update({
         where: { id: reportId },
         data: {
           status: ReportStatus.REJECTED,
+          rejectionReason: comment.trim(),
           approvedBy: adminUser.email || adminUser.id,
         },
       }),
@@ -248,17 +284,29 @@ export async function rejectReportAction(reportId: string, comment?: string): Pr
       }),
     ]);
 
+    if (attempt?.assignedStaffId) {
+      await prisma.notification.create({
+        data: {
+          userId: attempt.assignedStaffId,
+          type: "REVISION_REQUESTED",
+          message: `Report for "${attempt.assessment.title}" requires revisions: "${comment.trim()}"`,
+        },
+      });
+    }
+
     await createAuditLog({
       userId: adminUser.id,
       action: "REPORT_REJECTED",
       resource: "Report",
       resourceId: reportId,
-      metadata: { attemptId: report.attemptId, comment, rejectedBy: adminUser.email },
+      metadata: { attemptId: report.attemptId, comment: comment.trim(), rejectedBy: adminUser.email },
     });
 
     revalidatePath("/console");
     revalidatePath("/console/reports");
-    return { success: true, message: "Report rejected and sent back to staff for prep." };
+    revalidatePath("/portal");
+    revalidatePath("/portal/needs-revision");
+    return { success: true, message: "Report rejected and sent to Needs Revision queue." };
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to reject report." };
   }
@@ -509,6 +557,7 @@ export async function getAdminStaffWorkloadAction(): Promise<
       activeReviewsCount: number;
       publishedCount: number;
       createdAt: string;
+      available: boolean;
     }>;
   }>
 > {
@@ -557,6 +606,7 @@ export async function getAdminStaffWorkloadAction(): Promise<
           activeReviewsCount,
           publishedCount,
           createdAt: u.createdAt.toISOString(),
+          available: u.staffProfile ? u.staffProfile.available : true,
         };
       })
     );
@@ -646,6 +696,9 @@ export async function getAdminAssessmentsAction(): Promise<
     await verifyAdminSession();
 
     const assessments = await prisma.assessment.findMany({
+      where: {
+        status: { not: "ARCHIVED" },
+      },
       include: {
         _count: { select: { attempts: true } },
         sections: {
@@ -749,6 +802,11 @@ export async function updateQuestionAction(data: {
           version: nextVersion,
           questionText: data.questionText,
           questionType: data.questionType,
+          category: existingQuestion.category || "General",
+          reverseKeyed: existingQuestion.reverseKeyed || false,
+          correctOptionId: existingQuestion.correctOptionId,
+          mostEffectiveOptionId: existingQuestion.mostEffectiveOptionId,
+          leastEffectiveOptionId: existingQuestion.leastEffectiveOptionId,
           displayOrder: data.displayOrder,
           required: data.required,
           options: {
@@ -998,4 +1056,709 @@ export async function inviteStaffOrAdminAction(data: {
     return { success: false, message: error.message || "Failed to process invitation." };
   }
 }
+
+/**
+ * Priority 1c: Admin SLA Monitoring Action
+ */
+export async function getAdminSlaMonitoringAction(): Promise<
+  AdminActionResult<{
+    summary: {
+      totalOverdue: number;
+      totalDueToday: number;
+      avgTurnaroundDays: number;
+      totalInProgress: number;
+    };
+    evaluations: Array<{
+      id: string;
+      candidateName: string;
+      candidateEmail: string | null;
+      school: string | null;
+      grade: string | null;
+      assessmentTitle: string;
+      status: AttemptStatus;
+      assignedStaffId: string | null;
+      assignedStaffName: string;
+      submittedAt: string | null;
+      dueDate: string | null;
+      hoursRemaining: number;
+      slaStatus: "ON_TRACK" | "DUE_SOON" | "OVERDUE";
+      isOverdue: boolean;
+    }>;
+    staffMembers: Array<{
+      id: string;
+      name: string;
+      email: string | null;
+      specialty: string | null;
+      available: boolean;
+    }>;
+  }>
+> {
+  try {
+    await verifyAdminSession();
+
+    // 1. Fetch 30-day completed evaluations for average turnaround
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const completedRecent = await prisma.assessmentAttempt.findMany({
+      where: {
+        status: AttemptStatus.PUBLISHED,
+        submittedAt: { gte: thirtyDaysAgo },
+      },
+      include: {
+        reports: {
+          where: { status: ReportStatus.PUBLISHED },
+          orderBy: { publishedAt: "desc" },
+          take: 1,
+        },
+      },
+    });
+
+    let totalTurnaroundHours = 0;
+    let completedCount = 0;
+    for (const att of completedRecent) {
+      if (att.submittedAt) {
+        const publishedTime = att.reports[0]?.publishedAt || att.submittedAt;
+        const diffHours = (publishedTime.getTime() - att.submittedAt.getTime()) / (1000 * 60 * 60);
+        if (diffHours >= 0) {
+          totalTurnaroundHours += diffHours;
+          completedCount++;
+        }
+      }
+    }
+    const avgTurnaroundDays =
+      completedCount > 0
+        ? Number((totalTurnaroundHours / completedCount / 24).toFixed(1))
+        : 2.8;
+
+    // 2. Fetch in-progress submissions
+    const activeAttempts = await prisma.assessmentAttempt.findMany({
+      where: {
+        status: {
+          in: [
+            AttemptStatus.SUBMITTED,
+            AttemptStatus.UNDER_REVIEW,
+            AttemptStatus.REPORT_IN_PREP,
+            AttemptStatus.PENDING_APPROVAL,
+          ],
+        },
+      },
+      include: {
+        user: {
+          include: {
+            studentProfile: true,
+          },
+        },
+        assignedStaff: {
+          include: {
+            studentProfile: true,
+            staffProfile: true,
+          },
+        },
+        assessment: true,
+      },
+    });
+
+    let totalOverdue = 0;
+    let totalDueToday = 0;
+
+    const slaConfig = await prisma.systemConfig.findUnique({
+      where: { key: "GLOBAL_SLA_DAYS" },
+    });
+    const slaDays = slaConfig ? parseInt(slaConfig.value, 10) || DEFAULT_SLA_DAYS : DEFAULT_SLA_DAYS;
+
+    const evaluations = activeAttempts.map((att) => {
+      const studentProfile = att.user?.studentProfile;
+      const candidateName = studentProfile
+        ? `${studentProfile.firstName} ${studentProfile.lastName}`.trim()
+        : att.user?.email || "Candidate";
+
+      const staffProfile = att.assignedStaff?.studentProfile;
+      const assignedStaffName = att.assignedStaff
+        ? (staffProfile ? `${staffProfile.firstName} ${staffProfile.lastName}`.trim() : att.assignedStaff.email || "Evaluator")
+        : "Unassigned";
+
+      const sla = computeSlaInfo(att.submittedAt, slaDays);
+      const isOverdue = !!sla?.isOverdue;
+      const isDueToday = !!(sla && !sla.isOverdue && sla.hoursRemaining <= 24);
+
+      if (isOverdue) totalOverdue++;
+      if (isDueToday) totalDueToday++;
+
+      return {
+        id: att.id,
+        candidateName,
+        candidateEmail: att.user?.email || null,
+        school: studentProfile?.school || null,
+        grade: studentProfile?.grade || null,
+        assessmentTitle: att.assessment?.title || "Psychometric Assessment",
+        status: att.status,
+        assignedStaffId: att.assignedStaffId || null,
+        assignedStaffName,
+        submittedAt: att.submittedAt ? att.submittedAt.toISOString() : null,
+        dueDate: sla?.dueDate ? sla.dueDate.toISOString() : null,
+        hoursRemaining: sla?.hoursRemaining ?? 999,
+        slaStatus: sla?.status ?? "ON_TRACK",
+        isOverdue,
+      };
+    });
+
+    // Sort evaluations: most overdue first (lowest hours remaining first)
+    evaluations.sort((a, b) => a.hoursRemaining - b.hoursRemaining);
+
+    // 3. Active staff list for reassignment dropdown
+    const staffUsers = await prisma.user.findMany({
+      where: {
+        role: { in: [UserRole.STAFF, UserRole.ADMIN] },
+        status: UserStatus.ACTIVE,
+      },
+      include: {
+        studentProfile: true,
+        staffProfile: true,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const staffMembers = staffUsers.map((u) => {
+      const sp = u.studentProfile;
+      const name = sp ? `${sp.firstName} ${sp.lastName}`.trim() : u.email || "Evaluator";
+      return {
+        id: u.id,
+        name,
+        email: u.email,
+        specialty: u.staffProfile?.specialty || null,
+        available: u.staffProfile ? u.staffProfile.available : true,
+      };
+    });
+
+    return {
+      success: true,
+      message: "SLA monitoring data retrieved.",
+      data: {
+        summary: {
+          totalOverdue,
+          totalDueToday,
+          avgTurnaroundDays,
+          totalInProgress: evaluations.length,
+        },
+        evaluations,
+        staffMembers,
+      },
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to load SLA monitoring data." };
+  }
+}
+
+/**
+ * Priority 1c: Reassign Submission Action
+ */
+export async function reassignSubmissionAction(
+  attemptId: string,
+  targetStaffId: string
+): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    const attempt = await prisma.assessmentAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        assignedStaff: true,
+      },
+    });
+
+    if (!attempt) {
+      throw new Error("Assessment submission not found.");
+    }
+
+    const targetStaff = await prisma.user.findUnique({
+      where: { id: targetStaffId },
+    });
+
+    if (!targetStaff) {
+      throw new Error("Target evaluator not found.");
+    }
+
+    const prevStaffEmail = attempt.assignedStaff?.email || "Unassigned";
+
+    await prisma.assessmentAttempt.update({
+      where: { id: attemptId },
+      data: {
+        assignedStaffId: targetStaffId,
+        status: attempt.status === AttemptStatus.SUBMITTED ? AttemptStatus.UNDER_REVIEW : attempt.status,
+      },
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "SUBMISSION_REASSIGNED",
+      resource: "AssessmentAttempt",
+      resourceId: attemptId,
+      metadata: {
+        previousStaffId: attempt.assignedStaffId,
+        previousStaffEmail: prevStaffEmail,
+        newStaffId: targetStaffId,
+        newStaffEmail: targetStaff.email,
+        reassignedBy: adminUser.email,
+      },
+      result: AuditResult.SUCCESS,
+    });
+
+    await prisma.notification.create({
+      data: {
+        userId: targetStaffId,
+        type: "SUBMISSION_ASSIGNED",
+        message: `A candidate submission has been reassigned to your evaluation queue by ${adminUser.email || "Admin"}.`,
+      },
+    });
+
+    revalidatePath("/console/sla");
+    revalidatePath("/portal");
+    revalidatePath("/portal/under-review");
+    return {
+      success: true,
+      message: `Submission reassigned to ${targetStaff.email}.`,
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to reassign submission." };
+  }
+}
+
+/**
+ * 12. Security Center Actions (Priority 6)
+ */
+export type PrivilegedAccountSecurityInfo = {
+  id: string;
+  email: string | null;
+  role: UserRole;
+  status: UserStatus;
+  totpEnabled: boolean;
+  sessionVersion: number;
+  lastLoginAt: string | null;
+  createdAt: string;
+  invitedAt: string | null;
+  invitedByName: string | null;
+  isPendingActivation: boolean;
+};
+
+export type AdminSecurityData = {
+  summary: {
+    totalPrivileged: number;
+    pendingInvites: number;
+    mfaEnrolled: number;
+    suspendedAccounts: number;
+  };
+  accounts: PrivilegedAccountSecurityInfo[];
+};
+
+export async function getAdminSecurityOverviewAction(): Promise<AdminActionResult<AdminSecurityData>> {
+  try {
+    await verifyAdminSession();
+
+    const privilegedUsers = await prisma.user.findMany({
+      where: {
+        role: { in: [UserRole.ADMIN, UserRole.STAFF] },
+      },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    });
+
+    // Map inviter IDs to emails
+    const inviterIds = privilegedUsers
+      .map((u) => u.invitedBy)
+      .filter((id): id is string => Boolean(id));
+
+    const inviters = await prisma.user.findMany({
+      where: { id: { in: inviterIds } },
+      select: { id: true, email: true },
+    });
+    const inviterMap = new Map(inviters.map((inv) => [inv.id, inv.email]));
+
+    const accounts: PrivilegedAccountSecurityInfo[] = privilegedUsers.map((u) => {
+      const isPending = u.status === UserStatus.INACTIVE || Boolean(u.invitedAt && !u.lastLoginAt);
+      return {
+        id: u.id,
+        email: u.email,
+        role: u.role,
+        status: u.status,
+        totpEnabled: u.totpEnabled,
+        sessionVersion: u.sessionVersion,
+        lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,
+        createdAt: u.createdAt.toISOString(),
+        invitedAt: u.invitedAt ? u.invitedAt.toISOString() : null,
+        invitedByName: u.invitedBy ? inviterMap.get(u.invitedBy) || u.invitedBy : null,
+        isPendingActivation: isPending,
+      };
+    });
+
+    const pendingInvites = accounts.filter((a) => a.isPendingActivation).length;
+    const mfaEnrolled = accounts.filter((a) => a.totpEnabled).length;
+    const suspendedAccounts = accounts.filter((a) => a.status === UserStatus.SUSPENDED).length;
+
+    return {
+      success: true,
+      message: "Security overview retrieved successfully.",
+      data: {
+        summary: {
+          totalPrivileged: accounts.length,
+          pendingInvites,
+          mfaEnrolled,
+          suspendedAccounts,
+        },
+        accounts,
+      },
+    };
+  } catch (error: any) {
+    console.error("[getAdminSecurityOverviewAction error]:", error);
+    return { success: false, message: error.message || "Failed to load security overview." };
+  }
+}
+
+export async function adminForceLogoutUserAction(targetUserId: string): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    const targetUser = await prisma.user.findUnique({
+      where: { id: targetUserId },
+    });
+
+    if (!targetUser) {
+      throw new Error("Target account not found.");
+    }
+
+    // Increment sessionVersion to invalidate all active JWT sessions on other devices
+    const updated = await prisma.user.update({
+      where: { id: targetUserId },
+      data: {
+        sessionVersion: { increment: 1 },
+      },
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "ADMIN_FORCE_LOGOUT",
+      resource: "User",
+      resourceId: targetUserId,
+      metadata: {
+        targetEmail: targetUser.email,
+        targetRole: targetUser.role,
+        newSessionVersion: updated.sessionVersion,
+        actionBy: adminUser.email,
+      },
+      result: AuditResult.SUCCESS,
+    });
+
+    revalidatePath("/console/security");
+    revalidatePath("/console/users");
+    revalidatePath("/console/staff");
+
+    return {
+      success: true,
+      message: `Force logged out ${targetUser.email || "user"}. All active sessions on all devices have been terminated.`,
+    };
+  } catch (error: any) {
+    console.error("[adminForceLogoutUserAction error]:", error);
+    return { success: false, message: error.message || "Failed to terminate user sessions." };
+  }
+}
+
+/**
+ * 23. Notification & Email Template Management (Priority 11)
+ */
+export interface NotificationTemplateItem {
+  id: string;
+  type: string;
+  label: string;
+  description: string;
+  subject: string;
+  body: string;
+  availableVariables: string[];
+  updatedBy: string | null;
+  updatedAt: string;
+}
+
+const DEFAULT_NOTIFICATION_TEMPLATES: Record<
+  string,
+  {
+    label: string;
+    description: string;
+    subject: string;
+    body: string;
+    variables: string[];
+  }
+> = {
+  EMAIL_VERIFICATION: {
+    label: "Email Verification OTP",
+    description: "Dispatched to new candidates during account registration to confirm their email address.",
+    subject: "Verify your Alderwood Vantage account",
+    body: `Welcome {{candidateName}},
+
+Thank you for beginning your psychometric assessment journey with Alderwood Vantage.
+
+Please enter the following single-use verification code in your browser:
+
+{{otpCode}}
+
+Or navigate directly to the verification page:
+{{verificationUrl}}
+
+This code expires in 15 minutes. If you did not initiate this request, you can safely ignore this email.
+
+Warm regards,
+Alderwood Vantage Admissions & Security Team`,
+    variables: ["candidateName", "otpCode", "verificationUrl"],
+  },
+  SUBMISSION_CONFIRMED: {
+    label: "Submission Confirmation",
+    description: "Sent to the candidate immediately when an assessment attempt is submitted and entered into the staff evaluation queue.",
+    subject: "Assessment Confirmed & Queued — {{assessmentTitle}}",
+    body: `Hello {{candidateName}},
+
+Your assessment responses for "{{assessmentTitle}}" have been securely received and locked for expert evaluation.
+
+Our certified psychometric evaluators will review your responses within our standard service window (approx. {{slaDays}} business days).
+
+Track live evaluation status on your student dashboard:
+{{dashboardUrl}}
+
+Best regards,
+Alderwood Vantage Evaluation Team`,
+    variables: ["candidateName", "assessmentTitle", "slaDays", "dashboardUrl"],
+  },
+  REPORT_READY: {
+    label: "Certified Report Published",
+    description: "Dispatched when an administrator approves and publishes a candidate's certified evaluation report.",
+    subject: "Your Certified Evaluation Report is Ready — {{assessmentTitle}}",
+    body: `Congratulations {{candidateName}},
+
+Your official evaluation report for "{{assessmentTitle}}" has been verified and published by our psychology faculty.
+
+You can now view your complete dimensional analysis and download the certified PDF directly from your candidate portal:
+{{reportUrl}}
+
+Thank you for choosing Alderwood Vantage for your career assessment.
+
+Warm regards,
+Alderwood Vantage Psychology Faculty`,
+    variables: ["candidateName", "assessmentTitle", "reportUrl"],
+  },
+  PASSWORD_RESET: {
+    label: "Password Reset Request",
+    description: "Sent when an account holder requests a secure password reset link.",
+    subject: "Reset your Alderwood Vantage account password",
+    body: `Hello {{candidateName}},
+
+We received a request to reset the password associated with your Alderwood Vantage account.
+
+Click the secure link below to choose a new password:
+{{resetUrl}}
+
+If you did not make this request, you can safely ignore this email. This link expires in 60 minutes.
+
+Stay secure,
+Alderwood Vantage Security Governance`,
+    variables: ["candidateName", "resetUrl"],
+  },
+  STAFF_INVITE: {
+    label: "Staff Evaluator Invitation",
+    description: "Dispatched when an administrator invites a new psychologist or evaluator to join the staff workstation.",
+    subject: "Invitation: Join Alderwood Vantage Staff Evaluation Team",
+    body: `Hello {{staffName}},
+
+You have been invited to join the Alderwood Vantage evaluation and psychometric review portal as an accredited {{staffRole}}.
+
+Activate your secure workstation account using the link below:
+{{activationUrl}}
+
+This activation token is valid for 7 days.
+
+Welcome to the team,
+Alderwood Vantage Clinical Leadership`,
+    variables: ["staffName", "staffRole", "activationUrl"],
+  },
+};
+
+export async function getNotificationTemplatesAction(): Promise<
+  AdminActionResult<NotificationTemplateItem[]>
+> {
+  try {
+    await verifyAdminSession();
+
+    // Query existing templates from DB
+    const existingTemplates = await prisma.notificationTemplate.findMany({
+      orderBy: { type: "asc" },
+    });
+
+    const existingMap = new Map(existingTemplates.map((t) => [t.type, t]));
+
+    // Check if any default templates are missing and seed them
+    const templatesToSeed = Object.entries(DEFAULT_NOTIFICATION_TEMPLATES).filter(
+      ([type]) => !existingMap.has(type)
+    );
+
+    if (templatesToSeed.length > 0) {
+      await Promise.all(
+        templatesToSeed.map(([type, def]) =>
+          prisma.notificationTemplate.create({
+            data: {
+              type,
+              subject: def.subject,
+              body: def.body,
+              updatedBy: "System Default",
+            },
+          })
+        )
+      );
+    }
+
+    // Reload all
+    const allTemplates = await prisma.notificationTemplate.findMany({
+      orderBy: { type: "asc" },
+    });
+
+    const items: NotificationTemplateItem[] = allTemplates.map((t) => {
+      const def = DEFAULT_NOTIFICATION_TEMPLATES[t.type] || {
+        label: t.type.replace(/_/g, " "),
+        description: "Custom platform notification template.",
+        variables: ["candidateName"],
+      };
+
+      return {
+        id: t.id,
+        type: t.type,
+        label: def.label,
+        description: def.description,
+        subject: t.subject,
+        body: t.body,
+        availableVariables: def.variables,
+        updatedBy: t.updatedBy,
+        updatedAt: t.updatedAt.toISOString(),
+      };
+    });
+
+    return {
+      success: true,
+      message: "Notification templates loaded.",
+      data: items,
+    };
+  } catch (error: any) {
+    console.error("[getNotificationTemplatesAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to load notification templates.",
+    };
+  }
+}
+
+export async function updateNotificationTemplateAction(
+  type: string,
+  subject: string,
+  body: string
+): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    if (!type || !subject.trim() || !body.trim()) {
+      return { success: false, message: "Type, subject, and body are required." };
+    }
+
+    const updated = await prisma.notificationTemplate.upsert({
+      where: { type },
+      update: {
+        subject: subject.trim(),
+        body: body.trim(),
+        updatedBy: adminUser.email || "Admin",
+      },
+      create: {
+        type,
+        subject: subject.trim(),
+        body: body.trim(),
+        updatedBy: adminUser.email || "Admin",
+      },
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "NOTIFICATION_TEMPLATE_UPDATED",
+      resource: "NotificationTemplate",
+      resourceId: type,
+      metadata: {
+        templateType: type,
+        subject: subject.trim(),
+        bodyLength: body.length,
+        actionBy: adminUser.email,
+      },
+      result: AuditResult.SUCCESS,
+    });
+
+    revalidatePath("/console/notifications");
+
+    return {
+      success: true,
+      message: `Template "${type}" updated successfully.`,
+      data: updated,
+    };
+  } catch (error: any) {
+    console.error("[updateNotificationTemplateAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to update notification template.",
+    };
+  }
+}
+
+export async function resetNotificationTemplateAction(
+  type: string
+): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    const def = DEFAULT_NOTIFICATION_TEMPLATES[type];
+    if (!def) {
+      return { success: false, message: `No default template found for "${type}".` };
+    }
+
+    const updated = await prisma.notificationTemplate.upsert({
+      where: { type },
+      update: {
+        subject: def.subject,
+        body: def.body,
+        updatedBy: "System Reset",
+      },
+      create: {
+        type,
+        subject: def.subject,
+        body: def.body,
+        updatedBy: "System Reset",
+      },
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "NOTIFICATION_TEMPLATE_RESET",
+      resource: "NotificationTemplate",
+      resourceId: type,
+      metadata: {
+        templateType: type,
+        actionBy: adminUser.email,
+      },
+      result: AuditResult.SUCCESS,
+    });
+
+    revalidatePath("/console/notifications");
+
+    return {
+      success: true,
+      message: `Template "${type}" has been reset to system defaults.`,
+      data: updated,
+    };
+  } catch (error: any) {
+    console.error("[resetNotificationTemplateAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to reset notification template.",
+    };
+  }
+}
+
+
 

@@ -1,113 +1,151 @@
 "use client";
 
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import Image from "next/image";
+import { Phone, Mail } from "lucide-react";
 
 export default function Footer() {
+  const companyLinks = [
+    { label: "About Us", href: "/about" },
+    { label: "Why Vantage", href: "/#why-vantage" },
+    { label: "How It Works", href: "/how-it-works" },
+    { label: "FAQs", href: "/#faq" },
+  ];
+
+  const packageLinks = [
+    { label: "Packages Overview", href: "/packages" },
+    { label: "Assessment Pathways", href: "/#pathways" },
+    { label: "5-Year Leadership Roadmap", href: "/packages" },
+  ];
+
+  const legalLinks = [
+    { label: "Privacy & Parental Consent", href: "#privacy" },
+    { label: "Terms of Service", href: "#terms" },
+  ];
+
   return (
-    <footer className="bg-[#1A1A1D] text-[#E2E0DB] border-t border-[#2E2E32] pt-12 sm:pt-16 pb-8 sm:pb-12 text-sm mt-auto">
-      <div className="w-full px-3.5 sm:px-8 lg:px-12 xl:px-16 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 pb-10 sm:pb-12 border-b border-[#2E2E32]">
-          {/* Brand Info */}
-          <div className="sm:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#A9B4E8] text-black flex items-center justify-center font-black text-sm">
-                <Compass className="w-5 h-5 stroke-[2.2] text-black" />
-              </div>
-              <span className="text-lg font-extrabold tracking-tight text-white font-[family-name:var(--font-dm-sans)]">
-                AuraPath
-              </span>
+    <footer className="bg-[#F5F5F4] text-[#334155] border-t border-[#E7E5E4] pt-12 sm:pt-14 pb-10 text-sm mt-auto select-none">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1120px] mx-auto">
+        {/* Main Grid: Logo on Left + 4 Columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-10 border-b border-[#E7E5E4] items-start">
+          {/* Column 1: Transparent Brand Logo */}
+          <div className="sm:col-span-2 lg:col-span-3 flex items-start">
+            <Link
+              href="/"
+              className="inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-lg group -mt-1 sm:-mt-2"
+              draggable={false}
+              aria-label="Alderwood Vantage Home"
+            >
+              <Image
+                src="/AlderwoodVANTAGE.svg"
+                alt="Alderwood Vantage Logo"
+                width={200}
+                height={160}
+                draggable={false}
+                className="h-24 sm:h-28 lg:h-32 w-auto object-contain transition-transform group-hover:scale-105"
+              />
             </Link>
-            <p className="mt-3 text-xs sm:text-sm text-[#A9B4E8] max-w-sm leading-relaxed font-semibold">
-              The precision cognitive profiling & career architecture platform. Scenario-based behavioral psychometrics for students navigating 2026+ industry horizons.
-            </p>
-            <div className="mt-4 text-xs text-[#888888] font-bold">
-              © {new Date().getFullYear()} AuraPath Cognitive Technologies. All rights reserved.
-            </div>
           </div>
 
-          {/* Discovery Column */}
-          <div>
-            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-3 sm:mb-4">
-              Discovery
+          {/* Column 2: Company */}
+          <div className="sm:col-span-1 lg:col-span-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-4">
+              Company
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
-                  Begin Assessment
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/quests">
-                  The 4 Modules
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/decoder">
-                  Parent vs You
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/careers">
-                  2026+ Careers
-                </Link>
-              </li>
+            <ul className="space-y-2.5 text-[13px] font-medium text-[#64748B]">
+              {companyLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="hover:text-[#0F172A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Audiences Column */}
-          <div>
-            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-3 sm:mb-4">
-              Calibrated For
+          {/* Column 3: Packages */}
+          <div className="sm:col-span-1 lg:col-span-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-4">
+              Packages
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
-                  Class 9 & 10 (Streams)
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
-                  Class 11 & 12 (Degrees)
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/assessment">
-                  College & Early Grads
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-white hover:underline transition-colors" href="/decoder">
-                  Parents & Mentors
-                </Link>
-              </li>
+            <ul className="space-y-2.5 text-[13px] font-medium text-[#64748B]">
+              {packageLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="hover:text-[#0F172A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Trust & Ethics Column */}
-          <div>
-            <h4 className="text-xs font-black text-white uppercase tracking-wider mb-4">
-              Trust & Rigor
+          {/* Column 4: Legal & Trust */}
+          <div className="sm:col-span-1 lg:col-span-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-4">
+              Legal & Trust
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#E2E0DB] font-bold">
-              <li>
-                <span className="hover:text-white cursor-pointer">Big Five & RIASEC Models</span>
+            <ul className="space-y-2.5 text-[13px] font-medium text-[#64748B]">
+              {legalLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="hover:text-[#0F172A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 5: Contact */}
+          <div className="sm:col-span-1 lg:col-span-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-4">
+              Contact
+            </h4>
+            <ul className="space-y-3 text-[13px] font-medium text-[#64748B]">
+              <li className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#0F172A] shrink-0" aria-hidden="true" />
+                <a
+                  href="tel:+919316819331"
+                  className="hover:text-[#0F172A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm"
+                >
+                  +91 93168 19331
+                </a>
               </li>
-              <li>
-                <span className="hover:text-white cursor-pointer">Privacy Charter (Zero Spam)</span>
+              <li className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-[#0F172A] shrink-0" aria-hidden="true" />
+                <a
+                  href="mailto:contact@alderwoodvantage.com"
+                  className="hover:text-[#0F172A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm"
+                >
+                  contact@alderwoodvantage.com
+                </a>
               </li>
-              <li>
-                <span className="hover:text-white cursor-pointer">Independent Industry Research</span>
-              </li>
-              <li>
-                <span className="hover:text-white cursor-pointer">Terms & Security</span>
+              <li className="pt-1">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center text-xs font-bold text-[#FF6B6B] hover:underline"
+                >
+                  Contact support & advisory →
+                </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Footnote */}
-        
+        {/* BOTTOM SECTION: Copyright Notice */}
+        <div className="pt-8 text-center">
+          <p className="text-xs text-[#64748B]">
+            © {new Date().getFullYear()} Alderwood Vantage. All rights reserved. Raising leaders, not just employees.
+          </p>
+        </div>
       </div>
     </footer>
   );

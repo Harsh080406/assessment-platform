@@ -297,7 +297,7 @@ export default function ConstellationGraph() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-pop-lime" />
           </span>
           <span className="text-[10px] sm:text-xs font-black tracking-widest text-slate-300 uppercase">
-            Aura Constellation Map <span className="text-pop-cyan">v3.8</span>
+            Vantage Constellation Map <span className="text-pop-cyan">v3.8</span>
           </span>
         </div>
 
@@ -651,7 +651,7 @@ export default function ConstellationGraph() {
                   ⚡ Superpower: <span className="text-pop-yellow">{activeNode.coreSuperpower}</span>
                 </span>
                 <Link
-                  href="/assessment"
+                  href="/register"
                   className="ml-auto px-3 py-1.5 rounded-lg bg-pop-lime text-pop-ink font-black text-[11px] hover:bg-[#b8e600] transition-all flex items-center gap-1 shadow-neo cursor-pointer shrink-0"
                 >
                   <span>Explore Cluster</span>

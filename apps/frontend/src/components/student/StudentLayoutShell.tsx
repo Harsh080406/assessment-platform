@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
-  Compass,
   BarChart3,
+  Bell,
   Settings,
 } from "lucide-react";
 import StudentSidebar from "./StudentSidebar";
@@ -32,6 +32,29 @@ export default function StudentLayoutShell({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
+  // Auto-collapse sidebar on tablet screens (768 - 1023px)
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 768 && width < 1024) {
+        setIsCollapsed(true);
+      } else if (width >= 1024) {
+        setIsCollapsed(false);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
+  // Is assessment running? Hide mobile bottom nav if taking test
+  const isTakingAssessment = pathname.startsWith("/take/");
+
   const mobileNavItems = [
     {
       href: "/dashboard",
@@ -41,15 +64,9 @@ export default function StudentLayoutShell({
     },
     {
       href: "/dashboard/assessments",
-      label: "Modules",
+      label: "Assessments",
       icon: FileText,
       isActive: pathname.startsWith("/dashboard/assessments"),
-    },
-    {
-      href: "/dashboard/careers",
-      label: "Careers",
-      icon: Compass,
-      isActive: pathname.startsWith("/dashboard/careers"),
     },
     {
       href: "/dashboard/results",
@@ -58,16 +75,22 @@ export default function StudentLayoutShell({
       isActive: pathname.startsWith("/dashboard/results"),
     },
     {
+      href: "/dashboard/notifications",
+      label: "Alerts",
+      icon: Bell,
+      isActive: pathname.startsWith("/dashboard/notifications"),
+    },
+    {
       href: "/dashboard/settings",
-      label: "Settings",
+      label: "Profile",
       icon: Settings,
       isActive: pathname.startsWith("/dashboard/settings"),
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#0F172A] font-sans selection:bg-[#FFD4CB] flex">
-      {/* 1. Left Sidebar (Fixed on Desktop, Drawer on Mobile, Collapsible) */}
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans flex flex-col">
+      {/* 1. Left Sidebar (Fixed on Desktop, Drawer on Mobile) */}
       <StudentSidebar
         studentName={studentName}
         studentEmail={studentEmail}
@@ -79,57 +102,68 @@ export default function StudentLayoutShell({
         onToggleCollapse={() => setIsCollapsed((prev) => !prev)}
       />
 
-      {/* 2. Main Application Canvas with Smooth Padding Transition & Content Buffer */}
+      {/* 2. Main Canvas */}
       <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
-          isCollapsed ? "md:pl-20" : "md:pl-64"
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-200 ease-in-out ${
+          isCollapsed ? "md:pl-[72px]" : "md:pl-[248px]"
         }`}
       >
-        {/* Compact SaaS Top Header */}
+        {/* Top Header */}
         <StudentHeader
           studentName={studentName}
+          studentEmail={studentEmail}
           studentInitials={studentInitials}
           avatarUrl={avatarUrl}
           onMenuToggle={() => setSidebarOpen((prev) => !prev)}
         />
 
-        {/* Page Content Canvas with Generous Spacing & Centered Safe Max-Width */}
-        <main className="flex-1 w-full px-4 sm:px-8 lg:px-12 py-5 sm:py-8 pb-24 md:pb-8 max-w-[1680px] mx-auto space-y-6 sm:space-y-8">
+        {/* Content Area bounded to max 1200px centered */}
+        <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 pb-24 md:pb-10 space-y-6 sm:space-y-8 min-w-0">
           {children}
         </main>
       </div>
 
-      {/* 3. Sticky Mobile Bottom Navigation Bar (Phone View UX) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E2E8F0] px-2 py-1.5 flex items-center justify-around shadow-lg">
-        {mobileNavItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-                item.isActive
-                  ? "text-[#0F172A] font-extrabold"
-                  : "text-[#64748B] hover:text-[#0F172A]"
-              }`}
-            >
-              <div className="relative">
-                <Icon
-                  className={`w-5 h-5 ${
-                    item.isActive ? "text-[#FF6B6B]" : "text-[#64748B]"
+      {/* 3. Mobile Bottom Navigation (5 destinations, 56px, touch targets >= 44px, safe area) */}
+      {!isTakingAssessment && (
+        <nav
+          aria-label="Mobile navigation"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E2E8F0] px-3 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-md"
+        >
+          {mobileNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={item.isActive ? "page" : undefined}
+                className={`flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 px-1 rounded-xl transition-colors cursor-pointer ${
+                  item.isActive
+                    ? "text-[#0F172A]"
+                    : "text-[#64748B] hover:text-[#0F172A]"
+                }`}
+              >
+                <div className="relative flex items-center justify-center">
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${
+                      item.isActive ? "text-[#0F172A]" : "text-[#64748B]"
+                    }`}
+                  />
+                  {item.isActive && (
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#0F172A]" />
+                  )}
+                </div>
+                <span
+                  className={`text-[10px] tracking-tight mt-1 transition-colors ${
+                    item.isActive ? "font-bold text-[#0F172A]" : "font-medium text-[#64748B]"
                   }`}
-                />
-                {item.isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#FF6B6B]" />
-                )}
-              </div>
-              <span className="text-[10px] font-bold mt-1 tracking-tight">
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
+      )}
     </div>
   );
 }

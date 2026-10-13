@@ -57,7 +57,7 @@ export default function AgeStageSection() {
             <div className="mt-8 pt-6 border-t-2 border-slate-100">
               <Link
                 className="w-full py-3 rounded-2xl bg-pop-lime text-pop-ink font-black text-xs border-2 border-pop-ink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 flex items-center justify-center gap-2"
-                href="/assessment?stage=8-10"
+                href="/register"
               >
                 <span>Start Class 8–10 Track</span>
                 <ArrowRight className="w-4 h-4" />
@@ -106,7 +106,7 @@ export default function AgeStageSection() {
             <div className="mt-8 pt-6 border-t-2 border-slate-100">
               <Link
                 className="w-full py-3 rounded-2xl bg-pop-pink text-white font-black text-xs border-2 border-pop-ink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 flex items-center justify-center gap-2"
-                href="/assessment?stage=11-12"
+                href="/register"
               >
                 <span>Start Class 11–12 Track</span>
                 <ArrowRight className="w-4 h-4" />
@@ -150,7 +150,7 @@ export default function AgeStageSection() {
             <div className="mt-8 pt-6 border-t-2 border-slate-100">
               <Link
                 className="w-full py-3 rounded-2xl bg-pop-cyan text-pop-ink font-black text-xs border-2 border-pop-ink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 flex items-center justify-center gap-2"
-                href="/assessment?stage=college"
+                href="/register"
               >
                 <span>Start College / Grad Track</span>
                 <ArrowRight className="w-4 h-4" />

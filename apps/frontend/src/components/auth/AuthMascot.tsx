@@ -12,7 +12,7 @@ export default function AuthMascot({ className = "" }: AuthMascotProps) {
     >
       <Image
         src="/auth-hero.png"
-        alt="AuraPath Assessment and Self-Discovery"
+        alt="Alderwood Vantage Leadership Potential Assessment"
         fill
         priority
         unoptimized

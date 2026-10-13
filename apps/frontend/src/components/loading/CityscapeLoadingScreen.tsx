@@ -51,7 +51,7 @@ export default function CityscapeLoadingScreen({
       <div className="hidden md:block absolute inset-0 w-full h-full">
         <Image
           src="/window friendly.png"
-          alt="AuraPath Desktop Background"
+          alt="Alderwood Vantage Desktop Background"
           fill
           priority
           unoptimized
@@ -63,7 +63,7 @@ export default function CityscapeLoadingScreen({
       <div className="block md:hidden absolute inset-0 w-full h-full">
         <Image
           src="/mobile friendly.png"
-          alt="AuraPath Mobile Background"
+          alt="Alderwood Vantage Mobile Background"
           fill
           priority
           unoptimized
@@ -79,9 +79,18 @@ export default function CityscapeLoadingScreen({
         {/* Center Loading Card */}
         <div className="flex flex-col items-center justify-center text-center max-w-md w-full mx-auto space-y-4 bg-white/95 backdrop-blur-lg p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/60">
           {/* Sleek Brand Header */}
-          <div className="flex items-center justify-center gap-2 mb-1">
+          <div className="flex flex-col items-center justify-center gap-3 mb-1">
+            <Image
+              src="/AlderwoodVANTAGE.svg"
+              alt="Alderwood Vantage Logo"
+              width={160}
+              height={126}
+              priority
+              draggable={false}
+              className="h-24 sm:h-28 md:h-32 w-auto object-contain shrink-0 drop-shadow-sm"
+            />
             <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-2xl sm:text-3xl font-extrabold tracking-tight text-black">
-              Aura<span className="text-[#FF6B6B]">Path</span>
+              Alderwood <span className="text-[#FF6B6B]">Vantage</span>
             </span>
           </div>
 
@@ -108,7 +117,7 @@ export default function CityscapeLoadingScreen({
 
         {/* Bottom subtle copyright / branding tag in a high-contrast pill */}
         <div className="bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full shadow-lg border border-white/60 text-[11px] font-bold tracking-wider text-black uppercase">
-          AuraPath Assessment Platform
+          Alderwood Vantage Assessment Platform
         </div>
       </div>
     </div>

@@ -6,12 +6,14 @@ import Image from "next/image";
 import {
   LayoutDashboard,
   FileText,
-  Compass,
   BarChart3,
+  Bell,
   Settings,
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  LogOut,
+  HelpCircle,
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
 
@@ -28,10 +30,10 @@ interface StudentSidebarProps {
 
 export default function StudentSidebar({
   studentName = "Alex Student",
-  studentEmail = "student@aurapath.com",
+  studentEmail = "student@alderwoodvantage.com",
   studentInitials = "AS",
   avatarUrl,
-  isOpen,
+  isOpen = false,
   onClose,
   isCollapsed = false,
   onToggleCollapse,
@@ -50,19 +52,19 @@ export default function StudentSidebar({
       label: "Assessments",
       icon: FileText,
       isActive: pathname.startsWith("/dashboard/assessments"),
-      badge: "4 Modules",
-    },
-    {
-      href: "/dashboard/careers",
-      label: "Career Paths",
-      icon: Compass,
-      isActive: pathname.startsWith("/dashboard/careers"),
+      badge: "4",
     },
     {
       href: "/dashboard/results",
       label: "Results & Reports",
       icon: BarChart3,
       isActive: pathname.startsWith("/dashboard/results"),
+    },
+    {
+      href: "/dashboard/notifications",
+      label: "Notifications",
+      icon: Bell,
+      isActive: pathname.startsWith("/dashboard/notifications"),
     },
     {
       href: "/dashboard/settings",
@@ -74,88 +76,108 @@ export default function StudentSidebar({
 
   return (
     <>
-      {/* Mobile Backdrop */}
+      {/* Mobile Drawer Backdrop */}
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs md:hidden transition-opacity"
+          aria-hidden="true"
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Persistent Sidebar (248px desktop, 72px tablet / collapsed) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E2E8F0] flex flex-col justify-between transition-all duration-300 ease-in-out md:translate-x-0 ${
-          isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none md:shadow-none"
-        } w-[280px] ${isCollapsed ? "md:w-20" : "md:w-64"}`}
+        aria-label="Student Navigation"
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E2E8F0] flex flex-col justify-between transition-all duration-200 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0 shadow-xl" : "-translate-x-full md:translate-x-0 shadow-none"
+        } ${isCollapsed ? "w-[72px]" : "w-[248px]"}`}
       >
-        {/* Top: Brand Header & Navigation */}
-        <div className="flex flex-col h-full">
-          {/* Brand Logo & Portal Tag / Mobile Close / Desktop Collapse Toggle */}
+        {/* Top: Brand Header & Nav List */}
+        <div className="flex flex-col h-full min-h-0">
+          {/* Header */}
           <div
-            className={`h-16 border-b border-[#F1F5F9] flex items-center justify-between px-4 sm:px-5 transition-all ${
-              isCollapsed ? "md:px-3 md:justify-center" : ""
+            className={`h-16 border-b border-[#F1F5F9] flex items-center px-4 ${
+              isCollapsed ? "justify-center px-2" : "justify-between"
             }`}
           >
-            {/* Desktop Collapsed Icon View */}
-            <div className={`hidden ${isCollapsed ? "md:flex" : "hidden"} items-center justify-center`}>
+            {isCollapsed ? (
               <button
                 type="button"
                 onClick={onToggleCollapse}
-                className="w-10 h-10 rounded-xl bg-[#0F172A] hover:bg-black text-white font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-xs group"
+                className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A] transition-colors cursor-pointer"
                 title="Expand sidebar"
                 aria-label="Expand sidebar"
               >
-                <span className="group-hover:hidden flex items-center justify-center font-extrabold text-sm tracking-tighter">
-                  <span className="text-[#FF6B6B]">A</span>P
-                </span>
-                <PanelLeftOpen className="w-4 h-4 hidden group-hover:block text-white" />
+                <Image
+                  src="/AlderwoodVANTAGE.svg"
+                  alt="Alderwood Vantage"
+                  width={32}
+                  height={28}
+                  draggable={false}
+                  className="h-7 w-auto object-contain"
+                />
               </button>
-            </div>
+            ) : (
+              <div className="flex items-center justify-between w-full min-w-0">
+                <Link
+                  href="/dashboard"
+                  onClick={onClose}
+                  className="flex items-center gap-2.5 min-w-0"
+                  title="Alderwood Vantage Student"
+                >
+                  <Image
+                    src="/AlderwoodVANTAGE.svg"
+                    alt="Alderwood Vantage"
+                    width={36}
+                    height={30}
+                    draggable={false}
+                    className="h-7.5 w-auto object-contain shrink-0"
+                  />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-sm font-bold tracking-tight text-[#0F172A] leading-tight whitespace-nowrap">
+                      Alderwood <span className="text-[#FF6B6B]">Vantage</span>
+                    </span>
+                    <span className="text-[10px] font-semibold text-[#64748B]">
+                      Student Portal
+                    </span>
+                  </div>
+                </Link>
 
-            {/* Full Expanded View (always on mobile, and desktop when expanded) */}
-            <div className={`flex items-center justify-between w-full ${isCollapsed ? "md:hidden" : "flex"}`}>
-              <Link href="/dashboard" onClick={onClose} className="flex items-center gap-2.5">
-                <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-xl font-extrabold tracking-tight text-[#0F172A]">
-                  Aura<span className="text-[#FF6B6B]">Path</span>
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F1F5F9] text-[#475569] px-2 py-0.5 rounded-md border border-[#E2E8F0]">
-                  Student
-                </span>
-              </Link>
-
-              {/* Explicit Mobile Close Button */}
-              <button
-                type="button"
-                onClick={onClose}
-                className="md:hidden p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
-                aria-label="Close Navigation Menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Desktop Collapse Toggle Button */}
-              {onToggleCollapse && (
+                {/* Mobile Drawer Close */}
                 <button
                   type="button"
-                  onClick={onToggleCollapse}
-                  className="hidden md:flex p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
-                  title="Collapse sidebar"
-                  aria-label="Collapse sidebar"
+                  onClick={onClose}
+                  className="md:hidden p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                  aria-label="Close menu"
                 >
-                  <PanelLeftClose className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
-              )}
-            </div>
+
+                {/* Desktop Collapse Toggle */}
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    className="hidden md:flex p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                    title="Collapse sidebar"
+                    aria-label="Collapse sidebar"
+                  >
+                    <PanelLeftClose className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Navigation Links */}
-          <div className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-            {/* Platform Section Header */}
-            <div className={`px-3 pb-2 ${isCollapsed ? "md:hidden" : "block"}`}>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
-                Platform
-              </span>
-            </div>
+          {/* Navigation Items */}
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {!isCollapsed && (
+              <div className="px-3 pb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
+                  Learning Journey
+                </span>
+              </div>
+            )}
 
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -164,110 +186,79 @@ export default function StudentSidebar({
                   key={item.href}
                   href={item.href}
                   onClick={onClose}
+                  aria-current={item.isActive ? "page" : undefined}
                   title={item.label}
-                  className={`flex items-center rounded-xl text-xs font-semibold transition-all ${
+                  className={`group relative flex items-center rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     isCollapsed
-                      ? "md:w-10 md:h-10 md:mx-auto md:justify-center justify-between px-3.5 py-3 md:py-2.5"
-                      : "justify-between px-3.5 py-3 md:py-2.5"
+                      ? "w-10 h-10 mx-auto justify-center"
+                      : "justify-between px-3 py-2.5"
                   } ${
                     item.isActive
                       ? "bg-[#0F172A] text-white shadow-xs"
-                      : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC]"
+                      : "text-[#475569] hover:text-[#0F172A] hover:bg-[#F8FAFC]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
-                      className={`w-4 h-4 shrink-0 ${
-                        item.isActive ? "text-[#FF6B6B]" : "text-[#64748B]"
+                      className={`w-4 h-4 shrink-0 transition-colors ${
+                        item.isActive
+                          ? "text-white"
+                          : "text-[#64748B] group-hover:text-[#0F172A]"
                       }`}
                     />
-                    <span className={isCollapsed ? "md:hidden block" : "block"}>
-                      {item.label}
-                    </span>
+                    {!isCollapsed && <span>{item.label}</span>}
                   </div>
 
-                  {item.badge && (
+                  {!isCollapsed && item.badge && (
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full tabular-nums ${
                         item.isActive
                           ? "bg-white/20 text-white"
-                          : "bg-[#F1F5F9] text-[#64748B]"
-                      } ${isCollapsed ? "md:hidden block" : "block"}`}
+                          : "bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]"
+                      }`}
                     >
                       {item.badge}
                     </span>
                   )}
+
+                  {/* Tooltip on collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-full ml-3 px-2 py-1 bg-[#0F172A] text-white text-[11px] font-medium rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-md">
+                      {item.label}
+                    </div>
+                  )}
                 </Link>
               );
             })}
-          </div>
+          </nav>
 
-          {/* Bottom: Profile & Sign Out Bar */}
+          {/* Bottom Rail: Quiet Help & Sign Out (User profile is in top bar) */}
           <div className="p-3 border-t border-[#F1F5F9] bg-[#FAFAFA]">
-            {/* Desktop Collapsed View */}
-            <div className={`hidden ${isCollapsed ? "md:flex" : "hidden"} flex-col items-center gap-2.5`}>
-              <Link
-                href="/dashboard/settings"
-                onClick={onClose}
-                className="relative w-9 h-9 rounded-xl bg-[#1E293B] text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden hover:ring-2 hover:ring-[#FF6B6B] transition-all shadow-xs"
-                title={`${studentName} (Settings)`}
-              >
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={studentName}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <span>{studentInitials}</span>
-                )}
-              </Link>
+            {isCollapsed ? (
+              <div className="flex flex-col items-center gap-2">
+                <SignOutButton
+                  showLabel={false}
+                  className="w-10 h-10 p-0 border border-[#E2E8F0] hover:border-red-200 bg-white hover:bg-red-50 text-[#64748B] hover:text-red-600 rounded-xl transition-colors shadow-2xs"
+                  title="Sign out"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-between px-1">
+                <Link
+                  href="/how-it-works"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>Program Guide</span>
+                </Link>
 
-              <SignOutButton
-                showLabel={false}
-                className="w-9 h-9 p-0 border border-[#E2E8F0] hover:border-red-200 bg-white hover:bg-red-50 text-[#64748B] hover:text-red-600 rounded-xl shadow-xs"
-                title="Sign Out"
-              />
-            </div>
-
-            {/* Mobile & Desktop Expanded View */}
-            <div className={`flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs ${isCollapsed ? "md:hidden" : "flex"}`}>
-              <Link
-                href="/dashboard/settings"
-                onClick={onClose}
-                className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-80 transition-opacity"
-              >
-                <div className="relative w-8 h-8 rounded-full bg-[#1E293B] text-white font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
-                  {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt={studentName}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <span>{studentInitials}</span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1 text-left">
-                  <div className="text-xs font-bold text-[#0F172A] truncate">
-                    {studentName}
-                  </div>
-                  <div className="text-[10px] text-[#64748B] truncate">
-                    {studentEmail}
-                  </div>
-                </div>
-              </Link>
-
-              <SignOutButton
-                showLabel={false}
-                className="p-1.5 border-0 hover:bg-red-50 text-[#64748B] hover:text-red-600 rounded-lg shadow-none"
-                title="Sign Out"
-              />
-            </div>
+                <SignOutButton
+                  showLabel={true}
+                  className="text-xs font-medium text-[#64748B] hover:text-red-600 bg-transparent border-0 p-0 hover:bg-transparent shadow-none"
+                  title="Sign out"
+                />
+              </div>
+            )}
           </div>
         </div>
       </aside>

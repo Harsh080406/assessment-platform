@@ -25,7 +25,7 @@ export default async function StudentLayout({
     ? `${user.studentProfile.firstName} ${user.studentProfile.lastName}`.trim()
     : session.user.name || "Alex Student";
 
-  const studentEmail = user?.email || session.user.email || "student@aurapath.com";
+  const studentEmail = user?.email || session.user.email || "student@alderwoodvantage.com";
 
   const studentInitials =
     studentName
