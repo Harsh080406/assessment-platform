@@ -153,10 +153,10 @@ export default function ContactPage() {
 
                 <div className="mt-4 pt-3 border-t border-[#E2E8F0] space-y-1.5">
                   <a
-                    href="tel:+917570975709"
+                    href="tel:+919316819331"
                     className="text-base sm:text-lg font-black text-[#0F172A] hover:text-[#4F46E5] transition-colors block"
                   >
-                    +91 75709 75709
+                    +91 93168 19331
                   </a>
                   <p className="text-xs text-[#64748B] flex items-center gap-1.5 font-medium">
                     <Clock className="w-3.5 h-3.5 text-[#64748B]" />
