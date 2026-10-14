@@ -7,6 +7,8 @@ export const metadata = {
   description: "Manage transactional and lifecycle email notification templates.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminNotificationsPage() {
   const result = await getNotificationTemplatesAction();
   const initialTemplates = result.success && result.data ? result.data : [];

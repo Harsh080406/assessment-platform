@@ -47,7 +47,7 @@ function getEmailBaseUrl(): string {
 }
 
 function getDefaultFromAddress(): string {
-  return process.env.EMAIL_FROM || "Alderwood Vantage <support@send.alderwoodvantage.com>";
+  return process.env.EMAIL_FROM || "Alderwood Vantage <support@mail.alderwoodvantage.com>";
 }
 
 function getDefaultReplyTo(): string {
