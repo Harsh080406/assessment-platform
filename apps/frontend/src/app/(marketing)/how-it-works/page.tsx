@@ -194,9 +194,6 @@ export default function HowItWorksPage() {
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6">
             {/* Headline and CTAs */}
             <div className="text-center max-w-[720px] mx-auto">
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.1em] text-[#FF6B6B] mb-3">
-                Assessment and mentorship pathway
-              </span>
               <h1
                 id="hero-heading"
                 className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-[#0F172A] tracking-[-0.01em] leading-[1.12]"

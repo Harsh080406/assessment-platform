@@ -164,9 +164,6 @@ export default function AboutPage() {
               transition={{ duration: 0.4 }}
               className="text-center max-w-[720px] mx-auto mb-12 sm:mb-16"
             >
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#FF6B6B] mb-3">
-                About Alderwood Vantage
-              </span>
               <h1
                 id="hero-heading"
                 className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-[#0F172A] tracking-[-0.01em] leading-[1.12]"
