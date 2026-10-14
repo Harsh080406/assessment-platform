@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "ALDERWOOD VANTAGE — Find Your Vantage | Raising Leaders, Not Just Employees",
   description:
-    "A comprehensive, academically validated assessment designed by corporate leadership and HR professionals. Reveals the leader, innovator, and builder in every student—and maps what it takes to get there.",
+    "From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.",
   icons: {
     icon: [
       { url: "/favicon.ico" },

@@ -205,8 +205,8 @@ export default function HowItWorksPage() {
                 <span className="text-[#FF6B6B]">clear vantage in five steps.</span>
               </h1>
 
-              <p className="mt-5 text-lg sm:text-xl text-[#475569] font-normal leading-relaxed max-w-[620px] mx-auto">
-                A structured, academically validated assessment process co-developed with corporate HR leaders and PhD academicians. We guide your child toward self-knowledge, leadership potential, and actionable 5-year clarity.
+              <p className="mt-5 text-lg sm:text-xl text-[#475569] font-normal leading-relaxed max-w-[640px] mx-auto">
+                From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.
               </p>
 
               {/* CTAs */}
