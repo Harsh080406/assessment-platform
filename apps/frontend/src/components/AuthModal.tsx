@@ -1,11 +1,11 @@
 "use client";
 
-import UnifiedAuthCard from "@/components/auth/UnifiedAuthCard";
+import UnifiedAuthCard, { AuthMode } from "@/components/auth/UnifiedAuthCard";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialMode?: "login" | "signup" | "forgot_password" | "phone";
+  initialMode?: AuthMode;
 }
 
 export default function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalProps) {

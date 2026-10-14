@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X, Mail, Eye, EyeOff, User, Phone, AlertCircle, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import { X, Mail, Eye, EyeOff, User, AlertCircle, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
 import { LoginSchema, SignUpSchema } from "@/lib/validations/auth";
 import { signUpAction } from "@/app/actions/auth";
 import AuthMascot from "@/components/auth/AuthMascot";
-import PhoneSignInForm from "@/components/PhoneSignInForm";
 import CityscapeLoadingScreen from "@/components/loading/CityscapeLoadingScreen";
 
 
-export type AuthMode = "login" | "signup" | "forgot_password" | "phone";
+export type AuthMode = "login" | "signup" | "forgot_password";
 
 interface UnifiedAuthCardProps {
   initialMode?: AuthMode;
@@ -298,8 +297,6 @@ export default function UnifiedAuthCard({
                 ? "Login"
                 : mode === "signup"
                 ? "Create Account"
-                : mode === "phone"
-                ? "Phone Login"
                 : "Reset Password"}
             </h1>
             <p className="text-xs sm:text-sm text-[#718096] mt-1 font-medium">
@@ -307,8 +304,6 @@ export default function UnifiedAuthCard({
                 ? "Enter your account details"
                 : mode === "signup"
                 ? "Start your assessment and career trajectory"
-                : mode === "phone"
-                ? "Enter your mobile number to get started"
                 : "Enter your email to receive recovery instructions"}
             </p>
 
@@ -397,13 +392,6 @@ export default function UnifiedAuthCard({
                 </button>
               </form>
             )
-          ) : mode === "phone" ? (
-            /* ======================================================================= */
-            /* MODE 2: PHONE OTP LOGIN                                                 */
-            /* ======================================================================= */
-            <div className="my-2">
-              <PhoneSignInForm callbackUrl={callbackUrl} />
-            </div>
           ) : mode === "signup" ? (
             /* ======================================================================= */
             /* MODE 3: SIGN UP (CREATE ACCOUNT)                                        */
@@ -640,16 +628,6 @@ export default function UnifiedAuthCard({
                       </svg>
                     )}
                   </button>
-
-                  {/* Phone OTP Trigger */}
-                  <button
-                    type="button"
-                    onClick={() => switchMode("phone")}
-                    title="Sign up with Phone OTP"
-                    className="w-12 h-12 rounded-full border border-[#E2E8F0] bg-white text-[#191F2D] hover:bg-gray-50 flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Phone className="w-5 h-5" />
-                  </button>
                 </div>
 
                 {/* Footer Switcher */}
@@ -800,16 +778,6 @@ export default function UnifiedAuthCard({
                       />
                     </svg>
                   )}
-                </button>
-
-                {/* Phone OTP Trigger */}
-                <button
-                  type="button"
-                  onClick={() => switchMode("phone")}
-                  title="Sign in with Phone OTP"
-                  className="w-12 h-12 rounded-full border border-[#E2E8F0] bg-white text-[#191F2D] hover:bg-gray-50 flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                >
-                  <Phone className="w-5 h-5" />
                 </button>
               </div>
 
