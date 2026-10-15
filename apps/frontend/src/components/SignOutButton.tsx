@@ -28,6 +28,7 @@ export default function SignOutButton({
       disabled={isLoading}
       title={title}
       aria-label={title}
+      suppressHydrationWarning
       className={`inline-flex items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 ${className}`}
     >
       <LogOut className="w-4 h-4 shrink-0" />

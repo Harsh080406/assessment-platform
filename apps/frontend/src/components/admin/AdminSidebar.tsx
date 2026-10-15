@@ -309,6 +309,7 @@ export default function AdminSidebar({
                   <button
                     type="button"
                     onClick={onToggleCollapse}
+                    suppressHydrationWarning
                     className="hidden lg:flex w-10 h-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                     title="Expand sidebar"
                     aria-label="Expand sidebar"
@@ -328,6 +329,7 @@ export default function AdminSidebar({
                   <button
                     type="button"
                     onClick={onToggleCollapse}
+                    suppressHydrationWarning
                     className="hidden lg:inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
                     title="Hide sidebar"
                     aria-label="Hide sidebar"

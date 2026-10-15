@@ -312,6 +312,7 @@ export default function StaffSidebar({
                   <button
                     type="button"
                     onClick={onToggleCollapse}
+                    suppressHydrationWarning
                     className="hidden md:flex w-10 h-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                     title="Expand sidebar"
                     aria-label="Expand sidebar"
@@ -331,6 +332,7 @@ export default function StaffSidebar({
                   <button
                     type="button"
                     onClick={onToggleCollapse}
+                    suppressHydrationWarning
                     className="hidden md:inline-flex items-center gap-2 px-2 py-1 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                     title="Hide sidebar"
                     aria-label="Hide sidebar"

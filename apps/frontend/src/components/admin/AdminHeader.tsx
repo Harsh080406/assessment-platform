@@ -100,6 +100,7 @@ export default function AdminHeader({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search resources, users, reports..."
+              suppressHydrationWarning
               className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-indigo-500"
               autoFocus
             />
@@ -151,6 +152,7 @@ export default function AdminHeader({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search resources, users, reports..."
+                suppressHydrationWarning
                 className="w-full pl-9 pr-8 py-2 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
               />
               <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-2.5" />
@@ -194,6 +196,7 @@ export default function AdminHeader({
               <button
                 type="button"
                 onClick={() => setUserMenuOpen((prev) => !prev)}
+                suppressHydrationWarning
                 className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[#F1F5F9] transition-colors group cursor-pointer"
                 aria-expanded={userMenuOpen}
                 aria-haspopup="true"
