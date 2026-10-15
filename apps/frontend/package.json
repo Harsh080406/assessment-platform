@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:webpack": "next dev --webpack",
     "build": "npm run build --workspace=@aurapath/shared && prisma generate && next build --webpack",
     "start": "next start",
     "lint": "eslint"

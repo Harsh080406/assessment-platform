@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=@aurapath/frontend",
+    "dev:webpack": "npm run dev:webpack --workspace=@aurapath/frontend",
     "dev:frontend": "npm run dev --workspace=@aurapath/frontend",
     "dev:backend": "npm run dev --workspace=@aurapath/backend",
     "build": "npm run build --workspace=@aurapath/shared && npm run build --workspace=@aurapath/frontend",
