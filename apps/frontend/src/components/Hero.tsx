@@ -92,9 +92,9 @@ export default function Hero() {
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-2 sm:mt-5 mb-5 sm:mb-0 text-sm sm:text-base lg:text-[18px] text-[#475569] max-w-[350px] sm:max-w-[580px] font-semibold leading-relaxed"
+              className="mt-2 sm:mt-5 mb-5 sm:mb-0 text-sm sm:text-base lg:text-[18px] text-[#475569] max-w-[350px] sm:max-w-[620px] font-semibold leading-relaxed"
             >
-              A comprehensive, academically validated assessment designed by corporate leadership and HR professionals. It reveals the leader, innovator, and builder in every student, and maps what it takes to get there.
+              From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.
             </motion.p>
 
             {/* 3. Action CTAs */}

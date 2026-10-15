@@ -1,5 +1,7 @@
 "use server";
 
+import { getEmailService } from "@/lib/email";
+
 export interface StudentQueryInput {
   name: string;
   email: string;
@@ -43,6 +45,23 @@ export async function submitStudentQueryAction(input: StudentQueryInput) {
       timestamp: new Date().toISOString(),
     });
 
+    // Dispatch email notifications via Resend / EmailService
+    try {
+      const emailService = getEmailService();
+      await emailService.sendStudentQueryNotifications({
+        referenceId,
+        name: input.name.trim(),
+        email: input.email.trim().toLowerCase(),
+        phone: input.phone?.trim(),
+        stage: input.stage,
+        subject: input.subject,
+        message: input.message.trim(),
+      });
+    } catch (emailErr) {
+      console.error("[Student Query Email Dispatch Warning]:", emailErr);
+      // Non-blocking: query is still logged and reference is returned to user
+    }
+
     return {
       success: true,
       referenceId,
@@ -85,6 +104,26 @@ export async function submitInstitutionalQueryAction(input: InstitutionalQueryIn
       partnershipObjective: input.partnershipObjective,
       timestamp: new Date().toISOString(),
     });
+
+    // Dispatch email notifications via Resend / EmailService
+    try {
+      const emailService = getEmailService();
+      await emailService.sendInstitutionalQueryNotifications({
+        referenceId,
+        institutionName: input.institutionName.trim(),
+        representativeName: input.representativeName.trim(),
+        designation: input.designation.trim(),
+        workEmail: input.workEmail.trim().toLowerCase(),
+        phone: input.phone.trim(),
+        institutionType: input.institutionType,
+        cohortSize: input.cohortSize,
+        partnershipObjective: input.partnershipObjective,
+        message: input.message.trim(),
+      });
+    } catch (emailErr) {
+      console.error("[Institutional Query Email Dispatch Warning]:", emailErr);
+      // Non-blocking: query is still logged and reference is returned to user
+    }
 
     return {
       success: true,

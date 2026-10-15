@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { createAuditLog } from "@/lib/audit";
 import {
   SaveResponseSchema,
@@ -357,7 +358,13 @@ export async function submitAssessmentAction(
       return { success: false, message: "Unauthorized submission." };
     }
 
-    if (attempt.status === AttemptStatus.SUBMITTED) {
+    if (
+      attempt.status === AttemptStatus.SUBMITTED ||
+      attempt.status === AttemptStatus.UNDER_REVIEW ||
+      attempt.status === AttemptStatus.REPORT_IN_PREP ||
+      attempt.status === AttemptStatus.PENDING_APPROVAL ||
+      attempt.status === AttemptStatus.PUBLISHED
+    ) {
       return {
         success: true,
         message: "Assessment was already submitted.",
@@ -396,6 +403,10 @@ export async function submitAssessmentAction(
       },
       result: AuditResult.SUCCESS,
     });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/assessments");
+    revalidatePath("/dashboard/results");
 
     return {
       success: true,

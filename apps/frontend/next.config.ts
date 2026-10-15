@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   devIndicators: false,
   transpilePackages: ["@aurapath/shared"],
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
   async redirects() {
     return [
       {

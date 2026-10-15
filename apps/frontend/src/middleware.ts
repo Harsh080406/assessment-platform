@@ -34,17 +34,30 @@ export async function middleware(request: NextRequest) {
     const exp = typeof token?.exp === "number" ? token.exp : null;
     const isExpired = exp ? Date.now() >= exp * 1000 : false;
 
-    const isAuthenticated = !!token && !isExpired;
+    // A valid session token must have an identity (id or email or sub) and not be an empty revoked object {}
+    const hasValidIdentity = Boolean(token?.id || token?.sub || token?.email);
+    const isAuthenticated = !!token && !isExpired && hasValidIdentity;
     const userRole = (token?.role as string) || null;
+
+    // Helper to redirect while preserving the incoming request's custom domain & protocol
+    const createRedirect = (targetPath: string, callbackParam?: string) => {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = targetPath;
+      redirectUrl.search = "";
+      if (callbackParam) {
+        redirectUrl.searchParams.set("callbackUrl", callbackParam);
+      }
+      return NextResponse.redirect(redirectUrl);
+    };
 
     // Redirect legacy /assessment route to /register
     if (pathname === "/assessment" || pathname.startsWith("/assessment/")) {
-      return NextResponse.redirect(new URL("/register", request.url));
+      return createRedirect("/register");
     }
 
     // Redirect legacy marketing /careers route to /about
     if (pathname === "/careers" || pathname.startsWith("/careers/")) {
-      return NextResponse.redirect(new URL("/about", request.url));
+      return createRedirect("/about");
     }
 
     // 3. Route Category Classifications
@@ -72,58 +85,52 @@ export async function middleware(request: NextRequest) {
     // Rule A: Authenticated users accessing auth/marketing pages get redirected to their portal
     if (isAuthenticated && (isAuthRoute || isMarketingRoute)) {
       if (userRole === "ADMIN") {
-        return NextResponse.redirect(new URL("/console", request.url));
+        return createRedirect("/console");
       }
       if (userRole === "STAFF") {
-        return NextResponse.redirect(new URL("/portal", request.url));
+        return createRedirect("/portal");
       }
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return createRedirect("/dashboard");
     }
 
     // Rule B: Protected Student Routes (/dashboard/*, /take/*)
     if (isStudentRoute) {
       if (!isAuthenticated) {
-        const loginUrl = new URL("/login", request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(loginUrl);
+        return createRedirect("/login", pathname);
       }
 
       if (userRole === "ADMIN" && pathname.startsWith("/dashboard")) {
-        return NextResponse.redirect(new URL("/console", request.url));
+        return createRedirect("/console");
       }
 
       if (userRole === "STAFF") {
-        return NextResponse.redirect(new URL("/portal", request.url));
+        return createRedirect("/portal");
       }
 
       if (userRole !== "STUDENT" && userRole !== "ADMIN") {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
+        return createRedirect("/unauthorized");
       }
     }
 
     // Rule C: Protected Staff Routes (/portal/*)
     if (isStaffRoute) {
       if (!isAuthenticated) {
-        const loginUrl = new URL("/login", request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(loginUrl);
+        return createRedirect("/login", pathname);
       }
 
       if (userRole !== "STAFF" && userRole !== "ADMIN") {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
+        return createRedirect("/unauthorized");
       }
     }
 
     // Rule D: Protected Admin Routes (/console/*)
     if (isAdminRoute) {
       if (!isAuthenticated) {
-        const loginUrl = new URL("/login", request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(loginUrl);
+        return createRedirect("/login", pathname);
       }
 
       if (userRole !== "ADMIN") {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
+        return createRedirect("/unauthorized");
       }
     }
 

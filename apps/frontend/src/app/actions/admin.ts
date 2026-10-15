@@ -960,7 +960,7 @@ export async function getAdminAuditLogsAction(params?: {
 }
 
 /**
- * Invite Staff or Admin Action (Fix #1 - Invite-only provisioning)
+ * Invite User Action (Staff, Admin, or Student candidate)
  */
 export async function inviteStaffOrAdminAction(data: {
   email: string;
@@ -972,8 +972,8 @@ export async function inviteStaffOrAdminAction(data: {
     const email = data.email.trim().toLowerCase();
     const role = data.role;
 
-    if (role !== UserRole.STAFF && role !== UserRole.ADMIN) {
-      return { success: false, message: "Only STAFF or ADMIN roles can be invited." };
+    if (![UserRole.STUDENT, UserRole.STAFF, UserRole.ADMIN].includes(role)) {
+      return { success: false, message: "Invalid user role specified for invitation." };
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -992,7 +992,10 @@ export async function inviteStaffOrAdminAction(data: {
     const { generateActivationToken } = await import("@/lib/activationToken");
     const activationToken = generateActivationToken(email, role);
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const baseUrl =
+      process.env.NEXTAUTH_URL ||
+      process.env.AUTH_URL ||
+      "https://www.alderwoodvantage.com";
     const activationUrl = `${baseUrl}/activate?token=${activationToken}`;
 
     let invitedUser = existingUser;
@@ -1005,6 +1008,15 @@ export async function inviteStaffOrAdminAction(data: {
           status: UserStatus.INACTIVE,
           invitedBy: adminUser.id,
           invitedAt: new Date(),
+          studentProfile:
+            role === UserRole.STUDENT
+              ? {
+                  create: {
+                    firstName: email.split("@")[0],
+                    lastName: "",
+                  },
+                }
+              : undefined,
           staffProfile:
             role === UserRole.STAFF
               ? {
@@ -1027,6 +1039,18 @@ export async function inviteStaffOrAdminAction(data: {
       });
     }
 
+    // Send congratulatory account invitation email with activation link
+    let emailDispatched = false;
+    let emailErrorMsg: string | null = null;
+    try {
+      const { getEmailService } = await import("@/lib/email");
+      const emailRes = await getEmailService().sendAccountInvitationEmail(email, role, activationUrl);
+      emailDispatched = Boolean(emailRes?.success);
+    } catch (err: any) {
+      emailErrorMsg = err?.message || String(err);
+      console.error("[inviteStaffOrAdminAction] Email dispatch exception:", err);
+    }
+
     await createAuditLog({
       userId: adminUser.id,
       action: "STAFF_ADMIN_INVITED",
@@ -1037,6 +1061,8 @@ export async function inviteStaffOrAdminAction(data: {
         targetRole: role,
         invitedBy: adminUser.id,
         activationUrl,
+        emailDispatched,
+        emailError: emailErrorMsg,
       },
       result: AuditResult.SUCCESS,
     });
@@ -1046,7 +1072,9 @@ export async function inviteStaffOrAdminAction(data: {
 
     return {
       success: true,
-      message: `Invitation generated for ${email} as ${role}.`,
+      message: emailDispatched
+        ? `Invitation successfully sent to ${email} as ${role}. An activation email has been delivered.`
+        : `Invitation created for ${email} as ${role}. (Email notice: ${emailErrorMsg || "Failed to deliver via provider"}).`,
       data: {
         activationUrl,
         token: activationToken,
@@ -1056,6 +1084,8 @@ export async function inviteStaffOrAdminAction(data: {
     return { success: false, message: error.message || "Failed to process invitation." };
   }
 }
+
+export const inviteUserAction = inviteStaffOrAdminAction;
 
 /**
  * Priority 1c: Admin SLA Monitoring Action
@@ -1468,6 +1498,7 @@ export interface NotificationTemplateItem {
   id: string;
   type: string;
   label: string;
+  category: string;
   description: string;
   subject: string;
   body: string;
@@ -1480,14 +1511,38 @@ const DEFAULT_NOTIFICATION_TEMPLATES: Record<
   string,
   {
     label: string;
+    category: string;
     description: string;
     subject: string;
     body: string;
     variables: string[];
   }
 > = {
+  ACCOUNT_INVITATION: {
+    label: "Account Invitation & Activation",
+    category: "Account & Access",
+    description: "Dispatched when an administrator invites a candidate, student, or staff user to activate their account and set credentials.",
+    subject: "Congratulations! You've been invited to Alderwood Vantage ({{role}})",
+    body: `Congratulations & Welcome {{candidateName}},
+
+You have been officially invited to join Alderwood Vantage as a {{role}}.
+
+Next Steps to Activate Your Account:
+1. Click the activation link below to enter your secure activation portal.
+2. Provide your profile details (Full Name, Date of Birth, Address, Phone number).
+3. Create a secure password to finalize and activate your account.
+
+Activation Link:
+{{activationUrl}}
+
+This invitation link is valid for {{expiryHours}} hours.
+
+Alderwood Vantage • Raising leaders, not just employees.`,
+    variables: ["candidateName", "role", "activationUrl", "expiryHours"],
+  },
   EMAIL_VERIFICATION: {
     label: "Email Verification OTP",
+    category: "Account & Access",
     description: "Dispatched to new candidates during account registration to confirm their email address.",
     subject: "Verify your Alderwood Vantage account",
     body: `Welcome {{candidateName}},
@@ -1507,8 +1562,77 @@ Warm regards,
 Alderwood Vantage Admissions & Security Team`,
     variables: ["candidateName", "otpCode", "verificationUrl"],
   },
+  PASSWORD_RESET: {
+    label: "Password Reset Request",
+    category: "Account & Access",
+    description: "Sent when an account holder requests a secure password reset link.",
+    subject: "Reset your Alderwood Vantage account password",
+    body: `Hello {{candidateName}},
+
+We received a request to reset the password associated with your Alderwood Vantage account.
+
+Click the secure link below to choose a new password:
+{{resetUrl}}
+
+If you did not make this request, you can safely ignore this email. This link expires in 60 minutes.
+
+Stay secure,
+Alderwood Vantage Security Governance`,
+    variables: ["candidateName", "resetUrl"],
+  },
+  PASSWORD_RESET_OTP: {
+    label: "Password Reset 6-Digit Code",
+    category: "Account & Access",
+    description: "Dispatched when an account holder requests a 6-digit OTP code to reset their password.",
+    subject: "Your Alderwood Vantage Password Reset Code",
+    body: `Hello {{candidateName}},
+
+Use the 6-digit verification code below to reset your Alderwood Vantage account password:
+
+{{otpCode}}
+
+This code expires in {{expiryMinutes}} minutes. If you did not request this code, you can safely ignore this email.
+
+Alderwood Vantage Security Desk`,
+    variables: ["candidateName", "otpCode", "expiryMinutes"],
+  },
+  LOGIN_OTP: {
+    label: "Passwordless Sign-In Code",
+    category: "Account & Access",
+    description: "Dispatched during passwordless security sign-in verification.",
+    subject: "Your Alderwood Vantage Sign-in Code",
+    body: `Hello {{candidateName}},
+
+Your single-use sign-in security code is:
+
+{{otpCode}}
+
+Enter this 6-digit code to log in to your Alderwood Vantage account. Valid for {{expiryMinutes}} minutes.
+
+Alderwood Vantage Identity Governance`,
+    variables: ["candidateName", "otpCode", "expiryMinutes"],
+  },
+  STAFF_INVITE: {
+    label: "Staff Evaluator Invitation",
+    category: "Account & Access",
+    description: "Dispatched when an administrator invites a new psychologist or evaluator to join the staff workstation.",
+    subject: "Invitation: Join Alderwood Vantage Staff Evaluation Team",
+    body: `Hello {{staffName}},
+
+You have been invited to join the Alderwood Vantage evaluation and psychometric review portal as an accredited {{staffRole}}.
+
+Activate your secure workstation account using the link below:
+{{activationUrl}}
+
+This activation token is valid for 7 days.
+
+Welcome to the team,
+Alderwood Vantage Clinical Leadership`,
+    variables: ["staffName", "staffRole", "activationUrl"],
+  },
   SUBMISSION_CONFIRMED: {
     label: "Submission Confirmation",
+    category: "Assessments & Reports",
     description: "Sent to the candidate immediately when an assessment attempt is submitted and entered into the staff evaluation queue.",
     subject: "Assessment Confirmed & Queued — {{assessmentTitle}}",
     body: `Hello {{candidateName}},
@@ -1526,6 +1650,7 @@ Alderwood Vantage Evaluation Team`,
   },
   REPORT_READY: {
     label: "Certified Report Published",
+    category: "Assessments & Reports",
     description: "Dispatched when an administrator approves and publishes a candidate's certified evaluation report.",
     subject: "Your Certified Evaluation Report is Ready — {{assessmentTitle}}",
     body: `Congratulations {{candidateName}},
@@ -1541,39 +1666,36 @@ Warm regards,
 Alderwood Vantage Psychology Faculty`,
     variables: ["candidateName", "assessmentTitle", "reportUrl"],
   },
-  PASSWORD_RESET: {
-    label: "Password Reset Request",
-    description: "Sent when an account holder requests a secure password reset link.",
-    subject: "Reset your Alderwood Vantage account password",
+  STUDENT_QUERY_ACKNOWLEDGEMENT: {
+    label: "Admissions Query Acknowledgement",
+    category: "Support & Inquiries",
+    description: "Automated response sent to parents or students upon submitting a website contact enquiry.",
+    subject: "We've received your query [Ref: {{referenceId}}] - Alderwood Vantage",
     body: `Hello {{candidateName}},
 
-We received a request to reset the password associated with your Alderwood Vantage account.
+Thank you for contacting Alderwood Vantage. We have received your enquiry regarding "{{subject}}".
 
-Click the secure link below to choose a new password:
-{{resetUrl}}
+Our academic guidance desk is reviewing your message and will respond by email within {{responseWindowHours}} business hours.
 
-If you did not make this request, you can safely ignore this email. This link expires in 60 minutes.
+Your Reference ID: {{referenceId}}
+Helpline: {{helpline}} (Mon – Sat, 9:00 AM – 7:00 PM IST)
 
-Stay secure,
-Alderwood Vantage Security Governance`,
-    variables: ["candidateName", "resetUrl"],
+Alderwood Vantage Academic Desk`,
+    variables: ["candidateName", "referenceId", "subject", "responseWindowHours", "helpline"],
   },
-  STAFF_INVITE: {
-    label: "Staff Evaluator Invitation",
-    description: "Dispatched when an administrator invites a new psychologist or evaluator to join the staff workstation.",
-    subject: "Invitation: Join Alderwood Vantage Staff Evaluation Team",
-    body: `Hello {{staffName}},
+  INSTITUTIONAL_QUERY_ACKNOWLEDGEMENT: {
+    label: "Institutional Partnership Docket",
+    category: "Support & Inquiries",
+    description: "Automated docket acknowledgement sent to institutional representatives.",
+    subject: "Institutional Partnership Request Received [Ref: {{referenceId}}] - Alderwood Vantage",
+    body: `Dear {{representativeName}},
 
-You have been invited to join the Alderwood Vantage evaluation and psychometric review portal as an accredited {{staffRole}}.
+Thank you for your interest in bringing Alderwood Vantage to {{institutionName}}.
 
-Activate your secure workstation account using the link below:
-{{activationUrl}}
+Our Institutional Partnerships Director is reviewing your institutional docket (Ref: {{referenceId}}) and will connect directly within 4 business hours to discuss your cohort objectives.
 
-This activation token is valid for 7 days.
-
-Welcome to the team,
-Alderwood Vantage Clinical Leadership`,
-    variables: ["staffName", "staffRole", "activationUrl"],
+Alderwood Vantage • Institutional Partnerships Desk`,
+    variables: ["representativeName", "institutionName", "referenceId"],
   },
 };
 
@@ -1618,6 +1740,7 @@ export async function getNotificationTemplatesAction(): Promise<
     const items: NotificationTemplateItem[] = allTemplates.map((t) => {
       const def = DEFAULT_NOTIFICATION_TEMPLATES[t.type] || {
         label: t.type.replace(/_/g, " "),
+        category: "Other",
         description: "Custom platform notification template.",
         variables: ["candidateName"],
       };
@@ -1626,9 +1749,10 @@ export async function getNotificationTemplatesAction(): Promise<
         id: t.id,
         type: t.type,
         label: def.label,
+        category: def.category,
         description: def.description,
-        subject: t.subject,
-        body: t.body,
+        subject: t.subject.replace(/AuraPath|aurapath|AURAPATH/gi, "Alderwood Vantage"),
+        body: t.body.replace(/AuraPath|aurapath|AURAPATH/gi, "Alderwood Vantage"),
         availableVariables: def.variables,
         updatedBy: t.updatedBy,
         updatedAt: t.updatedAt.toISOString(),
@@ -1756,6 +1880,115 @@ export async function resetNotificationTemplateAction(
     return {
       success: false,
       message: error.message || "Failed to reset notification template.",
+    };
+  }
+}
+
+export async function sendTestNotificationEmailAction(
+  type: string,
+  recipientEmail: string,
+  subjectOverride?: string,
+  bodyOverride?: string
+): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    if (!recipientEmail || !recipientEmail.includes("@")) {
+      return { success: false, message: "A valid recipient email address is required." };
+    }
+
+    const def = DEFAULT_NOTIFICATION_TEMPLATES[type];
+    const dbTemplate = await prisma.notificationTemplate.findUnique({
+      where: { type },
+    });
+
+    const rawSubject = subjectOverride?.trim() || dbTemplate?.subject || def?.subject || "Alderwood Vantage Notification";
+    const rawBody = bodyOverride?.trim() || dbTemplate?.body || def?.body || "";
+
+    const sampleData: Record<string, string> = {
+      candidateName: "Sarah Jenkins",
+      staffName: "Dr. Evelyn Reed",
+      role: "Student",
+      staffRole: "Clinical Evaluator",
+      otpCode: "849201",
+      verificationUrl: "https://www.alderwoodvantage.com/verify-email?token=sample_test_token",
+      activationUrl: "https://www.alderwoodvantage.com/activate?token=sample_activation_token",
+      resetUrl: "https://www.alderwoodvantage.com/reset-password?token=sample_reset_token",
+      assessmentTitle: "Vantage Psychological Assessment Battery",
+      slaDays: "3",
+      dashboardUrl: "https://www.alderwoodvantage.com/dashboard",
+      reportUrl: "https://www.alderwoodvantage.com/dashboard/reports/sample_report",
+      expiryMinutes: "10",
+      expiryHours: "48",
+      referenceId: "STU-849201",
+      subject: "Psychometric Assessment Guidance",
+      responseWindowHours: "4",
+      helpline: "+91 93168 19331",
+      representativeName: "Dean Arthur Vance",
+      institutionName: "Kingsford Academy",
+      partnershipObjective: "Cohort Diagnostic Psychometry",
+    };
+
+    let populatedSubject = rawSubject;
+    let populatedBody = rawBody;
+
+    Object.entries(sampleData).forEach(([k, v]) => {
+      populatedSubject = populatedSubject.replaceAll(`{{${k}}}`, v);
+      populatedBody = populatedBody.replaceAll(`{{${k}}}`, v);
+    });
+
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px; background: #ffffff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="display: inline-block; padding: 4px 12px; background: #F1F5F9; color: #475569; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Template Test Dispatch: ${def?.label || type}</span>
+        </div>
+        <div style="white-space: pre-wrap; color: #0F172A; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          ${populatedBody.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+        </div>
+        <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
+        <p style="color: #94A3B8; font-size: 11px; text-align: center; margin: 0;">
+          This is an administrative test transmission sent by ${adminUser.email || "Admin"}.<br/>Alderwood Vantage • Raising leaders, not just employees.
+        </p>
+      </div>
+    `;
+
+    const { getEmailService } = await import("@/lib/email");
+    const emailRes = await getEmailService().sendEmail({
+      to: recipientEmail.trim(),
+      subject: `[TEST] ${populatedSubject}`,
+      html,
+      text: populatedBody,
+    });
+
+    if (!emailRes.success) {
+      return {
+        success: false,
+        message: `Failed to dispatch test email: ${emailRes.error || "Email provider error"}.`,
+      };
+    }
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "TEST_NOTIFICATION_EMAIL_SENT",
+      resource: "NotificationTemplate",
+      resourceId: type,
+      metadata: {
+        templateType: type,
+        recipient: recipientEmail.trim(),
+        messageId: emailRes.messageId,
+      },
+      result: AuditResult.SUCCESS,
+    });
+
+    return {
+      success: true,
+      message: `Test email for "${def?.label || type}" successfully delivered to ${recipientEmail.trim()}.`,
+    };
+  } catch (error: any) {
+    console.error("[sendTestNotificationEmailAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to dispatch test email.",
     };
   }
 }

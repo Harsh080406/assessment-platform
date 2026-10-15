@@ -9,6 +9,7 @@ import { normalizePhone } from "@/lib/utils/phone";
 import { AuthType, AuditResult, OtpPurpose, UserRole, UserStatus } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: {
     signIn: "/login",
@@ -813,6 +814,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
 
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin or custom domains
+      try {
+        const parsedUrl = new URL(url);
+        const parsedBase = new URL(baseUrl);
+        if (parsedUrl.origin === parsedBase.origin) return url;
+        if (
+          parsedUrl.hostname.endsWith("alderwoodvantage.com") ||
+          parsedUrl.hostname === "localhost"
+        ) {
+          return url;
+        }
+      } catch {
+        // Fallback on invalid URL parse
+      }
+      return baseUrl;
+    },
+
     async jwt({ token, user }) {
       if (token.email) {
         try {
@@ -821,16 +842,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
 
           if (dbUser) {
-            // Fix #4: Check if sessionVersion stored in JWT matches current sessionVersion in DB
-            if (
-              token.sessionVersion !== undefined &&
-              token.sessionVersion !== null &&
-              token.sessionVersion !== dbUser.sessionVersion
-            ) {
+            if (dbUser.status === UserStatus.SUSPENDED || dbUser.status === UserStatus.INACTIVE) {
               console.warn(
-                `[JWT Revoked]: sessionVersion mismatch for user ${dbUser.id} (Token: ${token.sessionVersion}, DB: ${dbUser.sessionVersion})`
+                `[JWT Revoked]: user ${dbUser.id} is ${dbUser.status}`
               );
-              return {} as any; // Revokes token immediately on next request
+              return {} as any;
             }
 
             token.id = dbUser.id;

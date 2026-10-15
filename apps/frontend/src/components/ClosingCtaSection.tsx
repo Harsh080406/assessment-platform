@@ -26,7 +26,7 @@ export default function ClosingCtaSection() {
         </h2>
 
         <p className="text-sm sm:text-lg text-[#CBD5E1] font-semibold max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
-          Raising leaders, not just employees. Take the comprehensive, academically validated four-module assessment today and receive your personalized Leadership Blueprint.
+          From self-discovery to leadership: a validated assessment, expert counselling, mentorship, and a 5-year pathway that helps every student become the leader, innovator and builder they can be.
         </p>
 
         {/* Dual CTA Buttons */}

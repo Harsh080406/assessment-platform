@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import AuthModal from "@/components/AuthModal";
 
-export type AuthModalMode = "login" | "signup" | "forgot_password" | "phone";
+export type AuthModalMode = "login" | "signup" | "forgot_password";
 
 interface AuthContextType {
   isAuthOpen: boolean;

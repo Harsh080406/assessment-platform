@@ -89,7 +89,7 @@ export default function StudentLayoutShell({
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans flex flex-col overflow-x-hidden">
       {/* 1. Left Sidebar (Fixed on Desktop, Drawer on Mobile) */}
       <StudentSidebar
         studentName={studentName}
@@ -117,8 +117,8 @@ export default function StudentLayoutShell({
           onMenuToggle={() => setSidebarOpen((prev) => !prev)}
         />
 
-        {/* Content Area bounded to max 1200px centered */}
-        <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 pb-24 md:pb-10 space-y-6 sm:space-y-8 min-w-0">
+        {/* Content Area - utilizing full screen width */}
+        <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-7 pb-24 md:pb-10 space-y-6 sm:space-y-8 min-w-0">
           {children}
         </main>
       </div>

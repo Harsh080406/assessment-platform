@@ -11,7 +11,7 @@ interface FaqItem {
 const DEFAULT_FAQS: FaqItem[] = [
   {
     q: "How is Alderwood Vantage different from standard career tests?",
-    a: "Most career tests are 10-minute quizzes that produce generic, robotic results. Alderwood Vantage is a deep, academically validated assessment across four dimensions (Spark, Wiring, Horsepower, Edge) designed by corporate leadership professionals. It goes beyond 'what to study' to provide a 5-year roadmap that reveals the leader, innovator, and builder in every student.",
+    a: "Most career tests are 10-minute quizzes that produce generic, robotic results. Alderwood Vantage takes students from self-discovery to leadership: a validated assessment across four dimensions (Spark, Wiring, Horsepower, Edge), expert counselling, mentorship, and a 5-year pathway that helps every student become the leader, innovator and builder they can be.",
   },
   {
     q: "Who designed and validated the assessment framework?",

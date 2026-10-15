@@ -76,6 +76,7 @@ export default function StudentModuleRow({
   return (
     <button
       type="button"
+      suppressHydrationWarning
       onClick={handleClick}
       disabled={loading}
       className="w-full text-left bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] hover:bg-[#F8FAFC] rounded-2xl p-4 sm:p-5 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
@@ -91,12 +92,12 @@ export default function StudentModuleRow({
         </div>
 
         <div className="space-y-0.5 min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] shrink-0">
               {subtitle}
             </span>
-            <span className="text-xs text-[#CBD5E1] hidden sm:inline">•</span>
-            <span className="text-sm font-semibold text-[#0F172A] group-hover:text-[#4F46E5] transition-colors truncate">
+            <span className="text-xs text-[#CBD5E1] shrink-0">•</span>
+            <span className="text-sm font-semibold text-[#0F172A] group-hover:text-[#4F46E5] transition-colors truncate min-w-0">
               {title}
             </span>
           </div>

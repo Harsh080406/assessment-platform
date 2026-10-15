@@ -194,9 +194,6 @@ export default function HowItWorksPage() {
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6">
             {/* Headline and CTAs */}
             <div className="text-center max-w-[720px] mx-auto">
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.1em] text-[#FF6B6B] mb-3">
-                Assessment and mentorship pathway
-              </span>
               <h1
                 id="hero-heading"
                 className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-[#0F172A] tracking-[-0.01em] leading-[1.12]"
@@ -205,8 +202,8 @@ export default function HowItWorksPage() {
                 <span className="text-[#FF6B6B]">clear vantage in five steps.</span>
               </h1>
 
-              <p className="mt-5 text-lg sm:text-xl text-[#475569] font-normal leading-relaxed max-w-[620px] mx-auto">
-                A structured, academically validated assessment process co-developed with corporate HR leaders and PhD academicians. We guide your child toward self-knowledge, leadership potential, and actionable 5-year clarity.
+              <p className="mt-5 text-lg sm:text-xl text-[#475569] font-normal leading-relaxed max-w-[640px] mx-auto">
+                From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.
               </p>
 
               {/* CTAs */}

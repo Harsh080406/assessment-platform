@@ -137,13 +137,8 @@ export default function StaffHeader({
         </div>
       </div>
 
-      {/* Right: Plain Role Label, Notifications & Single User Menu */}
+      {/* Right: Notifications & Single User Menu */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Subtle plain text role indicator */}
-        <span className="hidden lg:inline-block text-xs font-medium text-[#64748B] px-2 py-1 rounded-md bg-[#F8FAFC] border border-[#E2E8F0]/60">
-          Evaluator Workspace
-        </span>
-
         {/* Notifications Dropdown */}
         <StaffNotificationDropdown />
 
