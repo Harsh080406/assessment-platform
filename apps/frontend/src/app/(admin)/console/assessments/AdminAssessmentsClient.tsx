@@ -245,10 +245,6 @@ export default function AdminAssessmentsClient({ initialAssessments }: AdminAsse
                     <span>{pluralize(ass.sectionsCount, "section", "sections")}</span>
                     <span>•</span>
                     <span>{pluralize(ass.questionsCount, "question", "questions")}</span>
-                    <span>•</span>
-                    <span className="tabular-nums font-semibold text-[#0F172A]">
-                      {pluralize(ass.attemptsCount, "attempt", "attempts")}
-                    </span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-[#64748B] transition-transform duration-200 ${
