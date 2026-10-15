@@ -10,7 +10,10 @@ import {
   Trash2,
   CheckCircle2,
 } from "lucide-react";
-import { updateStudentProfileAction } from "@/app/actions/profile";
+import {
+  updateStudentProfileAction,
+  uploadAvatarAction,
+} from "@/app/actions/profile";
 
 interface SettingsClientProps {
   initialData: {
@@ -95,6 +98,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
   });
 
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Check if dirty
   const isDirty =
@@ -129,7 +133,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -138,12 +142,22 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Url = event.target?.result as string;
-      setFormData((prev) => ({ ...prev, avatarUrl: base64Url }));
-    };
-    reader.readAsDataURL(file);
+    setIsUploadingAvatar(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await uploadAvatarAction(fd);
+      if (res.success && res.avatarUrl) {
+        setFormData((prev) => ({ ...prev, avatarUrl: res.avatarUrl! }));
+        setToastMessage({ type: "success", text: "Profile photo uploaded to Cloudflare R2!" });
+      } else {
+        setToastMessage({ type: "error", text: res.message || "Failed to upload photo." });
+      }
+    } catch {
+      setToastMessage({ type: "error", text: "Network error uploading photo." });
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   const handleRemovePhoto = () => {
@@ -183,6 +197,19 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
       setToastMessage({ type: "error", text: "Last name is required." });
       return;
     }
+    if (!formData.country?.trim()) {
+      setToastMessage({ type: "error", text: "Country is required." });
+      return;
+    }
+    if (!formData.dateOfBirth?.trim()) {
+      setToastMessage({ type: "error", text: "Date of birth is required." });
+      return;
+    }
+    const parsedDob = new Date(formData.dateOfBirth);
+    if (isNaN(parsedDob.getTime()) || parsedDob > new Date()) {
+      setToastMessage({ type: "error", text: "Please select a valid date of birth in the past." });
+      return;
+    }
     if (!formData.school.trim()) {
       setToastMessage({ type: "error", text: "School or institution name is required." });
       return;
@@ -206,8 +233,8 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
         lastName: formData.lastName.trim(),
         avatarUrl: formData.avatarUrl || null,
         phone: formData.phone || null,
-        dateOfBirth: formData.dateOfBirth || null,
-        country: formData.country || null,
+        dateOfBirth: formData.dateOfBirth.trim(),
+        country: formData.country.trim(),
         school: formData.school.trim(),
         grade: formData.grade.trim(),
         educationLevel: formData.educationLevel.trim(),
@@ -301,10 +328,20 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-3.5 py-2 rounded-xl border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer min-h-[44px]"
+                    disabled={isUploadingAvatar}
+                    className="px-3.5 py-2 rounded-xl border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer min-h-[44px] disabled:opacity-50"
                   >
-                    <Upload className="w-3.5 h-3.5 text-[#64748B]" />
-                    <span>Upload photo</span>
+                    {isUploadingAvatar ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#4F46E5]" />
+                        <span>Uploading to R2...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3.5 h-3.5 text-[#64748B]" />
+                        <span>Upload photo</span>
+                      </>
+                    )}
                   </button>
 
                   {formData.avatarUrl && (
@@ -329,7 +366,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] block">
                 Choose an avatar preset:
               </span>
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2.5 flex-wrap pb-1">
                 {PRESET_AVATARS.map((preset) => {
                   const isSelected = formData.avatarUrl === preset.url;
                   return (
@@ -438,7 +475,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                     className="w-28 px-2.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
                   >
                     {COUNTRY_LIST.map((c) => (
-                      <option key={c.code} value={c.code}>
+                      <option key={`${c.name}-${c.code}`} value={c.code}>
                         {c.flag} {c.code}
                       </option>
                     ))}
@@ -459,12 +496,13 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
                   <label htmlFor="dateOfBirth" className="text-xs font-semibold text-[#0F172A] block">
-                    Date of birth
+                    Date of birth <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="dateOfBirth"
                     name="dateOfBirth"
                     type="date"
+                    required
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
                     className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
@@ -473,12 +511,13 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
 
                 <div className="space-y-1">
                   <label htmlFor="country" className="text-xs font-semibold text-[#0F172A] block">
-                    Country
+                    Country <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="country"
                     name="country"
                     type="text"
+                    required
                     value={formData.country}
                     onChange={handleInputChange}
                     className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"

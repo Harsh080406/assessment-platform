@@ -3,9 +3,11 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
-import { AuditResult, AuthType } from "@prisma/client";
+import { AuditResult, AuthType, OtpPurpose } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import crypto from "crypto";
+import { getEmailService } from "@/lib/email";
 
 export type SecurityActionResult<T = unknown> = {
   success: boolean;
@@ -23,6 +25,7 @@ async function verifyStudentSession() {
 
 export async function getStudentSecurityInfoAction(): Promise<
   SecurityActionResult<{
+    email: string | null;
     hasPassword: boolean;
     linkedMethods: Array<{
       type: string;
@@ -83,6 +86,7 @@ export async function getStudentSecurityInfoAction(): Promise<
       success: true,
       message: "Security status retrieved.",
       data: {
+        email: dbUser.email,
         hasPassword,
         linkedMethods,
         sessionVersion: dbUser.sessionVersion,
@@ -125,7 +129,6 @@ export async function changeStudentPasswordAction(
       where: { id: user.id },
       data: {
         passwordHash: newHash,
-        sessionVersion: { increment: 1 },
       },
     });
 
@@ -203,5 +206,214 @@ export async function revokeAllSessionsAction(): Promise<SecurityActionResult> {
     };
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to revoke sessions." };
+  }
+}
+
+/**
+ * Request a 6-digit OTP to be sent to the authenticated student's registered email
+ */
+export async function requestStudentPasswordResetOtpAction(): Promise<
+  SecurityActionResult<{ destination: string; maskedEmail: string }>
+> {
+  try {
+    const sessionUser = await verifyStudentSession();
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { id: true, email: true },
+    });
+
+    if (!user || !user.email) {
+      return { success: false, message: "No registered email address found for this account." };
+    }
+
+    // Check rate limit: max 5 active/recent OTPs in 1 hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentCount = await prisma.otpCode.count({
+      where: {
+        destination: user.email,
+        purpose: OtpPurpose.RESET,
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentCount >= 5) {
+      return {
+        success: false,
+        message: "Too many reset attempts. Please wait an hour before requesting a new code.",
+      };
+    }
+
+    const otpCode = crypto.randomInt(100000, 1000000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    await prisma.otpCode.create({
+      data: {
+        userId: user.id,
+        destination: user.email,
+        code: otpCode,
+        purpose: OtpPurpose.RESET,
+        expiresAt,
+      },
+    });
+
+    const emailService = getEmailService();
+    await emailService.sendPasswordResetOtpEmail(user.email, otpCode);
+
+    await createAuditLog({
+      userId: user.id,
+      action: "AUTH_FORGOT_PASSWORD_OTP_SENT",
+      resource: "User",
+      resourceId: user.id,
+      metadata: { email: user.email },
+      result: AuditResult.SUCCESS,
+    });
+
+    const parts = user.email.split("@");
+    const maskedEmail =
+      parts[0].length <= 2
+        ? `${parts[0]}***@${parts[1]}`
+        : `${parts[0][0]}***${parts[0].slice(-1)}@${parts[1]}`;
+
+    return {
+      success: true,
+      message: `A 6-digit verification code has been dispatched to ${maskedEmail}.`,
+      data: { destination: user.email, maskedEmail },
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to dispatch verification code." };
+  }
+}
+
+/**
+ * Verify the 6-digit OTP entered by the student
+ */
+export async function verifyStudentPasswordResetOtpAction(
+  code: string
+): Promise<SecurityActionResult> {
+  try {
+    const sessionUser = await verifyStudentSession();
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { id: true, email: true },
+    });
+
+    if (!user || !user.email) {
+      return { success: false, message: "User not found." };
+    }
+
+    const trimmed = code.trim();
+    if (!/^\d{6}$/.test(trimmed)) {
+      return { success: false, message: "Please enter a valid 6-digit verification code." };
+    }
+
+    const otp = await prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        destination: user.email,
+        code: trimmed,
+        purpose: OtpPurpose.RESET,
+        consumedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!otp) {
+      return {
+        success: false,
+        message: "Invalid or expired verification code. Please check your email or request a new code.",
+      };
+    }
+
+    return {
+      success: true,
+      message: "Verification code confirmed successfully.",
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to verify code." };
+  }
+}
+
+/**
+ * Complete the password reset with verified OTP and save new password to database
+ */
+export async function resetStudentPasswordWithOtpAction(
+  code: string,
+  newPassword: string
+): Promise<SecurityActionResult> {
+  try {
+    const sessionUser = await verifyStudentSession();
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { id: true, email: true },
+    });
+
+    if (!user || !user.email) {
+      return { success: false, message: "User record not found." };
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      return { success: false, message: "New password must be at least 8 characters long." };
+    }
+
+    const trimmed = code.trim();
+    const otp = await prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        destination: user.email,
+        code: trimmed,
+        purpose: OtpPurpose.RESET,
+        consumedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!otp) {
+      return {
+        success: false,
+        message: "Invalid or expired verification code. Please request a new code to continue.",
+      };
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash,
+        },
+      }),
+      prisma.otpCode.update({
+        where: { id: otp.id },
+        data: { consumedAt: new Date() },
+      }),
+    ]);
+
+    await createAuditLog({
+      userId: user.id,
+      action: "AUTH_RESET_PASSWORD_WITH_OTP",
+      resource: "User",
+      resourceId: user.id,
+      metadata: { email: user.email },
+      result: AuditResult.SUCCESS,
+    });
+
+    await prisma.notification.create({
+      data: {
+        userId: user.id,
+        type: "SECURITY_ALERT",
+        message: "Your account password was updated successfully via email OTP verification.",
+      },
+    });
+
+    revalidatePath("/dashboard/settings/security");
+    return {
+      success: true,
+      message: "Password updated successfully in database! Your new credentials are now active.",
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to update password." };
   }
 }

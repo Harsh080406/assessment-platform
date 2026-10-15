@@ -19,6 +19,7 @@ import {
   PanelLeftOpen,
   X,
 } from "lucide-react";
+import SignOutButton from "@/components/SignOutButton";
 
 interface AdminSidebarProps {
   isOpen?: boolean;
@@ -172,25 +173,26 @@ export default function AdminSidebar({
             }`}
           >
             {/* Expanded Brand View */}
-            <div className={`flex items-center gap-2.5 min-w-0 ${isCollapsed ? "lg:hidden" : "flex"}`}>
+            <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? "lg:hidden" : "flex"}`}>
               <Link
                 href="/console"
-                className="flex items-center gap-2 group min-w-0"
+                className="flex items-center gap-3 group min-w-0"
                 title="Alderwood Vantage Admin Console"
               >
                 <Image
                   src="/AlderwoodVANTAGE.svg"
                   alt="Alderwood Vantage Logo"
-                  width={34}
-                  height={28}
+                  width={48}
+                  height={42}
+                  priority
                   draggable={false}
-                  className="h-7 w-auto object-contain shrink-0"
+                  className="h-10 sm:h-11 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform duration-200"
                 />
-                <div className="flex flex-col leading-tight min-w-0">
-                  <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-sm font-bold tracking-tight text-[#0F172A] truncate">
+                <div className="flex flex-col min-w-0 justify-center">
+                  <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-[15px] font-black tracking-tight text-[#0F172A] leading-tight whitespace-nowrap">
                     Alderwood <span className="text-[#FF6B6B]">Vantage</span>
                   </span>
-                  <span className="text-[10px] font-semibold text-[#64748B] tracking-wider uppercase">
+                  <span className="text-[11px] font-semibold text-[#64748B] tracking-tight leading-tight mt-0.5 whitespace-nowrap">
                     Admin Console
                   </span>
                 </div>
@@ -201,15 +203,15 @@ export default function AdminSidebar({
             {isCollapsed && (
               <Link
                 href="/console"
-                className="hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors"
+                className="hidden lg:flex items-center justify-center p-1.5 rounded-xl hover:bg-[#F8FAFC] transition-all cursor-pointer group"
                 title="Alderwood Vantage Overview"
               >
                 <Image
                   src="/AlderwoodVANTAGE.svg"
                   alt="Alderwood Vantage Logo"
-                  width={28}
-                  height={24}
-                  className="h-6 w-auto object-contain"
+                  width={44}
+                  height={38}
+                  className="h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
                 />
               </Link>
             )}
@@ -268,7 +270,7 @@ export default function AdminSidebar({
                               }`}
                             />
                             <span
-                              className={`truncate leading-none ${
+                              className={`truncate leading-normal py-0.5 ${
                                 isCollapsed ? "lg:hidden" : "inline"
                               }`}
                             >
@@ -299,33 +301,48 @@ export default function AdminSidebar({
             ))}
           </nav>
 
-          {/* Bottom Footer: Desktop Collapse Toggle */}
-          <div className="p-3 border-t border-[#F1F5F9] hidden lg:flex items-center justify-between">
-            {!isCollapsed ? (
-              <div className="flex items-center justify-between w-full">
-                <span className="text-[11px] font-medium text-[#94A3B8]">
-                  v2.4 Governance
-                </span>
-                <button
-                  type="button"
-                  onClick={onToggleCollapse}
-                  className="p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors"
-                  title="Collapse sidebar"
-                  aria-label="Collapse sidebar"
-                >
-                  <PanelLeftClose className="w-4 h-4" />
-                </button>
+          {/* Bottom Rail: Hide Sidebar Toggle & Sign Out */}
+          <div className="p-3 border-t border-[#F1F5F9] bg-[#FAFAFA] overflow-x-hidden">
+            {isCollapsed ? (
+              <div className="flex flex-col items-center gap-2">
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    className="hidden lg:flex w-10 h-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                    title="Expand sidebar"
+                    aria-label="Expand sidebar"
+                  >
+                    <PanelLeftOpen className="w-4 h-4" />
+                  </button>
+                )}
+                <SignOutButton
+                  showLabel={false}
+                  className="w-10 h-10 p-0 border border-[#E2E8F0] hover:border-red-200 bg-white hover:bg-red-50 text-[#64748B] hover:text-red-600 rounded-xl transition-colors shadow-2xs"
+                  title="Sign out"
+                />
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={onToggleCollapse}
-                className="w-full flex items-center justify-center p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors"
-                title="Expand sidebar"
-                aria-label="Expand sidebar"
-              >
-                <PanelLeftOpen className="w-4 h-4" />
-              </button>
+              <div className="flex items-center justify-between px-1 gap-2 overflow-x-hidden">
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    className="hidden lg:inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
+                    title="Hide sidebar"
+                    aria-label="Hide sidebar"
+                  >
+                    <PanelLeftClose className="w-4 h-4 shrink-0" />
+                    <span>Hide sidebar</span>
+                  </button>
+                )}
+
+                <SignOutButton
+                  showLabel={true}
+                  className="text-xs font-medium text-[#64748B] hover:text-red-600 bg-transparent border-0 p-0 hover:bg-transparent shadow-none"
+                  title="Sign out"
+                />
+              </div>
             )}
           </div>
         </div>

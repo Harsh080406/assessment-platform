@@ -13,7 +13,6 @@ import {
   PanelLeftOpen,
   X,
   LogOut,
-  HelpCircle,
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
 
@@ -88,12 +87,12 @@ export default function StudentSidebar({
       {/* Persistent Sidebar (248px desktop, 72px tablet / collapsed) */}
       <aside
         aria-label="Student Navigation"
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E2E8F0] flex flex-col justify-between transition-all duration-200 ease-in-out md:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E2E8F0] flex flex-col justify-between transition-all duration-200 ease-in-out md:translate-x-0 overflow-x-hidden ${
           isOpen ? "translate-x-0 shadow-xl" : "-translate-x-full md:translate-x-0 shadow-none"
         } ${isCollapsed ? "w-[72px]" : "w-[248px]"}`}
       >
         {/* Top: Brand Header & Nav List */}
-        <div className="flex flex-col h-full min-h-0">
+        <div className="flex flex-col h-full min-h-0 overflow-x-hidden">
           {/* Header */}
           <div
             className={`h-16 border-b border-[#F1F5F9] flex items-center px-4 ${
@@ -101,43 +100,44 @@ export default function StudentSidebar({
             }`}
           >
             {isCollapsed ? (
-              <button
-                type="button"
-                onClick={onToggleCollapse}
-                className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A] transition-colors cursor-pointer"
-                title="Expand sidebar"
-                aria-label="Expand sidebar"
+              <Link
+                href="/dashboard"
+                onClick={onClose}
+                className="flex items-center justify-center p-1.5 rounded-xl hover:bg-[#F8FAFC] transition-all cursor-pointer group"
+                title="Alderwood Vantage Student"
+                aria-label="Alderwood Vantage Student"
               >
                 <Image
                   src="/AlderwoodVANTAGE.svg"
                   alt="Alderwood Vantage"
-                  width={32}
-                  height={28}
+                  width={44}
+                  height={38}
                   draggable={false}
-                  className="h-7 w-auto object-contain"
+                  className="h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
                 />
-              </button>
+              </Link>
             ) : (
               <div className="flex items-center justify-between w-full min-w-0">
                 <Link
                   href="/dashboard"
                   onClick={onClose}
-                  className="flex items-center gap-2.5 min-w-0"
+                  className="flex items-center gap-3 min-w-0 flex-1 group"
                   title="Alderwood Vantage Student"
                 >
                   <Image
                     src="/AlderwoodVANTAGE.svg"
                     alt="Alderwood Vantage"
-                    width={36}
-                    height={30}
+                    width={48}
+                    height={42}
+                    priority
                     draggable={false}
-                    className="h-7.5 w-auto object-contain shrink-0"
+                    className="h-10 sm:h-11 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform duration-200"
                   />
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-sm font-bold tracking-tight text-[#0F172A] leading-tight whitespace-nowrap">
+                  <div className="flex flex-col min-w-0 justify-center">
+                    <span className="font-[family-name:var(--font-plus-jakarta-sans)] text-[15px] font-black tracking-tight text-[#0F172A] leading-tight whitespace-nowrap">
                       Alderwood <span className="text-[#FF6B6B]">Vantage</span>
                     </span>
-                    <span className="text-[10px] font-semibold text-[#64748B]">
+                    <span className="text-[11px] font-semibold text-[#64748B] tracking-tight leading-tight mt-0.5 whitespace-nowrap">
                       Student Portal
                     </span>
                   </div>
@@ -152,25 +152,12 @@ export default function StudentSidebar({
                 >
                   <X className="w-5 h-5" />
                 </button>
-
-                {/* Desktop Collapse Toggle */}
-                {onToggleCollapse && (
-                  <button
-                    type="button"
-                    onClick={onToggleCollapse}
-                    className="hidden md:flex p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
-                    title="Collapse sidebar"
-                    aria-label="Collapse sidebar"
-                  >
-                    <PanelLeftClose className="w-4 h-4" />
-                  </button>
-                )}
               </div>
             )}
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto overflow-x-hidden no-scrollbar">
             {!isCollapsed && (
               <div className="px-3 pb-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
@@ -232,10 +219,21 @@ export default function StudentSidebar({
             })}
           </nav>
 
-          {/* Bottom Rail: Quiet Help & Sign Out (User profile is in top bar) */}
-          <div className="p-3 border-t border-[#F1F5F9] bg-[#FAFAFA]">
+          {/* Bottom Rail: Hide Sidebar Toggle & Sign Out */}
+          <div className="p-3 border-t border-[#F1F5F9] bg-[#FAFAFA] overflow-x-hidden">
             {isCollapsed ? (
               <div className="flex flex-col items-center gap-2">
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    className="hidden md:flex w-10 h-10 items-center justify-center rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                    title="Expand sidebar"
+                    aria-label="Expand sidebar"
+                  >
+                    <PanelLeftOpen className="w-4 h-4" />
+                  </button>
+                )}
                 <SignOutButton
                   showLabel={false}
                   className="w-10 h-10 p-0 border border-[#E2E8F0] hover:border-red-200 bg-white hover:bg-red-50 text-[#64748B] hover:text-red-600 rounded-xl transition-colors shadow-2xs"
@@ -243,14 +241,19 @@ export default function StudentSidebar({
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-between px-1">
-                <Link
-                  href="/how-it-works"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                  <span>Program Guide</span>
-                </Link>
+              <div className="flex items-center justify-between px-1 gap-2 overflow-x-hidden">
+                {onToggleCollapse && (
+                  <button
+                    type="button"
+                    onClick={onToggleCollapse}
+                    className="hidden md:inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
+                    title="Hide sidebar"
+                    aria-label="Hide sidebar"
+                  >
+                    <PanelLeftClose className="w-4 h-4 shrink-0" />
+                    <span>Hide sidebar</span>
+                  </button>
+                )}
 
                 <SignOutButton
                   showLabel={true}

@@ -4,14 +4,26 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { StorageService } from "@/lib/storage";
 
 const updateProfileSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(50),
   lastName: z.string().trim().min(1, "Last name is required").max(50),
   avatarUrl: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
-  dateOfBirth: z.string().nullable().optional(),
-  country: z.string().nullable().optional(),
+  dateOfBirth: z
+    .string()
+    .trim()
+    .min(1, "Date of birth is required")
+    .refine((val) => {
+      const d = new Date(val);
+      return !isNaN(d.getTime()) && d < new Date();
+    }, "Please provide a valid date of birth in the past"),
+  country: z
+    .string()
+    .trim()
+    .min(1, "Country is required")
+    .max(80),
   school: z.string().trim().min(1, "School or institution name is required").max(120),
   grade: z.string().trim().min(1, "Current class / grade is required"),
   educationLevel: z.string().trim().min(1, "Education stage is required"),
@@ -96,6 +108,72 @@ export async function updateStudentProfileAction(input: UpdateProfileInput) {
     return {
       success: false,
       message: "An error occurred while saving your profile. Please try again.",
+    };
+  }
+}
+
+export async function uploadAvatarAction(
+  formData: FormData
+): Promise<{ success: boolean; avatarUrl?: string; message?: string }> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, message: "Unauthorized. Please sign in." };
+    }
+
+    const file = formData.get("file") as File | null;
+    if (!file) {
+      return { success: false, message: "No image file provided." };
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      return { success: false, message: "Image must be under 5MB." };
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    if (!StorageService.isValidImageBuffer(buffer)) {
+      return {
+        success: false,
+        message: "Invalid image format. Supported formats: JPG, PNG, WebP, GIF.",
+      };
+    }
+
+    const { avatarUrl } = await StorageService.saveAvatar(
+      session.user.id,
+      buffer,
+      file.type || "image/jpeg",
+      file.name || "avatar.jpg"
+    );
+
+    // Update DB studentProfile
+    await prisma.studentProfile.upsert({
+      where: { userId: session.user.id },
+      create: {
+        userId: session.user.id,
+        firstName: session.user.name?.split(" ")[0] || "Student",
+        lastName: session.user.name?.split(" ").slice(1).join(" ") || "",
+        avatarUrl,
+      },
+      update: {
+        avatarUrl,
+      },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/settings");
+
+    return {
+      success: true,
+      avatarUrl,
+      message: "Avatar uploaded successfully to Cloudflare R2!",
+    };
+  } catch (err: any) {
+    console.error("[uploadAvatarAction Error]:", err);
+    return {
+      success: false,
+      message: err?.message || "Failed to upload avatar.",
     };
   }
 }

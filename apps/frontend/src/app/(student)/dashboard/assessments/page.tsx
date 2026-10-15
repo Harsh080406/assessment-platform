@@ -14,6 +14,7 @@ import StartAssessmentButton from "@/components/StartAssessmentButton";
 import StudentPageHeader from "@/components/student/StudentPageHeader";
 import StudentStatusPill from "@/components/student/StudentStatusPill";
 import StudentProgressBar from "@/components/student/StudentProgressBar";
+import AssessmentSubmitCard from "@/components/student/AssessmentSubmitCard";
 import { AssessmentStatus, AttemptStatus } from "@prisma/client";
 
 export default async function StudentAssessmentsPage() {
@@ -76,18 +77,20 @@ export default async function StudentAssessmentsPage() {
 
   const attempts = user?.attempts || [];
   const completedAttempt = attempts.find(
-    (a) => a.status === AttemptStatus.SUBMITTED || a.status === AttemptStatus.PUBLISHED
+    (a) =>
+      a.status === AttemptStatus.SUBMITTED ||
+      a.status === AttemptStatus.UNDER_REVIEW ||
+      a.status === AttemptStatus.REPORT_IN_PREP ||
+      a.status === AttemptStatus.PENDING_APPROVAL ||
+      a.status === AttemptStatus.PUBLISHED
   );
   const activeAttempt = attempts.find(
     (a) => a.status === AttemptStatus.IN_PROGRESS || a.status === AttemptStatus.NOT_STARTED
   );
 
   const targetAttempt = activeAttempt || completedAttempt || null;
-  const isOverallCompleted =
-    !activeAttempt &&
-    completedAttempt &&
-    (completedAttempt.status === AttemptStatus.SUBMITTED ||
-      completedAttempt.status === AttemptStatus.PUBLISHED);
+  const isSubmitted = Boolean(completedAttempt && !activeAttempt);
+  const isOverallCompleted = isSubmitted;
 
   const sections =
     targetAttempt?.assessment?.sections ||
@@ -147,7 +150,7 @@ export default async function StudentAssessmentsPage() {
     },
     {
       id: "career-domain-fit",
-      title: "Aptitude: Verbal, Numerical & Logical Reasoning",
+      title: "Cognitive Aptitude & Reasoning",
       subtitle: "Module D • Cognitive Reasoning",
       description:
         "Objective aptitude battery evaluating verbal deduction, numerical problem-solving, and logical speed.",
@@ -187,10 +190,11 @@ export default async function StudentAssessmentsPage() {
     };
   });
 
-  // Find the primary next action module index
-  const nextActiveIndex = tracks.findIndex((t) => t.isInProgress) !== -1
-    ? tracks.findIndex((t) => t.isInProgress)
-    : tracks.findIndex((t) => !t.isCompleted);
+
+
+  // Calculate module completion counts for report preparation submission
+  const allModulesCompleted = tracks.length > 0 && tracks.every((t) => t.isCompleted);
+  const completedModulesCount = tracks.filter((t) => t.isCompleted).length;
 
   return (
     <div className="w-full space-y-6 sm:space-y-8">
@@ -200,13 +204,22 @@ export default async function StudentAssessmentsPage() {
         description="Four foundational evaluation modules calibrated to map your cognitive and leadership potential."
       />
 
+      {/* Assessment Final Submission & Report Preparation Card */}
+      <AssessmentSubmitCard
+        attemptId={targetAttempt?.id || null}
+        allModulesCompleted={allModulesCompleted}
+        completedCount={completedModulesCount}
+        totalCount={tracks.length}
+        isSubmitted={isSubmitted}
+        submittedAt={completedAttempt?.submittedAt || null}
+      />
+
       {/* 2-Column Responsive Card Grid (1 col mobile, 2 cols tablet & laptop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
         {tracks.map((track, trackIdx) => {
           const Icon = track.icon;
           const isCompleted = track.status === "COMPLETED";
           const isInProgress = track.status === "IN_PROGRESS";
-          const isPrimaryNext = trackIdx === nextActiveIndex;
 
           const buttonLabel = isCompleted
             ? "Review responses"
@@ -288,7 +301,7 @@ export default async function StudentAssessmentsPage() {
                 <div className="pt-1">
                   <StartAssessmentButton
                     label={buttonLabel}
-                    variant={isPrimaryNext ? "primary" : "secondary"}
+                    variant={isCompleted ? "secondary" : "primary"}
                     className="w-full text-xs font-semibold"
                     sectionIndex={trackIdx}
                     moduleId={track.id}

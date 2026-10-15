@@ -34,7 +34,9 @@ export async function middleware(request: NextRequest) {
     const exp = typeof token?.exp === "number" ? token.exp : null;
     const isExpired = exp ? Date.now() >= exp * 1000 : false;
 
-    const isAuthenticated = !!token && !isExpired;
+    // A valid session token must have an identity (id or email or sub) and not be an empty revoked object {}
+    const hasValidIdentity = Boolean(token?.id || token?.sub || token?.email);
+    const isAuthenticated = !!token && !isExpired && hasValidIdentity;
     const userRole = (token?.role as string) || null;
 
     // Helper to redirect while preserving the incoming request's custom domain & protocol

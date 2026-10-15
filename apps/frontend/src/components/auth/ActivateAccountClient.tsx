@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
   Lock,
@@ -11,6 +12,14 @@ import {
   AlertCircle,
   Sparkles,
   UserCheck,
+  User,
+  Calendar,
+  MapPin,
+  Phone,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  ChevronRight,
 } from "lucide-react";
 import { activateAccountAction } from "@/app/actions/auth";
 
@@ -26,21 +35,43 @@ export default function ActivateAccountClient({
   role,
 }: ActivateAccountClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  // Form fields
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [country, setCountry] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(
-    !email ? "Invalid or expired activation link." : null
+    !email ? "Invalid or expired activation link. Please request a new invitation." : null
   );
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isActivated, setIsActivated] = useState(false);
+  const [activatedDetails, setActivatedDetails] = useState<{
+    firstName: string;
+    lastName: string;
+  } | null>(null);
 
   const targetDashboard =
     role === "ADMIN" ? "/console" : role === "STAFF" ? "/portal" : "/dashboard";
 
-  const handlePasswordActivation = (e: React.FormEvent) => {
+  const handleActivation = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!firstName.trim()) {
+      setError("Please provide your first name.");
+      return;
+    }
+
+    if (!lastName.trim()) {
+      setError("Please provide your last name.");
+      return;
+    }
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters long.");
@@ -48,17 +79,27 @@ export default function ActivateAccountClient({
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Passwords do not match. Please verify both entries.");
       return;
     }
 
     startTransition(async () => {
-      const res = await activateAccountAction({ token, password });
+      const res = await activateAccountAction({
+        token,
+        password,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        dateOfBirth: dateOfBirth.trim() || undefined,
+        country: country.trim() || undefined,
+        phone: phone.trim() || undefined,
+      });
+
       if (res.success) {
-        setSuccess(res.message);
-        setTimeout(() => {
-          router.push(`/login?callbackUrl=${encodeURIComponent(targetDashboard)}`);
-        }, 1500);
+        setActivatedDetails({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+        });
+        setIsActivated(true);
       } else {
         setError(res.message);
       }
@@ -69,8 +110,82 @@ export default function ActivateAccountClient({
     signIn("google", { callbackUrl: targetDashboard });
   };
 
+  // SUCCESS WINDOW
+  if (isActivated) {
+    return (
+      <div className="w-full max-w-lg mx-auto bg-white rounded-3xl border border-[#E2E8F0] shadow-2xl p-8 sm:p-10 space-y-7 animate-in fade-in-50 zoom-in-95 duration-200">
+        <div className="text-center space-y-3">
+          <div className="w-20 h-20 rounded-3xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/60 border border-emerald-200 text-emerald-800 text-[11px] font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Account Activated</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+            Welcome to Alderwood Vantage!
+          </h1>
+          <p className="text-sm text-[#475569] leading-relaxed max-w-md mx-auto">
+            Your profile details and password have been configured successfully. Your account is now active and ready to use.
+          </p>
+        </div>
+
+        {/* Profile Summary Card */}
+        <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-3">
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+            <span className="text-xs font-semibold text-[#64748B]">Name</span>
+            <span className="text-xs font-bold text-[#0F172A]">
+              {activatedDetails?.firstName} {activatedDetails?.lastName}
+            </span>
+          </div>
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+            <span className="text-xs font-semibold text-[#64748B]">Account Email</span>
+            <span className="text-xs font-bold text-[#0F172A]">{email}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+            <span className="text-xs font-semibold text-[#64748B]">Role / Access</span>
+            <span className="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
+              {role || "STUDENT"}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#64748B]">Status</span>
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Active & Verified
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="space-y-3 pt-2">
+          <Link
+            href={`/login?callbackUrl=${encodeURIComponent(targetDashboard)}`}
+            className="w-full py-4 rounded-xl bg-[#0F172A] hover:bg-black text-white text-sm font-bold transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+          >
+            <span>Sign In to Access Your Portal</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <Link
+            href="/"
+            className="w-full py-3.5 rounded-xl border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-[#334155] text-xs font-bold transition flex items-center justify-center gap-2"
+          >
+            <span>Go to Main Website</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <p className="text-center text-[11px] text-[#94A3B8]">
+          Alderwood Vantage • Raising leaders, not just employees.
+        </p>
+      </div>
+    );
+  }
+
+  // ACTIVATION FORM
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-3xl border border-[#E2E8F0] shadow-xl p-8 space-y-6">
+    <div className="w-full max-w-lg mx-auto bg-white rounded-3xl border border-[#E2E8F0] shadow-xl p-8 sm:p-9 space-y-6">
       <div className="text-center space-y-2">
         <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto shadow-xs">
           <ShieldCheck className="w-7 h-7" />
@@ -78,30 +193,32 @@ export default function ActivateAccountClient({
         <h1 className="text-2xl font-black text-[#0F172A] tracking-tight">
           Activate Your Account
         </h1>
-        <p className="text-xs text-[#64748B] font-medium">
-          You have been invited to join the Alderwood Vantage platform.
+        <p className="text-xs text-[#64748B] font-medium max-w-sm mx-auto">
+          Please complete your profile details and set a secure password to finalize your account activation.
         </p>
       </div>
 
       {/* Account Details Banner */}
-      {email && role && (
+      {email && (
         <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-extrabold uppercase text-[#94A3B8]">
               Invited Email
             </span>
-            <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
-              {role}
-            </span>
+            {role && (
+              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
+                {role}
+              </span>
+            )}
           </div>
           <div className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
             <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            {email}
+            <span className="truncate">{email}</span>
           </div>
         </div>
       )}
 
-      {/* Error / Success Alerts */}
+      {/* Error Alert */}
       {error && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-800 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
@@ -109,70 +226,172 @@ export default function ActivateAccountClient({
         </div>
       )}
 
-      {success && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>{success} Redirecting...</span>
-        </div>
-      )}
-
-      {email && !success && (
-        <div className="space-y-5">
-          {/* Activation Form */}
-          <form onSubmit={handlePasswordActivation} className="space-y-4">
+      {email && (
+        <form onSubmit={handleActivation} className="space-y-4">
+          {/* First & Last Name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#334155] block">
-                Set Password
+                First Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
-                  type="password"
-                  placeholder="••••••••"
+                  type="text"
+                  placeholder="e.g. Sarah"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={isPending}
+                  required
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <User className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#334155] block">
+                Last Name <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="e.g. Jenkins"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={isPending}
+                  required
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <User className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
+              </div>
+            </div>
+          </div>
+
+          {/* Date of Birth & Country/Address */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#334155] block">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  disabled={isPending}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <Calendar className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3 pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#334155] block">
+                Country / Address
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="e.g. United Kingdom"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  disabled={isPending}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+                <MapPin className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
+              </div>
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-[#334155] block">
+              Phone Number
+            </label>
+            <div className="relative">
+              <input
+                type="tel"
+                placeholder="+44 20 7946 0912"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={isPending}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              />
+              <Phone className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
+            </div>
+          </div>
+
+          {/* Password & Confirm Password */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#334155] block">
+                Create Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isPending}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-sm font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
-                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2.5 top-3 text-[#94A3B8] hover:text-[#475569]"
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
               </div>
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#334155] block">
-                Confirm Password
+                Confirm Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
-                  type="password"
-                  placeholder="••••••••"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isPending}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-sm font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
-                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3" />
               </div>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full py-3.5 rounded-xl bg-[#0F172A] hover:bg-black text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
-            >
-              {isPending ? (
-                "Activating Account..."
-              ) : (
-                <>
-                  <span>Activate with Password</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
+          <p className="text-[11px] text-[#94A3B8]">
+            Must contain at least 8 characters. You will use this password to sign in.
+          </p>
 
-          <div className="relative flex items-center justify-center">
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full py-3.5 rounded-xl bg-[#0F172A] hover:bg-black text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-60"
+          >
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Activating Your Account...</span>
+              </span>
+            ) : (
+              <>
+                <span>Complete Activation & Create Password</span>
+                <ChevronRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+
+          <div className="relative flex items-center justify-center pt-2">
             <div className="border-t border-[#E2E8F0] w-full" />
             <span className="bg-white px-3 text-[10px] font-extrabold uppercase text-[#94A3B8] absolute">
               Or
@@ -181,9 +400,10 @@ export default function ActivateAccountClient({
 
           {/* Google OAuth Activation Option */}
           <button
+            type="button"
             onClick={handleGoogleActivation}
             disabled={isPending}
-            className="w-full py-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] text-xs font-bold transition flex items-center justify-center gap-3 shadow-xs"
+            className="w-full py-3 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] text-xs font-bold transition flex items-center justify-center gap-3 shadow-xs"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -205,7 +425,7 @@ export default function ActivateAccountClient({
             </svg>
             <span>Activate with Google</span>
           </button>
-        </div>
+        </form>
       )}
     </div>
   );

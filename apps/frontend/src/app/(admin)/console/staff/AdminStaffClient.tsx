@@ -320,52 +320,110 @@ export default function AdminStaffClient({ initialStaff }: AdminStaffClientProps
               </button>
             </div>
 
-            <form onSubmit={handleSendInvite} className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-[#0F172A] block mb-1">
-                  Invitee Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="staff@alderwoodvantage.com"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+            {createdActivationUrl ? (
+              <div className="space-y-4">
+                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-900 flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-bold">Congratulatory Invitation Email Sent!</p>
+                    <p className="text-[11px] text-emerald-800 leading-relaxed">
+                      An activation email has been dispatched with instructions for the user to complete their profile and set their password. You can also copy the activation link directly below:
+                    </p>
+                  </div>
+                </div>
 
-              <div>
-                <label className="text-xs font-semibold text-[#0F172A] block mb-1">
-                  Assigned Clearance Role
-                </label>
-                <select
-                  value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value as UserRole)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value={UserRole.STAFF}>STAFF (Clinical Evaluator)</option>
-                  <option value={UserRole.ADMIN}>ADMIN (System Administrator)</option>
-                </select>
-              </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#0F172A] block">
+                    Activation Link (Valid for 48 Hours)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={createdActivationUrl}
+                      className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-mono text-[#0F172A] focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={copyActivationLink}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] shrink-0 transition-colors"
+                    >
+                      {copiedLink ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-emerald-600">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F1F5F9]">
-                <button
-                  type="button"
-                  onClick={() => setShowInviteModal(false)}
-                  className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F8FAFC]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPending || !inviteEmail.trim()}
-                  className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold disabled:opacity-50 transition-colors"
-                >
-                  {isPending ? "Generating..." : "Generate Invite"}
-                </button>
+                <div className="flex justify-end pt-2 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowInviteModal(false);
+                      setCreatedActivationUrl(null);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSendInvite} className="space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                    Invitee Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="staff@alderwoodvantage.com"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                    Assigned Clearance Role
+                  </label>
+                  <select
+                    value={inviteRole}
+                    onChange={(e) => setInviteRole(e.target.value as UserRole)}
+                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value={UserRole.STAFF}>STAFF (Clinical Evaluator)</option>
+                    <option value={UserRole.ADMIN}>ADMIN (System Administrator)</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => setShowInviteModal(false)}
+                    className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F8FAFC]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isPending || !inviteEmail.trim()}
+                    className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+                  >
+                    {isPending ? "Generating..." : "Generate Invite & Send Email"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

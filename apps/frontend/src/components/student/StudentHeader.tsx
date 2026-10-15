@@ -77,7 +77,7 @@ export default function StudentHeader({
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] h-16 w-full">
-      <div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 max-w-[1200px] mx-auto">
+      <div className="h-full px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-3 w-full">
         {/* Left Section: Mobile Menu, Mobile Title, Desktop Search */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Mobile drawer toggle */}

@@ -93,7 +93,12 @@ export default async function StudentDashboardPage() {
   // Determine active and completed attempts
   const attempts = user?.attempts || [];
   const completedAttempts = attempts.filter(
-    (a) => a.status === AttemptStatus.SUBMITTED || a.status === AttemptStatus.PUBLISHED
+    (a) =>
+      a.status === AttemptStatus.SUBMITTED ||
+      a.status === AttemptStatus.UNDER_REVIEW ||
+      a.status === AttemptStatus.REPORT_IN_PREP ||
+      a.status === AttemptStatus.PENDING_APPROVAL ||
+      a.status === AttemptStatus.PUBLISHED
   );
   const activeAttempt = attempts.find(
     (a) => a.status === AttemptStatus.IN_PROGRESS || a.status === AttemptStatus.NOT_STARTED
@@ -153,7 +158,7 @@ export default async function StudentDashboardPage() {
     {
       id: "career-domain-fit",
       subtitle: "Module D",
-      title: "Aptitude: Verbal, Numerical & Logical Reasoning",
+      title: "Cognitive Aptitude & Reasoning",
       description: "Objective cognitive aptitude battery measuring verbal deduction and reasoning.",
       duration: "~35 mins",
       fallbackQuestions: 30,
@@ -203,6 +208,8 @@ export default async function StudentDashboardPage() {
     ? Math.min(100, Math.round((totalAnsweredAll / totalQuestionsAll) * 100))
     : 0;
 
+  const allModulesCompleted = modules.length > 0 && modules.every((m) => m.isCompleted);
+
   // Current focal module for the "Continue" card
   const currentModule =
     modules.find((m) => m.isInProgress) ||
@@ -218,11 +225,11 @@ export default async function StudentDashboardPage() {
   return (
     <div className="w-full space-y-6 sm:space-y-8">
       {/* 2-Column Responsive Layout: 8 cols main + 4 cols context rail */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* ========================================================================= */}
         {/* MAIN COLUMN (8 of 12 cols on desktop)                                     */}
         {/* ========================================================================= */}
-        <div className="xl:col-span-8 space-y-6 sm:space-y-8 min-w-0">
+        <div className="lg:col-span-8 space-y-6 sm:space-y-8 min-w-0">
           {/* 1. CONTINUE WHERE YOU LEFT OFF CARD (Hero Replacement) */}
           <section className="bg-white border border-[#E2E8F0] rounded-2xl p-5 sm:p-7 shadow-xs">
             <div className="space-y-4">
@@ -287,6 +294,14 @@ export default async function StudentDashboardPage() {
                     className="px-5 py-2.5 rounded-xl bg-[#FF6B6B] hover:bg-[#E05353] text-white text-xs sm:text-sm font-semibold transition-all shadow-2xs inline-flex items-center gap-2 cursor-pointer min-h-[44px]"
                   >
                     <span>View Certified Results</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                ) : allModulesCompleted ? (
+                  <Link
+                    href="/dashboard/assessments"
+                    className="px-5 py-2.5 rounded-xl bg-[#FF6B6B] hover:bg-[#E05353] text-white text-xs sm:text-sm font-semibold transition-all shadow-2xs inline-flex items-center gap-2 cursor-pointer min-h-[44px]"
+                  >
+                    <span>Submit for Report Preparation</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 ) : (
@@ -431,7 +446,7 @@ export default async function StudentDashboardPage() {
         {/* ========================================================================= */}
         {/* RIGHT RAIL (4 of 12 cols on desktop; 4th and 5th on mobile)              */}
         {/* ========================================================================= */}
-        <div className="xl:col-span-4 space-y-6 min-w-0">
+        <div className="lg:col-span-4 space-y-6 min-w-0">
           {/* 4. PROFILE COMPLETENESS CARD */}
           <section className="bg-white border border-[#E2E8F0] rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between">

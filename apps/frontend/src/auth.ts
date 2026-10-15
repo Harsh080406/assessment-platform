@@ -842,16 +842,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
 
           if (dbUser) {
-            // Fix #4: Check if sessionVersion stored in JWT matches current sessionVersion in DB
-            if (
-              token.sessionVersion !== undefined &&
-              token.sessionVersion !== null &&
-              token.sessionVersion !== dbUser.sessionVersion
-            ) {
+            if (dbUser.status === UserStatus.SUSPENDED || dbUser.status === UserStatus.INACTIVE) {
               console.warn(
-                `[JWT Revoked]: sessionVersion mismatch for user ${dbUser.id} (Token: ${token.sessionVersion}, DB: ${dbUser.sessionVersion})`
+                `[JWT Revoked]: user ${dbUser.id} is ${dbUser.status}`
               );
-              return {} as any; // Revokes token immediately on next request
+              return {} as any;
             }
 
             token.id = dbUser.id;

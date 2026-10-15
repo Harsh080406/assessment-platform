@@ -6,9 +6,17 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
+  UserPlus,
+  Copy,
+  Check,
 } from "lucide-react";
 import { UserRole, UserStatus } from "@prisma/client";
-import { updateUserStatusAction, resetUserAccessAction } from "@/app/actions/admin";
+import {
+  updateUserStatusAction,
+  resetUserAccessAction,
+  inviteUserAction,
+} from "@/app/actions/admin";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import AdminStatusPill, { AdminTag } from "@/components/admin/AdminStatusPill";
 import AdminConfirmationDialog from "@/components/admin/AdminConfirmationDialog";
 import {
@@ -49,6 +57,13 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
 
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  // Invite User Modal State
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<UserRole>(UserRole.STUDENT);
+  const [createdActivationUrl, setCreatedActivationUrl] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Confirmation Dialog State
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -128,6 +143,53 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
     });
   };
 
+  const handleSendInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+    setCreatedActivationUrl(null);
+
+    startTransition(async () => {
+      const res = await inviteUserAction({
+        email: inviteEmail,
+        role: inviteRole,
+      });
+
+      if (res.success && res.data) {
+        setCreatedActivationUrl(res.data.activationUrl);
+        setMessage({ text: res.message, type: "success" });
+
+        // Optimistically add invited user to candidate list
+        setUsers((prev) => [
+          {
+            id: `temp-${Date.now()}`,
+            name: inviteEmail.split("@")[0],
+            email: inviteEmail,
+            phone: null,
+            role: inviteRole,
+            status: UserStatus.INACTIVE,
+            school: null,
+            grade: null,
+            createdAt: new Date().toISOString(),
+            lastLoginAt: null,
+            attemptsCount: 0,
+          },
+          ...prev,
+        ]);
+        setInviteEmail("");
+      } else {
+        setMessage({ text: res.message, type: "error" });
+      }
+    });
+  };
+
+  const copyActivationLink = () => {
+    if (createdActivationUrl) {
+      navigator.clipboard.writeText(createdActivationUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
   const renderRoleTag = (role: UserRole) => {
     switch (role) {
       case UserRole.ADMIN:
@@ -148,7 +210,28 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* 1. Page Header with Invite User Primary Button */}
+      <AdminPageHeader
+        title="User Governance"
+        description="Manage candidate accounts, role assignments, security statuses, and access credentials."
+        breadcrumbHref="/console"
+        breadcrumbLabel="Back to Overview"
+        action={
+          <button
+            type="button"
+            onClick={() => {
+              setShowInviteModal(true);
+              setCreatedActivationUrl(null);
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold shadow-xs transition-colors"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Invite User</span>
+          </button>
+        }
+      />
+
       {/* Toast Feedback */}
       {message && (
         <div
@@ -498,6 +581,141 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
         isDestructive={confirmDialog.actionType === "disable"}
         isLoading={isPending}
       />
+
+      {/* Invite User Modal */}
+      {showInviteModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in-0 duration-150"
+        >
+          <div className="bg-white rounded-2xl border border-[#E2E8F0] shadow-2xl w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
+              <h3 className="font-bold text-sm text-[#0F172A]">
+                Invite User to Platform
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowInviteModal(false)}
+                className="text-[#94A3B8] hover:text-[#0F172A] p-1"
+                aria-label="Close dialog"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {createdActivationUrl ? (
+              <div className="space-y-4">
+                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-900 flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-bold">Congratulatory Invitation Email Sent!</p>
+                    <p className="text-[11px] text-emerald-800 leading-relaxed">
+                      An activation email has been dispatched with instructions for the user to submit their profile details and create their password. You may also provide the link directly below:
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#0F172A] block">
+                    Activation Link (Valid for 48 Hours)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={createdActivationUrl}
+                      className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-mono text-[#0F172A] focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={copyActivationLink}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#0F172A] shrink-0 transition-colors"
+                    >
+                      {copiedLink ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-emerald-600">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-2 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowInviteModal(false);
+                      setCreatedActivationUrl(null);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSendInvite} className="space-y-3.5">
+                <div>
+                  <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                    Invitee Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="user@example.com"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                    Assigned Role <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={inviteRole}
+                    onChange={(e) => setInviteRole(e.target.value as UserRole)}
+                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value={UserRole.STUDENT}>STUDENT (Candidate Assessment)</option>
+                    <option value={UserRole.STAFF}>STAFF (Evaluator / Reviewer)</option>
+                    <option value={UserRole.ADMIN}>ADMIN (System Administrator)</option>
+                  </select>
+                </div>
+
+                <p className="text-[11px] text-[#64748B] leading-relaxed">
+                  Upon dispatching, a congratulatory invitation email will be delivered to this address instructing the user to proceed to the secure activation link, enter their personal details (name, date of birth, address, phone), and create their password.
+                </p>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => setShowInviteModal(false)}
+                    className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F8FAFC]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isPending || !inviteEmail.trim()}
+                    className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+                  >
+                    {isPending ? "Sending Invitation..." : "Send Invitation & Email"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

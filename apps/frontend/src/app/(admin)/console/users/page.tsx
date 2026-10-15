@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { getAdminUsersAction } from "@/app/actions/admin";
 import AdminUsersClient from "./AdminUsersClient";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
   await auth();
@@ -10,13 +11,6 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="w-full space-y-6">
-      <AdminPageHeader
-        title="User Governance"
-        description="Manage candidate accounts, role assignments, security statuses, and access credentials."
-        breadcrumbHref="/console"
-        breadcrumbLabel="Back to Overview"
-      />
-
       <AdminUsersClient initialUsers={users} />
     </div>
   );

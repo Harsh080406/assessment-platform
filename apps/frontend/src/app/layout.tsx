@@ -39,6 +39,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${plusJakartaSans.variable} scroll-smooth`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window !== "undefined") {
+                  var isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+                  if (!isLocal || ${process.env.NODE_ENV === "production"}) {
+                    var noop = function() {};
+                    var methods = ["log", "debug", "info", "warn", "error", "dir", "table", "trace", "group", "groupCollapsed", "groupEnd", "time", "timeEnd", "assert", "count"];
+                    for (var i = 0; i < methods.length; i++) {
+                      try {
+                        window.console[methods[i]] = noop;
+                      } catch (e) {}
+                    }
+                  }
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="bg-[#FBFBF9] text-black font-sans antialiased overflow-x-hidden selection:bg-[#A9B4E8] selection:text-black min-h-screen flex flex-col">
         <AuthProvider>{children}</AuthProvider>
       </body>

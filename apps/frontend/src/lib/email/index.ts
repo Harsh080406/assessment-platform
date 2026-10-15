@@ -35,6 +35,7 @@ export interface IEmailService {
   sendPasswordResetEmail(to: string, token: string, baseUrl?: string): Promise<{ success: boolean }>;
   sendPasswordResetOtpEmail(to: string, code: string): Promise<{ success: boolean }>;
   sendLoginOtpEmail(to: string, code: string): Promise<{ success: boolean }>;
+  sendAccountInvitationEmail(to: string, role: string, activationUrl: string): Promise<{ success: boolean }>;
   sendStudentQueryNotifications(data: StudentQueryData): Promise<{ success: boolean }>;
   sendInstitutionalQueryNotifications(data: InstitutionalQueryData): Promise<{ success: boolean }>;
 }
@@ -302,6 +303,47 @@ export class ResendEmailService implements IEmailService {
 
     return { success: true };
   }
+
+  async sendAccountInvitationEmail(to: string, role: string, activationUrl: string): Promise<{ success: boolean }> {
+    const roleDisplayName = role === "ADMIN" ? "Administrator" : role === "STAFF" ? "Staff Reviewer" : "Student";
+    const res = await this.sendEmail({
+      to,
+      subject: `Congratulations! You've been invited to Alderwood Vantage (${roleDisplayName})`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px; background: #ffffff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <span style="display: inline-block; padding: 6px 14px; background: #F1F5F9; color: #0F172A; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Account Invitation</span>
+          </div>
+          <h2 style="color: #0F172A; margin-top: 0; font-size: 24px; text-align: center; font-weight: 800;">Congratulations & Welcome!</h2>
+          <p style="color: #475569; font-size: 15px; line-height: 1.6; text-align: center; margin-top: 8px;">
+            You have been officially invited to join <strong>Alderwood Vantage</strong> as a <strong>${roleDisplayName}</strong>.
+          </p>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; margin: 24px 0;">
+            <p style="margin: 0 0 12px 0; color: #334155; font-size: 14px; font-weight: 600;">Next Steps to Activate Your Account:</p>
+            <ol style="margin: 0; padding-left: 20px; color: #475569; font-size: 14px; line-height: 1.6;">
+              <li style="margin-bottom: 6px;">Click the activation button below to proceed to your secure activation portal.</li>
+              <li style="margin-bottom: 6px;">Provide your profile details (Name, Date of Birth, Address, Phone number).</li>
+              <li>Create a secure password to finalize and activate your account.</li>
+            </ol>
+          </div>
+          <div style="margin: 32px 0; text-align: center;">
+            <a href="${activationUrl}" style="background-color: #FF6B6B; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);">Proceed to Activate Account &rarr;</a>
+          </div>
+          <p style="color: #64748B; font-size: 13px; line-height: 1.5; text-align: center;">
+            This invitation link is valid for <strong>48 hours</strong>. If you did not expect this invitation, you can safely ignore this email.
+          </p>
+          <p style="color: #64748B; font-size: 12px; line-height: 1.5; word-break: break-all; margin-top: 16px;">
+            Or copy and paste this activation link directly into your browser:<br/>
+            <a href="${activationUrl}" style="color: #0F172A;">${activationUrl}</a>
+          </p>
+          <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 28px 0;" />
+          <p style="color: #94A3B8; font-size: 12px; text-align: center; margin-bottom: 0;">Alderwood Vantage • Raising leaders, not just employees.</p>
+        </div>
+      `,
+      text: `Congratulations! You have been invited to join Alderwood Vantage as a ${roleDisplayName}.\n\nProceed to activate your account by visiting the link below:\n${activationUrl}\n\nThis invitation link is valid for 48 hours.`,
+    });
+    return { success: res.success };
+  }
 }
 
 /**
@@ -352,6 +394,13 @@ export class ConsoleEmailService implements IEmailService {
     return { success: true };
   }
 
+  async sendAccountInvitationEmail(to: string, role: string, activationUrl: string): Promise<{ success: boolean }> {
+    console.log("\n=======================================================");
+    console.log(`[EMAIL DISPATCH] Account Invitation Email to: ${to} (Role: ${role})`);
+    console.log(`[ACTIVATION URL]: ${activationUrl}`);
+    console.log("=======================================================\n");
+    return { success: true };
+  }
   async sendStudentQueryNotifications(data: StudentQueryData): Promise<{ success: boolean }> {
     console.log("\n=======================================================");
     console.log(`[EMAIL CONTACT DISPATCH] Student Query: ${data.referenceId}`);
