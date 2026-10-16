@@ -9,12 +9,14 @@ import {
   UserPlus,
   Copy,
   Check,
+  MapPin,
 } from "lucide-react";
 import { UserRole, UserStatus } from "@prisma/client";
 import {
   updateUserStatusAction,
   resetUserAccessAction,
   inviteUserAction,
+  updateUserLocationAction,
 } from "@/app/actions/admin";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import AdminStatusPill, { AdminTag } from "@/components/admin/AdminStatusPill";
@@ -38,6 +40,7 @@ interface UserItem {
   name: string;
   school: string | null;
   grade: string | null;
+  location: string | null;
   createdAt: string;
   lastLoginAt: string | null;
   attemptsCount: number;
@@ -65,6 +68,10 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
   const [createdActivationUrl, setCreatedActivationUrl] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // Edit Location Modal State
+  const [editingLocationUser, setEditingLocationUser] = useState<UserItem | null>(null);
+  const [newLocationValue, setNewLocationValue] = useState("");
+
   // Confirmation Dialog State
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -85,7 +92,8 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
       u.name.toLowerCase().includes(q) ||
       (u.email && u.email.toLowerCase().includes(q)) ||
       (u.phone && u.phone.toLowerCase().includes(q)) ||
-      (u.school && u.school.toLowerCase().includes(q));
+      (u.school && u.school.toLowerCase().includes(q)) ||
+      (u.location && u.location.toLowerCase().includes(q));
 
     return matchesRole && matchesStatus && matchesQuery;
   });
@@ -169,6 +177,7 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
             status: UserStatus.INACTIVE,
             school: null,
             grade: null,
+            location: null,
             createdAt: new Date().toISOString(),
             lastLoginAt: null,
             attemptsCount: 0,
@@ -343,12 +352,13 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
               <table className="w-full text-left border-collapse table-fixed">
                 <thead>
                   <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                    <th className="py-3 px-4 w-[30%]">User Account</th>
-                    <th className="py-3 px-4 w-[14%]">Role</th>
-                    <th className="py-3 px-4 w-[24%]">School & Grade</th>
-                    <th className="py-3 px-4 w-[12%]">Status</th>
-                    <th className="py-3 px-4 w-[10%]">Attempts</th>
-                    <th className="py-3 px-4 w-[10%] text-right">Actions</th>
+                    <th className="py-3 px-4 w-[26%]">User Account</th>
+                    <th className="py-3 px-4 w-[12%]">Role</th>
+                    <th className="py-3 px-4 w-[18%]">School & Grade</th>
+                    <th className="py-3 px-4 w-[18%]">Location</th>
+                    <th className="py-3 px-4 w-[10%]">Status</th>
+                    <th className="py-3 px-4 w-[8%]">Attempts</th>
+                    <th className="py-3 px-4 w-[8%] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1F5F9] text-xs">
@@ -392,6 +402,20 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
                           </div>
                         </td>
 
+                        {/* Location */}
+                        <td className="py-3.5 px-4">
+                          {u.location ? (
+                            <div className="flex items-center gap-1.5 text-xs text-[#0F172A] truncate">
+                              <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                              <span className="truncate font-medium" title={u.location}>
+                                {u.location}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[#94A3B8] italic text-[11px]">Not provided</span>
+                          )}
+                        </td>
+
                         {/* Status */}
                         <td className="py-3.5 px-4">
                           {u.status === UserStatus.ACTIVE ? (
@@ -427,6 +451,13 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
                               </button>
                             }
                             overflowActions={[
+                              {
+                                label: "Edit Location",
+                                onClick: () => {
+                                  setEditingLocationUser(u);
+                                  setNewLocationValue(u.location || "");
+                                },
+                              },
                               {
                                 label:
                                   u.status === UserStatus.ACTIVE
@@ -479,6 +510,19 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
                       <span>School & Grade</span>
                       <span className="font-medium text-[#0F172A]">
                         {formatFallback(u.school)} • {formatFallback(u.grade)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[#64748B]">
+                      <span>Location</span>
+                      <span className="font-medium text-[#0F172A] flex items-center gap-1">
+                        {u.location ? (
+                          <>
+                            <MapPin className="w-3 h-3 text-rose-500 shrink-0" />
+                            <span className="truncate max-w-[150px]">{u.location}</span>
+                          </>
+                        ) : (
+                          <span className="text-[#94A3B8] italic">—</span>
+                        )}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-[#64748B]">
@@ -713,6 +757,96 @@ export default function AdminUsersClient({ initialUsers }: AdminUsersClientProps
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Location Modal */}
+      {editingLocationUser && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-[#E2E8F0] space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#0F172A]">Edit User Location</h3>
+                  <p className="text-[11px] text-[#64748B]">
+                    {editingLocationUser.name} ({editingLocationUser.email || "No email"})
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingLocationUser(null)}
+                className="p-1 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                startTransition(async () => {
+                  const res = await updateUserLocationAction(
+                    editingLocationUser.id,
+                    newLocationValue
+                  );
+                  if (res.success) {
+                    setUsers((prev) =>
+                      prev.map((usr) =>
+                        usr.id === editingLocationUser.id
+                          ? { ...usr, location: newLocationValue.trim() || null }
+                          : usr
+                      )
+                    );
+                    setMessage({ text: res.message, type: "success" });
+                    setEditingLocationUser(null);
+                  } else {
+                    setMessage({ text: res.message, type: "error" });
+                  }
+                });
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="text-xs font-semibold text-[#0F172A] block mb-1">
+                  Full Address, City or Country
+                </label>
+                <div className="relative">
+                  <MapPin className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    value={newLocationValue}
+                    onChange={(e) => setNewLocationValue(e.target.value)}
+                    placeholder="e.g. New Delhi, India or London, UK"
+                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#E2E8F0] bg-white text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <p className="text-[11px] text-[#64748B] mt-1">
+                  This location is used for regional demographics, timezones, and assessment routing.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
+                <button
+                  type="button"
+                  onClick={() => setEditingLocationUser(null)}
+                  className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-xs font-semibold text-[#0F172A] hover:bg-[#F8FAFC]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="px-4 py-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+                >
+                  {isPending ? "Saving..." : "Save Location"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

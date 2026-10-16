@@ -410,6 +410,7 @@ export async function getAdminUsersAction(params?: {
       name: string;
       school: string | null;
       grade: string | null;
+      location: string | null;
       createdAt: string;
       lastLoginAt: string | null;
       attemptsCount: number;
@@ -437,6 +438,9 @@ export async function getAdminUsersAction(params?: {
         { studentProfile: { firstName: { contains: q, mode: "insensitive" } } },
         { studentProfile: { lastName: { contains: q, mode: "insensitive" } } },
         { studentProfile: { school: { contains: q, mode: "insensitive" } } },
+        { studentProfile: { country: { contains: q, mode: "insensitive" } } },
+        { studentProfile: { address: { contains: q, mode: "insensitive" } } },
+        { staffProfile: { address: { contains: q, mode: "insensitive" } } },
       ];
     }
 
@@ -444,6 +448,7 @@ export async function getAdminUsersAction(params?: {
       where: whereClause,
       include: {
         studentProfile: true,
+        staffProfile: true,
         _count: { select: { attempts: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -455,6 +460,8 @@ export async function getAdminUsersAction(params?: {
         ? `${sp.firstName} ${sp.lastName}`.trim()
         : u.email?.split("@")[0] || "User";
 
+      const location = sp?.address || sp?.country || u.staffProfile?.address || null;
+
       return {
         id: u.id,
         email: u.email,
@@ -464,6 +471,7 @@ export async function getAdminUsersAction(params?: {
         name,
         school: sp?.school || null,
         grade: sp?.grade || null,
+        location,
         createdAt: u.createdAt.toISOString(),
         lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,
         attemptsCount: u._count.attempts,
@@ -556,6 +564,7 @@ export async function getAdminStaffWorkloadAction(): Promise<
       role: UserRole;
       status: UserStatus;
       specialty: string | null;
+      address?: string | null;
       activeReviewsCount: number;
       publishedCount: number;
       createdAt: string;
@@ -587,6 +596,12 @@ export async function getAdminStaffWorkloadAction(): Promise<
           ? `${u.studentProfile.firstName} ${u.studentProfile.lastName}`.trim()
           : u.email?.split("@")[0] || "Staff Member";
 
+        const address =
+          u.staffProfile?.address ||
+          u.studentProfile?.address ||
+          u.studentProfile?.country ||
+          null;
+
         const [activeReviewsCount, publishedCount] = await Promise.all([
           prisma.report.count({
             where: {
@@ -611,6 +626,7 @@ export async function getAdminStaffWorkloadAction(): Promise<
           role: u.role,
           status: u.status,
           specialty: u.staffProfile?.specialty || "Certified Psychometric Evaluator",
+          address,
           activeReviewsCount,
           publishedCount,
           createdAt: u.createdAt.toISOString(),
@@ -679,6 +695,7 @@ export interface UpdateStaffInput {
   authorityStatus?: StaffAuthorityStatus;
   available?: boolean;
   avatarUrl?: string | null;
+  address?: string | null;
 }
 
 export async function updateStaffMemberAction(
@@ -751,11 +768,13 @@ export async function updateStaffMemberAction(
           specialty: targetSpecialty,
           active: targetStaffActive,
           available: targetStaffAvailable,
+          ...(input.address !== undefined ? { address: input.address } : {}),
         },
         update: {
           specialty: targetSpecialty,
           active: targetStaffActive,
           available: targetStaffAvailable,
+          ...(input.address !== undefined ? { address: input.address } : {}),
         },
       });
 
@@ -766,11 +785,13 @@ export async function updateStaffMemberAction(
           firstName,
           lastName,
           avatarUrl: input.avatarUrl !== undefined ? input.avatarUrl : null,
+          ...(input.address !== undefined ? { address: input.address } : {}),
         },
         update: {
           firstName,
           lastName,
           ...(input.avatarUrl !== undefined ? { avatarUrl: input.avatarUrl } : {}),
+          ...(input.address !== undefined ? { address: input.address } : {}),
         },
       });
 
@@ -788,6 +809,7 @@ export async function updateStaffMemberAction(
         systemRole: targetRole,
         available: targetStaffAvailable,
         active: targetStaffActive,
+        address: input.address,
         updatedBy: adminUser.email,
       },
     });
@@ -809,6 +831,7 @@ export async function updateStaffMemberAction(
           specialty: targetSpecialty,
           active: targetStaffActive,
           available: targetStaffAvailable,
+          address: input.address !== undefined ? input.address : user.staffProfile?.address || null,
           avatarUrl:
             input.avatarUrl !== undefined
               ? input.avatarUrl
@@ -822,6 +845,55 @@ export async function updateStaffMemberAction(
       success: false,
       message: error.message || "Failed to update staff member.",
     };
+  }
+}
+
+export async function updateUserLocationAction(
+  userId: string,
+  location: string
+): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { studentProfile: true, staffProfile: true },
+    });
+
+    if (!user) {
+      return { success: false, message: "User account not found." };
+    }
+
+    const trimmed = location.trim();
+
+    await prisma.$transaction(async (tx) => {
+      if (user.studentProfile) {
+        await tx.studentProfile.update({
+          where: { userId },
+          data: { address: trimmed || null, country: trimmed || null },
+        });
+      }
+      if (user.staffProfile) {
+        await tx.staffProfile.update({
+          where: { userId },
+          data: { address: trimmed || null },
+        });
+      }
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "USER_LOCATION_UPDATED",
+      resource: "User",
+      resourceId: userId,
+      metadata: { location: trimmed, updatedBy: adminUser.email },
+    });
+
+    revalidatePath("/console/users");
+    revalidatePath("/console/staff");
+    return { success: true, message: `Location updated for ${user.email || "user"}.` };
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed to update location." };
   }
 }
 
