@@ -550,6 +550,8 @@ export async function getAdminStaffWorkloadAction(): Promise<
     staffList: Array<{
       id: string;
       name: string;
+      firstName?: string;
+      lastName?: string;
       email: string | null;
       role: UserRole;
       status: UserStatus;
@@ -557,7 +559,9 @@ export async function getAdminStaffWorkloadAction(): Promise<
       activeReviewsCount: number;
       publishedCount: number;
       createdAt: string;
+      active: boolean;
       available: boolean;
+      avatarUrl: string | null;
     }>;
   }>
 > {
@@ -577,6 +581,8 @@ export async function getAdminStaffWorkloadAction(): Promise<
 
     const formatted = await Promise.all(
       staffUsers.map(async (u) => {
+        const firstName = u.studentProfile?.firstName || u.email?.split("@")[0] || "Staff";
+        const lastName = u.studentProfile?.lastName || "";
         const name = u.studentProfile
           ? `${u.studentProfile.firstName} ${u.studentProfile.lastName}`.trim()
           : u.email?.split("@")[0] || "Staff Member";
@@ -599,14 +605,18 @@ export async function getAdminStaffWorkloadAction(): Promise<
         return {
           id: u.id,
           name,
+          firstName,
+          lastName,
           email: u.email,
           role: u.role,
           status: u.status,
-          specialty: u.staffProfile?.specialty || "Psychometric Evaluator",
+          specialty: u.staffProfile?.specialty || "Certified Psychometric Evaluator",
           activeReviewsCount,
           publishedCount,
           createdAt: u.createdAt.toISOString(),
+          active: u.staffProfile ? u.staffProfile.active : true,
           available: u.staffProfile ? u.staffProfile.available : true,
+          avatarUrl: u.studentProfile?.avatarUrl || null,
         };
       })
     );
@@ -656,6 +666,229 @@ export async function updateUserRoleAction(
     return { success: true, message: `User role updated to ${newRole}.` };
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to update role." };
+  }
+}
+
+export type StaffAuthorityStatus = "GRANTED" | "STOPPED" | "REVOKED";
+
+export interface UpdateStaffInput {
+  userId: string;
+  name?: string;
+  specificRole?: string;
+  systemRole?: UserRole;
+  authorityStatus?: StaffAuthorityStatus;
+  available?: boolean;
+  avatarUrl?: string | null;
+}
+
+export async function updateStaffMemberAction(
+  input: UpdateStaffInput
+): Promise<AdminActionResult<{ staff: any }>> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    const user = await prisma.user.findUnique({
+      where: { id: input.userId },
+      include: { staffProfile: true, studentProfile: true },
+    });
+
+    if (!user) {
+      return { success: false, message: "Staff user not found." };
+    }
+
+    // Determine target system status & staff active state
+    let targetUserStatus = user.status;
+    let targetStaffActive = user.staffProfile ? user.staffProfile.active : true;
+    let targetStaffAvailable =
+      input.available !== undefined
+        ? input.available
+        : user.staffProfile
+        ? user.staffProfile.available
+        : true;
+
+    if (input.authorityStatus === "GRANTED") {
+      targetUserStatus = UserStatus.ACTIVE;
+      targetStaffActive = true;
+    } else if (input.authorityStatus === "STOPPED") {
+      targetStaffActive = false;
+      targetStaffAvailable = false;
+      targetUserStatus = UserStatus.INACTIVE;
+    } else if (input.authorityStatus === "REVOKED") {
+      targetUserStatus = UserStatus.SUSPENDED;
+      targetStaffActive = false;
+      targetStaffAvailable = false;
+    }
+
+    const targetRole = input.systemRole || user.role;
+    const targetSpecialty =
+      input.specificRole ||
+      user.staffProfile?.specialty ||
+      "Certified Psychometric Evaluator";
+
+    // Parse name if provided
+    let firstName =
+      user.studentProfile?.firstName || user.email?.split("@")[0] || "Staff";
+    let lastName = user.studentProfile?.lastName || "";
+    if (input.name && input.name.trim()) {
+      const parts = input.name.trim().split(/\s+/);
+      firstName = parts[0] || firstName;
+      lastName = parts.slice(1).join(" ");
+    }
+
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id: input.userId },
+        data: {
+          role: targetRole,
+          status: targetUserStatus,
+        },
+      });
+
+      await tx.staffProfile.upsert({
+        where: { userId: input.userId },
+        create: {
+          userId: input.userId,
+          specialty: targetSpecialty,
+          active: targetStaffActive,
+          available: targetStaffAvailable,
+        },
+        update: {
+          specialty: targetSpecialty,
+          active: targetStaffActive,
+          available: targetStaffAvailable,
+        },
+      });
+
+      await tx.studentProfile.upsert({
+        where: { userId: input.userId },
+        create: {
+          userId: input.userId,
+          firstName,
+          lastName,
+          avatarUrl: input.avatarUrl !== undefined ? input.avatarUrl : null,
+        },
+        update: {
+          firstName,
+          lastName,
+          ...(input.avatarUrl !== undefined ? { avatarUrl: input.avatarUrl } : {}),
+        },
+      });
+
+      return updated;
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "STAFF_PERMISSIONS_UPDATED",
+      resource: "StaffProfile",
+      resourceId: input.userId,
+      metadata: {
+        authorityStatus: input.authorityStatus,
+        specificRole: targetSpecialty,
+        systemRole: targetRole,
+        available: targetStaffAvailable,
+        active: targetStaffActive,
+        updatedBy: adminUser.email,
+      },
+    });
+
+    revalidatePath("/console/staff");
+    revalidatePath("/console/users");
+
+    return {
+      success: true,
+      message: `Staff member updated successfully. Authority: ${
+        input.authorityStatus || (targetStaffActive ? "GRANTED" : "STOPPED")
+      }.`,
+      data: {
+        staff: {
+          id: updatedUser.id,
+          name: `${firstName} ${lastName}`.trim(),
+          role: updatedUser.role,
+          status: updatedUser.status,
+          specialty: targetSpecialty,
+          active: targetStaffActive,
+          available: targetStaffAvailable,
+          avatarUrl:
+            input.avatarUrl !== undefined
+              ? input.avatarUrl
+              : user.studentProfile?.avatarUrl || null,
+        },
+      },
+    };
+  } catch (error: any) {
+    console.error("[updateStaffMemberAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to update staff member.",
+    };
+  }
+}
+
+export async function uploadStaffAvatarAction(
+  userId: string,
+  formData: FormData
+): Promise<AdminActionResult<{ avatarUrl: string }>> {
+  try {
+    const adminUser = await verifyAdminSession();
+    const file = formData.get("file") as File | null;
+    if (!file) {
+      return { success: false, message: "No image file provided." };
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return { success: false, message: "Image must be under 5MB." };
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    if (!StorageService.isValidImageBuffer(buffer)) {
+      return {
+        success: false,
+        message: "Invalid image format. Supported formats: JPG, PNG, WebP, GIF.",
+      };
+    }
+
+    const { avatarUrl } = await StorageService.saveAvatar(
+      userId,
+      buffer,
+      file.type || "image/jpeg",
+      file.name || "avatar.jpg"
+    );
+
+    await prisma.studentProfile.upsert({
+      where: { userId },
+      create: {
+        userId,
+        firstName: "Staff",
+        lastName: "Member",
+        avatarUrl,
+      },
+      update: {
+        avatarUrl,
+      },
+    });
+
+    await createAuditLog({
+      userId: adminUser.id,
+      action: "STAFF_AVATAR_UPLOADED",
+      resource: "StaffProfile",
+      resourceId: userId,
+      metadata: { avatarUrl, updatedBy: adminUser.email },
+    });
+
+    revalidatePath("/console/staff");
+    return {
+      success: true,
+      message: "Staff profile picture uploaded successfully.",
+      data: { avatarUrl },
+    };
+  } catch (err: any) {
+    console.error("[uploadStaffAvatarAction Error]:", err);
+    return {
+      success: false,
+      message: err?.message || "Failed to upload staff avatar.",
+    };
   }
 }
 
@@ -965,6 +1198,7 @@ export async function getAdminAuditLogsAction(params?: {
 export async function inviteStaffOrAdminAction(data: {
   email: string;
   role: UserRole;
+  specificRole?: string;
 }): Promise<AdminActionResult<{ activationUrl: string; token: string }>> {
   try {
     const adminUser = await verifyAdminSession();
@@ -1018,11 +1252,16 @@ export async function inviteStaffOrAdminAction(data: {
                 }
               : undefined,
           staffProfile:
-            role === UserRole.STAFF
+            role === UserRole.STAFF || role === UserRole.ADMIN
               ? {
                   create: {
-                    specialty: "General Evaluator",
+                    specialty:
+                      data.specificRole ||
+                      (role === UserRole.ADMIN
+                        ? "System Administrator"
+                        : "Certified Psychometric Evaluator"),
                     active: true,
+                    available: true,
                   },
                 }
               : undefined,

@@ -4,6 +4,8 @@ import { UserRole } from "@prisma/client";
 import { getStaffSelfSettingsAction } from "@/app/actions/staff";
 import StaffSettingsClient from "./StaffSettingsClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function StaffSettingsPage() {
   const session = await auth();
 

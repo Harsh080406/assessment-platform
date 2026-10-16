@@ -8,16 +8,16 @@ interface AuthMascotProps {
 export default function AuthMascot({ className = "" }: AuthMascotProps) {
   return (
     <div
-      className={`w-full h-full min-h-[380px] relative select-none rounded-[24px] sm:rounded-[28px] overflow-hidden flex items-center justify-center bg-[#FFF5F2] ${className}`}
+      className={`w-full h-full relative select-none overflow-hidden flex items-center justify-center bg-[#FDCBC7] ${className}`}
     >
       <Image
-        src="/auth-hero.png"
+        src="/Untitled design.svg"
         alt="Alderwood Vantage Leadership Potential Assessment"
         fill
         priority
         unoptimized
-        sizes="(max-width: 768px) 100vw, 600px"
-        className="w-full h-full object-cover object-center rounded-[24px] sm:rounded-[28px]"
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="w-full h-full object-cover object-center"
       />
     </div>
   );

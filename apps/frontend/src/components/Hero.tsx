@@ -125,20 +125,21 @@ export default function Hero() {
           {/* RIGHT COLUMN: Hero Visual Image */}
           <div className="lg:col-span-6 xl:col-span-6 relative flex items-center justify-center lg:justify-end mt-4 sm:mt-6 lg:mt-0 select-none">
             <div
-              className="relative w-full max-w-[320px] xs:max-w-[380px] sm:max-w-[480px] lg:max-w-[560px] xl:max-w-[640px] 2xl:max-w-[700px] aspect-[7555/5205] select-none"
+              className="relative w-full max-w-[260px] xs:max-w-[300px] sm:max-w-[360px] lg:max-w-[420px] xl:max-w-[460px] 2xl:max-w-[500px] aspect-[955/926] select-none"
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
             >
               <Image
-                src="/Smiling Student with Laptop and Backpack.png"
+                src="/hero.svg"
                 alt="Smiling Student with Laptop and Backpack - Alderwood Vantage"
                 fill
                 priority
+                unoptimized
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
                 onContextMenu={(e) => e.preventDefault()}
-                className="object-contain object-center drop-shadow-[0_16px_30px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:scale-[1.01] pointer-events-none select-none"
-                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 700px"
+                className="object-contain object-center drop-shadow-[0_12px_24px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:scale-[1.01] pointer-events-none select-none"
+                sizes="(max-width: 640px) 75vw, (max-width: 1024px) 35vw, 480px"
                 style={
                   {
                     userSelect: "none",

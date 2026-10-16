@@ -135,6 +135,7 @@ model StudentProfile {
   avatarUrl      String?
   dateOfBirth    DateTime?
   country        String?
+  address        String?
   phone          String?
   school         String?
   grade          String?
@@ -150,6 +151,7 @@ model StaffProfile {
   id        String    @id @default(cuid())
   userId    String    @unique
   specialty String?
+  address   String?
   active    Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

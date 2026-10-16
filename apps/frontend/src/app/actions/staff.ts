@@ -692,6 +692,10 @@ export type StaffSelfSettingsData = {
   email: string | null;
   phone: string | null;
   name: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl: string | null;
+  address: string | null;
   role: string;
   status: string;
   memberSince: string;
@@ -713,6 +717,7 @@ export async function getStaffSelfSettingsAction(): Promise<StaffActionResult<St
           status: true,
           createdAt: true,
           lastLoginAt: true,
+          studentProfile: true,
         },
       }),
       prisma.staffProfile.findUnique({
@@ -748,6 +753,11 @@ export async function getStaffSelfSettingsAction(): Promise<StaffActionResult<St
       });
     }
 
+    const sp = dbUser?.studentProfile;
+    const resolvedName = sp
+      ? `${sp.firstName} ${sp.lastName}`.trim()
+      : user.name || dbUser?.email?.split("@")[0] || "Staff Evaluator";
+
     return {
       success: true,
       message: "Settings loaded.",
@@ -758,8 +768,12 @@ export async function getStaffSelfSettingsAction(): Promise<StaffActionResult<St
         emailNotifications: pref ? pref.emailEnabled : true,
         slaAlerts: slaPref ? slaPref.emailEnabled : true,
         email: dbUser?.email || user.email || null,
-        phone: dbUser?.phone || null,
-        name: user.name || dbUser?.email?.split("@")[0] || "Staff Evaluator",
+        phone: dbUser?.phone || sp?.phone || null,
+        name: resolvedName,
+        firstName: sp?.firstName || "",
+        lastName: sp?.lastName || "",
+        avatarUrl: sp?.avatarUrl || null,
+        address: profile.address || sp?.address || null,
         role: dbUser?.role || user.role || "STAFF",
         status: dbUser?.status || "ACTIVE",
         memberSince: dbUser?.createdAt ? dbUser.createdAt.toISOString() : new Date().toISOString(),
@@ -774,7 +788,9 @@ export async function getStaffSelfSettingsAction(): Promise<StaffActionResult<St
 
 export async function updateStaffSelfSettingsAction(data: {
   phone?: string | null;
-  specialty: string;
+  address?: string | null;
+  avatarUrl?: string | null;
+  specialty?: string;
   available: boolean;
   emailNotifications: boolean;
   slaAlerts?: boolean;
@@ -789,17 +805,77 @@ export async function updateStaffSelfSettingsAction(data: {
           phone: data.phone?.trim() || null,
         },
       });
+      await prisma.studentProfile.upsert({
+        where: { userId: user.id },
+        update: { phone: data.phone?.trim() || null },
+        create: {
+          userId: user.id,
+          firstName: user.name?.split(" ")[0] || "Staff",
+          lastName: user.name?.split(" ").slice(1).join(" ") || "Member",
+          phone: data.phone?.trim() || null,
+        },
+      });
+    }
+
+    if (data.address !== undefined) {
+      await prisma.staffProfile.upsert({
+        where: { userId: user.id },
+        update: {
+          address: data.address?.trim() || null,
+        },
+        create: {
+          userId: user.id,
+          address: data.address?.trim() || null,
+          available: data.available,
+          active: true,
+        },
+      });
+      await prisma.studentProfile.upsert({
+        where: { userId: user.id },
+        update: {
+          address: data.address?.trim() || null,
+        },
+        create: {
+          userId: user.id,
+          firstName: user.name?.split(" ")[0] || "Staff",
+          lastName: user.name?.split(" ").slice(1).join(" ") || "Member",
+          address: data.address?.trim() || null,
+        },
+      });
+    }
+
+    if (data.avatarUrl !== undefined) {
+      await prisma.studentProfile.upsert({
+        where: { userId: user.id },
+        update: {
+          avatarUrl: data.avatarUrl || null,
+        },
+        create: {
+          userId: user.id,
+          firstName: user.name?.split(" ")[0] || "Staff",
+          lastName: user.name?.split(" ").slice(1).join(" ") || "Member",
+          avatarUrl: data.avatarUrl || null,
+        },
+      });
+    }
+
+    const staffUpdate: any = {
+      available: data.available,
+    };
+    if (data.specialty !== undefined) {
+      staffUpdate.specialty = data.specialty.trim();
+    }
+    if (data.address !== undefined) {
+      staffUpdate.address = data.address?.trim() || null;
     }
 
     await prisma.staffProfile.upsert({
       where: { userId: user.id },
-      update: {
-        specialty: data.specialty.trim(),
-        available: data.available,
-      },
+      update: staffUpdate,
       create: {
         userId: user.id,
-        specialty: data.specialty.trim(),
+        specialty: data.specialty?.trim() || "Psychometric Career Counselor",
+        address: data.address?.trim() || null,
         available: data.available,
         active: true,
       },
@@ -847,10 +923,11 @@ export async function updateStaffSelfSettingsAction(data: {
       resource: "StaffProfile",
       resourceId: user.id,
       metadata: {
-        specialty: data.specialty,
+        address: data.address,
         available: data.available,
         emailNotifications: data.emailNotifications,
         phone: data.phone,
+        avatarUrl: data.avatarUrl,
       },
       result: AuditResult.SUCCESS,
     });
@@ -867,6 +944,76 @@ export async function updateStaffSelfSettingsAction(data: {
   } catch (error: any) {
     console.error("[updateStaffSelfSettingsAction error]:", error);
     return { success: false, message: error.message || "Failed to update staff settings." };
+  }
+}
+
+export async function uploadStaffSelfAvatarAction(
+  formData: FormData
+): Promise<StaffActionResult<{ avatarUrl: string }>> {
+  try {
+    const user = await verifyStaffSession();
+    const file = formData.get("file") as File | null;
+    if (!file) {
+      return { success: false, message: "No image file provided." };
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return { success: false, message: "Image must be under 5MB." };
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    if (!StorageService.isValidImageBuffer(buffer)) {
+      return {
+        success: false,
+        message: "Invalid image format. Supported formats: JPG, PNG, WebP, GIF.",
+      };
+    }
+
+    const { avatarUrl } = await StorageService.saveAvatar(
+      user.id,
+      buffer,
+      file.type || "image/jpeg",
+      file.name || "avatar.jpg"
+    );
+
+    await prisma.studentProfile.upsert({
+      where: { userId: user.id },
+      create: {
+        userId: user.id,
+        firstName: user.name?.split(" ")[0] || "Staff",
+        lastName: user.name?.split(" ").slice(1).join(" ") || "Member",
+        avatarUrl,
+      },
+      update: {
+        avatarUrl,
+      },
+    });
+
+    await createAuditLog({
+      userId: user.id,
+      action: "STAFF_AVATAR_UPLOADED",
+      resource: "StaffProfile",
+      resourceId: user.id,
+      metadata: { avatarUrl },
+      result: AuditResult.SUCCESS,
+    });
+
+    revalidatePath("/portal");
+    revalidatePath("/portal/settings");
+    revalidatePath("/console/staff");
+
+    return {
+      success: true,
+      message: "Profile picture uploaded successfully.",
+      data: { avatarUrl },
+    };
+  } catch (err: any) {
+    console.error("[uploadStaffSelfAvatarAction Error]:", err);
+    return {
+      success: false,
+      message: err?.message || "Failed to upload profile photo.",
+    };
   }
 }
 

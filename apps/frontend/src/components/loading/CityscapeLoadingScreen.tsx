@@ -47,27 +47,27 @@ export default function CityscapeLoadingScreen({
 
   return (
     <div className="fixed inset-0 z-[999999] w-screen h-screen overflow-hidden select-none bg-slate-950">
-      {/* Desktop / Laptop "Window Friendly" Full-Screen Image */}
+      {/* Desktop / Laptop Full-Screen Image */}
       <div className="hidden md:block absolute inset-0 w-full h-full">
         <Image
-          src="/window friendly.png"
-          alt="Alderwood Vantage Desktop Background"
+          src="/laptop back.svg"
+          alt="Alderwood Vantage Laptop Background"
           fill
           priority
           unoptimized
-          className="object-cover w-full h-full"
+          className="object-cover object-center w-full h-full"
         />
       </div>
 
-      {/* Mobile "Mobile Friendly" Full-Screen Image */}
+      {/* Mobile Full-Screen Image */}
       <div className="block md:hidden absolute inset-0 w-full h-full">
         <Image
-          src="/mobile friendly.png"
+          src="/mobile back.svg"
           alt="Alderwood Vantage Mobile Background"
           fill
           priority
           unoptimized
-          className="object-cover w-full h-full"
+          className="object-cover object-center w-full h-full"
         />
       </div>
 

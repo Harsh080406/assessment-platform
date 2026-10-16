@@ -1053,25 +1053,25 @@ export default function UnifiedAuthCard({
   );
 
   const cardContent = (
-    <div className="relative w-full max-w-4xl lg:max-w-5xl bg-white rounded-[32px] sm:rounded-[40px] shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-[#F5E6E0] overflow-hidden p-5 sm:p-7 md:p-10 text-[#1E2538] font-sans selection:bg-[#FFD4CB]">
+    <div className="relative w-full max-w-4xl lg:max-w-5xl bg-white rounded-[32px] sm:rounded-[40px] shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-[#F5E6E0] overflow-hidden text-[#1E2538] font-sans selection:bg-[#FFD4CB]">
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 text-[#718096] hover:text-[#1A202C] p-2 rounded-full hover:bg-[#F8FAFC] transition-all cursor-pointer"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 z-20 text-[#718096] hover:text-[#1A202C] p-2.5 rounded-full bg-white/70 backdrop-blur-md hover:bg-white shadow-sm border border-[#F5E6E0]/60 transition-all cursor-pointer"
           aria-label="Close"
         >
           <X className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       )}
 
-      <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-stretch">
-        {/* Left Column: 50% Equal Proportion Illustration */}
-        <div className="hidden md:flex rounded-[24px] sm:rounded-[32px] overflow-hidden relative min-h-[480px] md:min-h-[540px] self-stretch shadow-inner bg-[#FFF5F2]">
-          <AuthMascot className="w-full h-full min-h-[480px] md:min-h-[540px]" />
+      <div className="grid md:grid-cols-2 items-stretch">
+        {/* Left Column: 50% Equal Proportion Full-Bleed Illustration */}
+        <div className="hidden md:block relative w-full h-full min-h-[560px] md:min-h-[600px] lg:min-h-[640px] self-stretch overflow-hidden bg-[#FDCBC7]">
+          <AuthMascot className="w-full h-full" />
         </div>
 
         {/* Right Column: 50% Equal Proportion Form */}
-        <div className="flex flex-col justify-center px-2 sm:px-4 md:px-6">
+        <div className="flex flex-col justify-center p-6 sm:p-8 md:p-10 lg:p-12">
           {formBody}
         </div>
       </div>
