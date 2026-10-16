@@ -14,6 +14,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
+import AdminNotificationBell from "./AdminNotificationBell";
 
 interface AdminHeaderProps {
   adminName?: string;
@@ -180,16 +181,8 @@ export default function AdminHeader({
               <span>Admin</span>
             </div>
 
-            {/* Notification Bell with unread dot */}
-            <Link
-              href="/console/audit-logs"
-              className="relative p-2 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors"
-              aria-label="Notifications & Audit Events"
-              title="Audit events"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-600 ring-2 ring-white" />
-            </Link>
+            {/* Notification Bell Dropdown */}
+            <AdminNotificationBell />
 
             {/* ONE User Menu (Dropdown) */}
             <div className="relative" ref={userMenuRef}>

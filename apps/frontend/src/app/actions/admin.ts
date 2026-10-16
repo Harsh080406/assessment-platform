@@ -2304,5 +2304,328 @@ export async function sendTestNotificationEmailAction(
   }
 }
 
+export type AdminNotificationItem = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  href?: string;
+  readAt: string | null;
+  createdAt: string;
+  priority: "CRITICAL" | "HIGH" | "NORMAL";
+};
+
+function formatAdminNotificationTitle(type: string): string {
+  switch (type) {
+    case "REPORT_PENDING_APPROVAL":
+      return "Report Awaiting Sign-off";
+    case "SLA_BREACH":
+      return "SLA Turnaround Alert";
+    case "SECURITY_ALERT":
+      return "Security Audit Warning";
+    case "USER_SIGNUP":
+      return "New Candidate Registration";
+    case "PASSWORD_CHANGED":
+      return "Security: Password Updated";
+    case "TWO_FACTOR_ENABLED":
+      return "Security: 2FA Enabled";
+    default:
+      return type
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+}
+
+function getAdminNotificationHref(type: string): string {
+  switch (type) {
+    case "REPORT_PENDING_APPROVAL":
+      return "/console/reports";
+    case "SLA_BREACH":
+      return "/console/sla";
+    case "SECURITY_ALERT":
+      return "/console/audit-logs";
+    case "USER_SIGNUP":
+      return "/console/users";
+    case "STAFF_ASSIGNMENT":
+      return "/console/staff";
+    default:
+      return "/console";
+  }
+}
+
+/**
+ * 23. Get Admin Notifications & Operational Alerts
+ */
+export async function getAdminNotificationsAction(): Promise<
+  AdminActionResult<{
+    notifications: AdminNotificationItem[];
+    unreadCount: number;
+  }>
+> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    // 1. Fetch acknowledged live alert IDs for this admin
+    const acknowledgedLiveRecords = await prisma.notification.findMany({
+      where: {
+        userId: adminUser.id,
+        id: { startsWith: "live-" },
+      },
+      select: { id: true, readAt: true },
+    });
+    const acknowledgedMap = new Map<string, string | null>(
+      acknowledgedLiveRecords.map((r) => [r.id, r.readAt ? r.readAt.toISOString() : null])
+    );
+
+    // 2. Fetch direct DB notifications for this admin
+    const dbNotifications = await prisma.notification.findMany({
+      where: {
+        userId: adminUser.id,
+        NOT: { id: { startsWith: "live-" } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 25,
+    });
+
+    // 3. Operational: Reports pending approval
+    const pendingReports = await prisma.report.findMany({
+      where: { status: ReportStatus.PENDING_APPROVAL },
+      include: {
+        attempt: {
+          include: {
+            user: {
+              include: {
+                studentProfile: true,
+              },
+            },
+            assessment: { select: { title: true } },
+          },
+        },
+      },
+      orderBy: { uploadedAt: "desc" },
+      take: 8,
+    });
+
+    // 4. Operational: SLA overdue or critical attempts
+    const slaThreshold = new Date(Date.now() - DEFAULT_SLA_DAYS * 24 * 60 * 60 * 1000);
+    const overdueAttempts = await prisma.assessmentAttempt.findMany({
+      where: {
+        status: { in: [AttemptStatus.SUBMITTED, AttemptStatus.UNDER_REVIEW] },
+        submittedAt: { lte: slaThreshold },
+      },
+      include: {
+        user: {
+          include: {
+            studentProfile: true,
+          },
+        },
+        assessment: { select: { title: true } },
+      },
+      orderBy: { submittedAt: "asc" },
+      take: 8,
+    });
+
+    // 5. Operational: Security audit failures in last 48 hours
+    const recentAuditAlerts = await prisma.auditLog.findMany({
+      where: {
+        result: AuditResult.FAILURE,
+        createdAt: { gte: new Date(Date.now() - 48 * 60 * 60 * 1000) },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+
+    const items: AdminNotificationItem[] = [];
+
+    // Map DB notifications
+    for (const n of dbNotifications) {
+      items.push({
+        id: n.id,
+        type: n.type,
+        title: formatAdminNotificationTitle(n.type),
+        message: n.message,
+        href: getAdminNotificationHref(n.type),
+        readAt: n.readAt ? n.readAt.toISOString() : null,
+        createdAt: n.createdAt.toISOString(),
+        priority: "NORMAL",
+      });
+    }
+
+    // Map Pending Reports
+    for (const report of pendingReports) {
+      const id = `live-report-${report.id}`;
+      const readAt = acknowledgedMap.get(id) || null;
+      const studentProfile = report.attempt?.user?.studentProfile;
+      const candidateName = studentProfile
+        ? `${studentProfile.firstName} ${studentProfile.lastName}`.trim()
+        : report.attempt?.user?.email || "Candidate";
+      const testTitle = report.attempt?.assessment?.title || "Assessment";
+      items.push({
+        id,
+        type: "REPORT_PENDING_APPROVAL",
+        title: "Report Awaiting Sign-off",
+        message: `${candidateName}'s report for "${testTitle}" is pending final executive approval.`,
+        href: "/console/reports",
+        readAt,
+        createdAt: report.uploadedAt.toISOString(),
+        priority: "HIGH",
+      });
+    }
+
+    // Map Overdue Attempts
+    for (const attempt of overdueAttempts) {
+      const id = `live-sla-${attempt.id}`;
+      const readAt = acknowledgedMap.get(id) || null;
+      const studentProfile = attempt.user?.studentProfile;
+      const candidateName = studentProfile
+        ? `${studentProfile.firstName} ${studentProfile.lastName}`.trim()
+        : attempt.user?.email || "Candidate";
+      const testTitle = attempt.assessment?.title || "Assessment";
+      items.push({
+        id,
+        type: "SLA_BREACH",
+        title: "SLA Overdue Alert",
+        message: `${candidateName}'s assessment attempt on "${testTitle}" is exceeding turnaround SLA.`,
+        href: "/console/sla",
+        readAt,
+        createdAt: attempt.submittedAt
+          ? attempt.submittedAt.toISOString()
+          : attempt.startedAt.toISOString(),
+        priority: "CRITICAL",
+      });
+    }
+
+    // Map Security Failures
+    for (const log of recentAuditAlerts) {
+      const id = `live-audit-${log.id}`;
+      const readAt = acknowledgedMap.get(id) || null;
+      items.push({
+        id,
+        type: "SECURITY_ALERT",
+        title: "Security Incident Alert",
+        message: `Action ${log.action} failed on ${log.resource}${log.ipAddress ? ` (${log.ipAddress})` : ""}.`,
+        href: "/console/audit-logs",
+        readAt,
+        createdAt: log.createdAt.toISOString(),
+        priority: "HIGH",
+      });
+    }
+
+    // Sort all by createdAt descending
+    items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const unreadCount = items.filter((i) => !i.readAt).length;
+
+    return {
+      success: true,
+      message: "Admin notifications loaded.",
+      data: {
+        notifications: items,
+        unreadCount,
+      },
+    };
+  } catch (error: any) {
+    console.error("[getAdminNotificationsAction error]:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to load admin notifications.",
+      data: {
+        notifications: [],
+        unreadCount: 0,
+      },
+    };
+  }
+}
+
+/**
+ * 24. Mark Single Admin Notification Read
+ */
+export async function markAdminNotificationReadAction(notificationId: string): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    if (notificationId.startsWith("live-")) {
+      await prisma.notification.upsert({
+        where: { id: notificationId },
+        create: {
+          id: notificationId,
+          userId: adminUser.id,
+          type: "ALERT_ACKNOWLEDGED",
+          message: `Operational alert acknowledged: ${notificationId}`,
+          readAt: new Date(),
+        },
+        update: {
+          readAt: new Date(),
+        },
+      });
+    } else {
+      await prisma.notification.updateMany({
+        where: {
+          id: notificationId,
+          userId: adminUser.id,
+        },
+        data: {
+          readAt: new Date(),
+        },
+      });
+    }
+
+    revalidatePath("/console");
+    return { success: true, message: "Notification marked as read." };
+  } catch (error: any) {
+    console.error("[markAdminNotificationReadAction error]:", error);
+    return { success: false, message: error.message || "Failed to mark notification read." };
+  }
+}
+
+/**
+ * 25. Mark All Admin Notifications Read
+ */
+export async function markAllAdminNotificationsReadAction(liveNotificationIds?: string[]): Promise<AdminActionResult> {
+  try {
+    const adminUser = await verifyAdminSession();
+
+    // Mark regular DB notifications read
+    await prisma.notification.updateMany({
+      where: {
+        userId: adminUser.id,
+        readAt: null,
+      },
+      data: {
+        readAt: new Date(),
+      },
+    });
+
+    // Mark operational live alerts acknowledged
+    if (liveNotificationIds && liveNotificationIds.length > 0) {
+      for (const liveId of liveNotificationIds) {
+        if (liveId.startsWith("live-")) {
+          await prisma.notification.upsert({
+            where: { id: liveId },
+            create: {
+              id: liveId,
+              userId: adminUser.id,
+              type: "ALERT_ACKNOWLEDGED",
+              message: `Operational alert acknowledged: ${liveId}`,
+              readAt: new Date(),
+            },
+            update: {
+              readAt: new Date(),
+            },
+          });
+        }
+      }
+    }
+
+    revalidatePath("/console");
+    return { success: true, message: "All notifications marked as read." };
+  } catch (error: any) {
+    console.error("[markAllAdminNotificationsReadAction error]:", error);
+    return { success: false, message: error.message || "Failed to mark all notifications read." };
+  }
+}
+
+
 
 
