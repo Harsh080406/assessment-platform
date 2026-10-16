@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "ALDERWOOD VANTAGE — Find Your Vantage | Raising Leaders, Not Just Employees",
+  title: "ALDERWOOD VANTAGE - Find Your Vantage | Raising Leaders, Not Just Employees",
   description:
     "From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.",
   icons: {
