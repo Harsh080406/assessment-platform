@@ -1,7 +1,9 @@
 export const SITE_NAME = "Alderwood Vantage";
-export const SITE_TAGLINE = "Find Your Vantage | Raising Leaders, Not Just Employees";
+export const SITE_TAGLINE = "Raising Leaders, Not Just Employees";
 export const DEFAULT_DESCRIPTION =
-  "From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.";
+  "Validated psychometric assessments, expert counselling, and 5-year developmental roadmaps empowering students to become visionary leaders and innovators.";
+export const DEFAULT_OG_IMAGE = "/alderwood-og.png";
+export const DEFAULT_LOGO = "/alderwood-logo.png";
 
 export function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_APP_URL) {

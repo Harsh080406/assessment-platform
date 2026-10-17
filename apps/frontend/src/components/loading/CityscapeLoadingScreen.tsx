@@ -47,28 +47,10 @@ export default function CityscapeLoadingScreen({
 
   return (
     <div className="fixed inset-0 z-[999999] w-screen h-screen overflow-hidden select-none bg-slate-950">
-      {/* Desktop / Laptop Full-Screen Image */}
-      <div className="hidden md:block absolute inset-0 w-full h-full">
-        <Image
-          src="/laptop back.svg"
-          alt="Alderwood Vantage Laptop Background"
-          fill
-          priority
-          unoptimized
-          className="object-cover object-center w-full h-full"
-        />
-      </div>
-
-      {/* Mobile Full-Screen Image */}
-      <div className="block md:hidden absolute inset-0 w-full h-full">
-        <Image
-          src="/mobile back.svg"
-          alt="Alderwood Vantage Mobile Background"
-          fill
-          priority
-          unoptimized
-          className="object-cover object-center w-full h-full"
-        />
+      {/* Sleek Pure-CSS Animated Ambient Backdrop (Zero Network Payload) */}
+      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-black overflow-hidden pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-80 h-80 bg-[#FF6B6B]/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-[#4F46E5]/10 rounded-full blur-3xl animate-pulse delay-700" />
       </div>
 
       {/* Overlaid UI Content (Logo, Progress Bar, Status Message) */}

@@ -4,22 +4,22 @@ import { BreadcrumbJsonLd, CourseProgramJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Assessment Packages & Modules | Spark, Wiring, Horsepower, Edge",
+  title: "Packages & Modules | Spark, Wiring, Horsepower, Edge",
   description:
-    "Discover the 4 Alderwood Vantage assessment modules (Spark, Wiring, Horsepower, Edge) and choose between Discover, Decode, and Design leadership packages.",
+    "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package tailored for high school and university students.",
   alternates: {
     canonical: "/packages",
   },
   openGraph: {
-    title: `Assessment Packages & Modules | ${SITE_NAME}`,
+    title: `Packages & Modules | ${SITE_NAME}`,
     description:
-      "Discover the 4 Alderwood Vantage assessment modules (Spark, Wiring, Horsepower, Edge) and choose between Discover, Decode, and Design leadership packages.",
+      "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package tailored for high school and university students.",
     url: "/packages",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `Packages & Modules - ${SITE_NAME}`,
@@ -28,10 +28,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `Assessment Packages & Modules | ${SITE_NAME}`,
+    title: `Packages & Modules | ${SITE_NAME}`,
     description:
-      "Discover the 4 Alderwood Vantage assessment modules (Spark, Wiring, Horsepower, Edge) and select your pathway package.",
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+      "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package.",
+    images: ["/alderwood-og.png"],
   },
 };
 

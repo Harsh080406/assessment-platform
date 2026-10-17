@@ -4,25 +4,31 @@ import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+  title: "Find Your Vantage | Raising Leaders, Not Just Employees",
   description: DEFAULT_DESCRIPTION,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    title: `Find Your Vantage | ${SITE_NAME}`,
     description: DEFAULT_DESCRIPTION,
     url: "/",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `${SITE_NAME} - Raising Leaders, Not Just Employees`,
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Find Your Vantage | ${SITE_NAME}`,
+    description: DEFAULT_DESCRIPTION,
+    images: ["/alderwood-og.png"],
   },
 };
 

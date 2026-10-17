@@ -4,22 +4,22 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "About Us | Our Mission, Science & Leadership Pedagogy",
+  title: "About Us | Alderwood Vantage Mission & Pedagogy",
   description:
-    "Learn about Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and the senior enterprise leadership practitioners guiding students toward clarity.",
+    "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
   alternates: {
     canonical: "/about",
   },
   openGraph: {
     title: `About Us | ${SITE_NAME}`,
     description:
-      "Learn about Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and the senior enterprise leadership practitioners guiding students toward clarity.",
+      "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
     url: "/about",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `About ${SITE_NAME}`,
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `About Us | ${SITE_NAME}`,
     description:
-      "Learn about Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and the leadership practitioners guiding students.",
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+      "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
+    images: ["/alderwood-og.png"],
   },
 };
 

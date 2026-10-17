@@ -79,6 +79,9 @@ export default function FaqSection() {
               >
                 <button
                   type="button"
+                  id={`faq-btn-${index}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${index}`}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 bg-white text-black cursor-pointer"
                   style={{ color: "#000000" }}
@@ -97,11 +100,16 @@ export default function FaqSection() {
                     <ChevronDown className="w-4 h-4" />
                   </div>
                 </button>
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-[#475569] leading-relaxed border-t border-[#F1F5F9] bg-[#F8FAFC]/50">
-                    {faq.a}
-                  </div>
-                )}
+                <div
+                  id={`faq-answer-${index}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${index}`}
+                  className={`px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-[#475569] leading-relaxed border-t border-[#F1F5F9] bg-[#F8FAFC]/50 ${
+                    isOpen ? "block" : "hidden"
+                  }`}
+                >
+                  {faq.a}
+                </div>
               </div>
             );
           })}

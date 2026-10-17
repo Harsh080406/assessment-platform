@@ -11,11 +11,10 @@ export default function AuthMascot({ className = "" }: AuthMascotProps) {
       className={`w-full h-full relative select-none overflow-hidden flex items-center justify-center bg-[#FDCBC7] ${className}`}
     >
       <Image
-        src="/Untitled design.svg"
+        src="/auth-mascot.webp"
         alt="Alderwood Vantage Leadership Potential Assessment"
         fill
         priority
-        unoptimized
         sizes="(max-width: 768px) 100vw, 50vw"
         className="w-full h-full object-cover object-center"
       />

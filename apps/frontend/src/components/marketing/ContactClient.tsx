@@ -1209,16 +1209,16 @@ export default function ContactClient() {
                       />
                     </button>
 
-                    {isOpen && (
-                      <div
-                        id={`faq-answer-${idx}`}
-                        role="region"
-                        aria-labelledby={`faq-question-${idx}`}
-                        className="px-5 sm:px-6 pb-5 pt-1 text-sm text-[#475569] leading-relaxed animate-fade-in"
-                      >
-                        <p>{item.a}</p>
-                      </div>
-                    )}
+                    <div
+                      id={`faq-answer-${idx}`}
+                      role="region"
+                      aria-labelledby={`faq-question-${idx}`}
+                      className={`px-5 sm:px-6 pb-5 pt-1 text-sm text-[#475569] leading-relaxed ${
+                        isOpen ? "block animate-fade-in" : "hidden"
+                      }`}
+                    >
+                      <p>{item.a}</p>
+                    </div>
                   </div>
                 );
               })}

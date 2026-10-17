@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `${SITE_NAME} - Raising Leaders, Not Just Employees`,
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+    images: ["/alderwood-og.png"],
   },
   robots: {
     index: true,

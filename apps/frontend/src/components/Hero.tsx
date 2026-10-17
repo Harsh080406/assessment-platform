@@ -130,11 +130,10 @@ export default function Hero() {
               onDragStart={(e) => e.preventDefault()}
             >
               <Image
-                src="/hero.svg"
+                src="/hero-student.webp"
                 alt="Smiling Student with Laptop and Backpack - Alderwood Vantage"
                 fill
                 priority
-                unoptimized
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
                 onContextMenu={(e) => e.preventDefault()}

@@ -4,22 +4,22 @@ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "How It Works | The 5-Step Leadership & Career Pathway",
+  title: "How It Works | 5-Step Student Leadership Pathway",
   description:
-    "Explore the Alderwood Vantage 5-step journey: setup, self-paced 4-module assessment, AI + expert synthesis, 1-on-1 debrief, and a customized 5-year leadership roadmap.",
+    "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap. See how Alderwood Vantage unlocks student career clarity.",
   alternates: {
     canonical: "/how-it-works",
   },
   openGraph: {
     title: `How It Works | ${SITE_NAME}`,
     description:
-      "Explore the Alderwood Vantage 5-step journey: setup, self-paced 4-module assessment, AI + expert synthesis, 1-on-1 debrief, and a customized 5-year leadership roadmap.",
+      "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap. See how Alderwood Vantage unlocks student career clarity.",
     url: "/how-it-works",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `How It Works - ${SITE_NAME}`,
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `How It Works | ${SITE_NAME}`,
     description:
-      "Explore the Alderwood Vantage 5-step journey: setup, 4-module assessment, AI + expert synthesis, and 1-on-1 debrief.",
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+      "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap.",
+    images: ["/alderwood-og.png"],
   },
 };
 

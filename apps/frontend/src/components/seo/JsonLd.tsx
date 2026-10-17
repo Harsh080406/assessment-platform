@@ -11,7 +11,7 @@ export function OrganizationJsonLd() {
     url: baseUrl,
     logo: {
       "@type": "ImageObject",
-      url: `${baseUrl}/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png`,
+      url: `${baseUrl}/alderwood-logo.png`,
       caption: "Alderwood Vantage Logo",
     },
     description:

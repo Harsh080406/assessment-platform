@@ -4,22 +4,22 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Student-Parent Decoder | Career Myths vs Scientific Evidence",
+  title: "Student-Parent Decoder | Career Myths vs Science",
   description:
-    "Bridge the conversation gap between parental expectations and student aspirations. Discover scientific data versus popular career myths regarding streams, careers, and leadership paths.",
+    "Bridge the communication gap between parental aspirations and student passions with data-driven insights and objective cognitive assessment results.",
   alternates: {
     canonical: "/decoder",
   },
   openGraph: {
     title: `Student-Parent Decoder | ${SITE_NAME}`,
     description:
-      "Bridge the conversation gap between parental expectations and student aspirations with objective cognitive data and scientific evidence.",
+      "Bridge the communication gap between parental aspirations and student passions with data-driven insights and objective cognitive assessment results.",
     url: "/decoder",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `Student-Parent Decoder - ${SITE_NAME}`,
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Student-Parent Decoder | ${SITE_NAME}`,
     description:
-      "Bridge the conversation gap between parental expectations and student aspirations with objective cognitive data.",
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+      "Bridge the communication gap between parental aspirations and student passions with data-driven insights.",
+    images: ["/alderwood-og.png"],
   },
 };
 

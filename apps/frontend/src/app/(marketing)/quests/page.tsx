@@ -4,22 +4,22 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Interactive Quests & Experiential Challenges | Alderwood Vantage",
+  title: "Interactive Quests | Real-World Student Challenges",
   description:
-    "Engage in scenario-based quests and real-world leadership challenges designed to uncover natural decision-making, strategic problem solving, and innate aptitude.",
+    "Engage in scenario-based leadership quests and decision dilemmas designed to reveal innate problem-solving and cognitive instincts without test stress.",
   alternates: {
     canonical: "/quests",
   },
   openGraph: {
-    title: `Interactive Quests & Experiential Challenges | ${SITE_NAME}`,
+    title: `Interactive Quests | ${SITE_NAME}`,
     description:
-      "Engage in scenario-based quests and real-world leadership challenges designed to uncover natural decision-making, strategic problem solving, and innate aptitude.",
+      "Engage in scenario-based leadership quests and decision dilemmas designed to reveal innate problem-solving and cognitive instincts without test stress.",
     url: "/quests",
     siteName: SITE_NAME,
     type: "website",
     images: [
       {
-        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        url: "/alderwood-og.png",
         width: 1200,
         height: 630,
         alt: `Quests & Challenges - ${SITE_NAME}`,
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: `Interactive Quests | ${SITE_NAME}`,
     description:
       "Engage in scenario-based quests designed to uncover natural problem solving and leadership instincts.",
-    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+    images: ["/alderwood-og.png"],
   },
 };
 

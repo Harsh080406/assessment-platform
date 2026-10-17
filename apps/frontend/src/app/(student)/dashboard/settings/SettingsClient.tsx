@@ -46,7 +46,7 @@ const COUNTRY_LIST = [
 ];
 
 const PRESET_AVATARS = [
-  { id: "hero", label: "Learner", url: "/Smiling Student with Laptop and Backpack.png" },
+  { id: "hero", label: "Learner", url: "/smiling-student.png" },
   {
     id: "tech",
     label: "Analyst",
