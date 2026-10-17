@@ -68,13 +68,14 @@ export interface AttemptExportData {
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 /**
- * Extracts Option A, Option B, Option C, Option D text for any question type.
+ * Extracts Option A, Option B, Option C, Option D, Option E text for any question type.
  */
 function extractOptions(q: AssessmentQuestion): {
   optA: string;
   optB: string;
   optC: string;
   optD: string;
+  optE: string;
 } {
   // If the question has explicit options in DB (MCQ, SJT)
   if (q.options && q.options.length > 0) {
@@ -83,29 +84,41 @@ function extractOptions(q: AssessmentQuestion): {
       optA: sorted[0]?.optionText || "-",
       optB: sorted[1]?.optionText || "-",
       optC: sorted[2]?.optionText || "-",
-      optD:
-        sorted[3]?.optionText ||
-        (sorted.length > 4 ? sorted.slice(3).map((o) => o.optionText).join(" | ") : "-"),
+      optD: sorted[3]?.optionText || "-",
+      optE: sorted[4]?.optionText || (sorted.length > 5 ? sorted.slice(4).map((o) => o.optionText).join(" | ") : "-"),
     };
   }
 
-  // Likert 5 scale
-  if (q.questionType === QuestionType.LIKERT_5) {
+  const isInterests =
+    q.questionType === QuestionType.RATING_5 ||
+    [
+      "realistic",
+      "investigative",
+      "artistic",
+      "social",
+      "enterprising",
+      "conventional",
+    ].includes((q.category || "").toLowerCase());
+
+  // RIASEC Interests (Enjoyment Scale)
+  if (isInterests) {
+    return {
+      optA: "1 - Would dislike it",
+      optB: "2 - Dislike",
+      optC: "3 - Neutral",
+      optD: "4 - Enjoy",
+      optE: "5 - Would love it",
+    };
+  }
+
+  // Likert 5 scale (Agreement Scale)
+  if (q.questionType === QuestionType.LIKERT_5 || q.questionType === QuestionType.RATING_5) {
     return {
       optA: "1 - Strongly Disagree",
       optB: "2 - Disagree",
       optC: "3 - Neutral",
-      optD: "4 - Agree / 5 - Strongly Agree",
-    };
-  }
-
-  // Rating 5 scale
-  if (q.questionType === QuestionType.RATING_5) {
-    return {
-      optA: "1 - Very Low",
-      optB: "2 - Low",
-      optC: "3 - Moderate",
-      optD: "4 - High / 5 - Very High",
+      optD: "4 - Agree",
+      optE: "5 - Strongly Agree",
     };
   }
 
@@ -113,9 +126,10 @@ function extractOptions(q: AssessmentQuestion): {
   if (q.questionType === QuestionType.FORCED_RANKING) {
     return {
       optA: "Rank 1 - 2 (Top Priority Driver)",
-      optB: "Rank 3 - 5 (High Priority Value)",
-      optC: "Rank 6 - 8 (Secondary Value)",
-      optD: "Rank 9 - 10 (Peripheral Need)",
+      optB: "Rank 3 - 4 (High Priority Value)",
+      optC: "Rank 5 - 6 (Core Value)",
+      optD: "Rank 7 - 8 (Secondary Value)",
+      optE: "Rank 9 - 10 (Peripheral Need)",
     };
   }
 
@@ -124,6 +138,7 @@ function extractOptions(q: AssessmentQuestion): {
     optB: "-",
     optC: "-",
     optD: "-",
+    optE: "-",
   };
 }
 
@@ -228,12 +243,13 @@ export interface FormattedExcelRow {
   "Option B": string;
   "Option C": string;
   "Option D": string;
+  "Option E": string;
   "Candidates answers": string;
 }
 
 /**
  * Generates an Excel workbook with the exact format:
- * Questionnumber, Module, Category / Competency, Question / Scenario Text, Option A, Option B, Option C, Option D, Candidates answers
+ * Questionnumber, Module, Category / Competency, Question / Scenario Text, Option A, Option B, Option C, Option D, Option E, Candidates answers
  * Organized module-wise across individual tabs plus a consolidated Master tab.
  */
 export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buffer {
@@ -254,10 +270,11 @@ export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buff
     { wch: 28 }, // Module
     { wch: 25 }, // Category / Competency
     { wch: 60 }, // Question / Scenario Text
-    { wch: 32 }, // Option A
-    { wch: 32 }, // Option B
-    { wch: 32 }, // Option C
-    { wch: 32 }, // Option D
+    { wch: 30 }, // Option A
+    { wch: 30 }, // Option B
+    { wch: 30 }, // Option C
+    { wch: 30 }, // Option D
+    { wch: 30 }, // Option E
     { wch: 38 }, // Candidates answers
   ];
 
@@ -273,7 +290,7 @@ export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buff
     sec.questions.forEach((q) => {
       globalQNum++;
       const rawAns = responseMap.get(q.id);
-      const { optA, optB, optC, optD } = extractOptions(q);
+      const { optA, optB, optC, optD, optE } = extractOptions(q);
       const candidateAnswer = formatCandidateAnswer(q, rawAns);
 
       allRows.push({
@@ -285,6 +302,7 @@ export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buff
         "Option B": optB,
         "Option C": optC,
         "Option D": optD,
+        "Option E": optE,
         "Candidates answers": candidateAnswer,
       });
     });
@@ -308,7 +326,7 @@ export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buff
 
     const moduleRows: FormattedExcelRow[] = sec.questions.map((q, qIdx) => {
       const rawAns = responseMap.get(q.id);
-      const { optA, optB, optC, optD } = extractOptions(q);
+      const { optA, optB, optC, optD, optE } = extractOptions(q);
       const candidateAnswer = formatCandidateAnswer(q, rawAns);
 
       return {
@@ -320,6 +338,7 @@ export function generateModuleWiseAnswersWorkbook(data: AttemptExportData): Buff
         "Option B": optB,
         "Option C": optC,
         "Option D": optD,
+        "Option E": optE,
         "Candidates answers": candidateAnswer,
       };
     });
