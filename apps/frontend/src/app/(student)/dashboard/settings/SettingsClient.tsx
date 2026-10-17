@@ -492,6 +492,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                     src={formData.avatarUrl}
                     alt="Student profile"
                     fill
+                    sizes="96px"
                     className="object-cover"
                     unoptimized
                   />
@@ -502,7 +503,10 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
 
               <div className="space-y-2 text-center sm:text-left flex-1 min-w-0">
                 <input
+                  id="settings-avatar-file-upload"
+                  name="avatarFile"
                   type="file"
+                  aria-label="Upload profile photo"
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   accept="image/png, image/jpeg, image/webp"
@@ -570,6 +574,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                         src={preset.url}
                         alt={preset.label}
                         fill
+                        sizes="44px"
                         className="object-cover"
                         unoptimized
                       />
@@ -628,7 +633,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
               {/* Email (Readonly with Verified Tag) */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-[#0F172A] block">
+                  <label htmlFor="settings-registered-email" className="text-xs font-semibold text-[#0F172A] block">
                     Registered email
                   </label>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
@@ -637,7 +642,10 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                   </span>
                 </div>
                 <input
+                  id="settings-registered-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   readOnly
                   disabled
                   value={initialData.email}
@@ -655,6 +663,9 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                 </label>
                 <div className="flex gap-2">
                   <select
+                    id="settings-country-code"
+                    name="countryCode"
+                    aria-label="Country code"
                     value={selectedCountryCode}
                     onChange={(e) => handleCountryCodeChange(e.target.value)}
                     className="w-28 px-2.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
@@ -668,7 +679,9 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
 
                   <input
                     id="phone"
+                    name="phone"
                     type="tel"
+                    autoComplete="tel-national"
                     value={localPhoneNumber}
                     onChange={handleLocalPhoneChange}
                     placeholder="98765 43210"

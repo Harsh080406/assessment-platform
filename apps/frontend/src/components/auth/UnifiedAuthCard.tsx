@@ -452,13 +452,16 @@ export default function UnifiedAuthCard({
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+                  <label htmlFor="forgot-new-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
                     New Password
                   </label>
                   <div className="relative flex items-center">
                     <Lock className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                     <input
+                      id="forgot-new-password"
+                      name="newPassword"
                       type={showForgotNewPassword ? "text" : "password"}
+                      autoComplete="new-password"
                       value={forgotNewPassword}
                       onChange={(e) => setForgotNewPassword(e.target.value)}
                       placeholder="Minimum 8 characters"
@@ -472,6 +475,7 @@ export default function UnifiedAuthCard({
                     <button
                       type="button"
                       onClick={() => setShowForgotNewPassword(!showForgotNewPassword)}
+                      aria-label="Toggle new password visibility"
                       className="absolute right-3.5 text-[#8C95A6] hover:text-[#191F2D] p-1 cursor-pointer"
                     >
                       {showForgotNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -481,13 +485,16 @@ export default function UnifiedAuthCard({
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+                  <label htmlFor="forgot-confirm-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
                     Confirm Password
                   </label>
                   <div className="relative flex items-center">
                     <Lock className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                     <input
+                      id="forgot-confirm-password"
+                      name="confirmPassword"
                       type={showForgotConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
                       value={forgotConfirmPassword}
                       onChange={(e) => setForgotConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
@@ -501,6 +508,7 @@ export default function UnifiedAuthCard({
                     <button
                       type="button"
                       onClick={() => setShowForgotConfirmPassword(!showForgotConfirmPassword)}
+                      aria-label="Toggle confirm password visibility"
                       className="absolute right-3.5 text-[#8C95A6] hover:text-[#191F2D] p-1 cursor-pointer"
                     >
                       {showForgotConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -532,16 +540,19 @@ export default function UnifiedAuthCard({
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+                  <label htmlFor="forgot-otp-input" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
                     6-Digit Verification Code
                   </label>
                   <div className="relative flex items-center">
                     <KeyRound className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                     <input
+                      id="forgot-otp-input"
+                      name="otp"
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
                       maxLength={6}
+                      autoComplete="one-time-code"
                       value={forgotOtp}
                       onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ""))}
                       placeholder="123456"
@@ -610,13 +621,16 @@ export default function UnifiedAuthCard({
             ) : (
               <form onSubmit={handleForgotPasswordSubmit} className="space-y-4 animate-fade-in">
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+                  <label htmlFor="forgot-password-email" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
                     Email Address
                   </label>
                   <div className="relative flex items-center">
                     <Mail className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                     <input
+                      id="forgot-password-email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="name@example.com"
@@ -677,14 +691,16 @@ export default function UnifiedAuthCard({
                   {/* First Name & Last Name Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
+                      <label htmlFor="signup-firstName" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
                         First Name
                       </label>
                       <div className="relative flex items-center">
                         <User className="w-4 h-4 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                         <input
+                          id="signup-firstName"
                           type="text"
                           name="firstName"
+                          autoComplete="given-name"
                           value={signUpData.firstName}
                           onChange={(e) =>
                             setSignUpData((prev) => ({ ...prev, firstName: e.target.value }))
@@ -704,12 +720,14 @@ export default function UnifiedAuthCard({
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
+                      <label htmlFor="signup-lastName" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
                         Last Name
                       </label>
                       <input
+                        id="signup-lastName"
                         type="text"
                         name="lastName"
+                        autoComplete="family-name"
                         value={signUpData.lastName}
                         onChange={(e) =>
                           setSignUpData((prev) => ({ ...prev, lastName: e.target.value }))
@@ -730,14 +748,16 @@ export default function UnifiedAuthCard({
 
                   {/* Email Address */}
                   <div>
-                    <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
+                    <label htmlFor="signup-email" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
                       Email Address
                     </label>
                     <div className="relative flex items-center">
                       <Mail className="w-4 h-4 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                       <input
+                        id="signup-email"
                         type="email"
                         name="email"
+                        autoComplete="email"
                         value={signUpData.email}
                         onChange={(e) =>
                           setSignUpData((prev) => ({ ...prev, email: e.target.value }))
@@ -757,13 +777,15 @@ export default function UnifiedAuthCard({
                   {/* Password & Confirm Password Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
+                      <label htmlFor="signup-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
                         Password
                       </label>
                       <div className="relative flex items-center">
                         <input
+                          id="signup-password"
                           type={showSignUpPassword ? "text" : "password"}
                           name="password"
+                          autoComplete="new-password"
                           value={signUpData.password}
                           onChange={(e) =>
                             setSignUpData((prev) => ({ ...prev, password: e.target.value }))
@@ -779,7 +801,7 @@ export default function UnifiedAuthCard({
                         <button
                           type="button"
                           onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                          className="absolute right-3 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1"
+                          className="absolute right-3 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1 cursor-pointer"
                           aria-label="Toggle password visibility"
                         >
                           {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -791,13 +813,15 @@ export default function UnifiedAuthCard({
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
+                      <label htmlFor="signup-confirm-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
                         Confirm
                       </label>
                       <div className="relative flex items-center">
                         <input
+                          id="signup-confirm-password"
                           type={showSignUpConfirm ? "text" : "password"}
                           name="confirmPassword"
+                          autoComplete="new-password"
                           value={signUpData.confirmPassword}
                           onChange={(e) =>
                             setSignUpData((prev) => ({ ...prev, confirmPassword: e.target.value }))
@@ -813,8 +837,8 @@ export default function UnifiedAuthCard({
                         <button
                           type="button"
                           onClick={() => setShowSignUpConfirm(!showSignUpConfirm)}
-                          className="absolute right-3 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1"
-                          aria-label="Toggle password visibility"
+                          className="absolute right-3 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1 cursor-pointer"
+                          aria-label="Toggle confirm password visibility"
                         >
                           {showSignUpConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
@@ -906,13 +930,16 @@ export default function UnifiedAuthCard({
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 {/* Email Field */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+                  <label htmlFor="login-email" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
                     Email
                   </label>
                   <div className="relative flex items-center">
                     <Mail className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                     <input
+                      id="login-email"
+                      name="email"
                       type="email"
+                      autoComplete="username email"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="name@example.com"
@@ -930,7 +957,7 @@ export default function UnifiedAuthCard({
                 {/* Password Field */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs sm:text-sm font-bold text-[#1E2538]">
+                    <label htmlFor="login-password" className="block text-xs sm:text-sm font-bold text-[#1E2538]">
                       Password
                     </label>
                     <button
@@ -944,7 +971,10 @@ export default function UnifiedAuthCard({
                   </div>
                   <div className="relative flex items-center">
                     <input
+                      id="login-password"
+                      name="password"
                       type={showLoginPassword ? "text" : "password"}
+                      autoComplete="current-password"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       placeholder="••••••••"
@@ -959,7 +989,7 @@ export default function UnifiedAuthCard({
                       type="button"
                       onClick={() => setShowLoginPassword(!showLoginPassword)}
                       disabled={isAuthenticating || isRedirecting}
-                      className="absolute right-3.5 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1"
+                      className="absolute right-3.5 text-[#8C95A6] hover:text-[#191F2D] transition-colors p-1 cursor-pointer"
                       aria-label="Toggle password visibility"
                     >
                       {showLoginPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

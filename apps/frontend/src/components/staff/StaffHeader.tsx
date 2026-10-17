@@ -119,7 +119,11 @@ export default function StaffHeader({
         <div className="relative w-full hidden sm:block">
           <input
             ref={searchInputRef}
-            type="text"
+            id="staff-search-input"
+            name="search"
+            type="search"
+            autoComplete="off"
+            aria-label="Search candidate, school, or assessment"
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
             placeholder="Search candidate, school, or assessment..."
@@ -157,6 +161,7 @@ export default function StaffHeader({
                   src={avatarUrl}
                   alt={staffName}
                   fill
+                  sizes="32px"
                   className="object-cover"
                   unoptimized
                 />

@@ -112,7 +112,11 @@ export default function StudentHeader({
             <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               ref={searchInputRef}
-              type="text"
+              id="student-desktop-search"
+              name="search"
+              type="search"
+              autoComplete="off"
+              aria-label="Search assessments, reports, topics"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search assessments, reports, topics..."
@@ -155,6 +159,7 @@ export default function StudentHeader({
                     src={avatarUrl}
                     alt={studentName}
                     fill
+                    sizes="32px"
                     className="object-cover"
                     unoptimized
                   />
@@ -225,7 +230,11 @@ export default function StudentHeader({
           <div className="relative w-full">
             <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
-              type="text"
+              id="student-mobile-search"
+              name="search"
+              type="search"
+              autoComplete="off"
+              aria-label="Search assessments and reports"
               autoFocus
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

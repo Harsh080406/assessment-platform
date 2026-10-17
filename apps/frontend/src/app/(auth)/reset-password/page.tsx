@@ -107,13 +107,16 @@ function ResetPasswordForm() {
             )}
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+              <label htmlFor="reset-new-password" className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
                 New Password
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-[#777777] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
+                  id="reset-new-password"
+                  name="password"
                   type="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="8+ chars, 1 uppercase, 1 number"
@@ -127,13 +130,16 @@ function ResetPasswordForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
+              <label htmlFor="reset-confirm-password" className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
                 Confirm New Password
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-[#777777] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
+                  id="reset-confirm-password"
+                  name="confirmPassword"
                   type="password"
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"

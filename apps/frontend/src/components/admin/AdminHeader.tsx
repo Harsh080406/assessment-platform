@@ -97,7 +97,11 @@ export default function AdminHeader({
             <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
             <input
               ref={searchInputRef}
-              type="text"
+              id="admin-mobile-search"
+              name="search"
+              type="search"
+              autoComplete="off"
+              aria-label="Search resources, users, reports"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search resources, users, reports..."
@@ -149,7 +153,11 @@ export default function AdminHeader({
             <div className="relative w-full hidden sm:block max-w-md">
               <input
                 ref={searchInputRef}
-                type="text"
+                id="admin-desktop-search"
+                name="search"
+                type="search"
+                autoComplete="off"
+                aria-label="Search resources, users, reports"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search resources, users, reports..."
@@ -201,6 +209,7 @@ export default function AdminHeader({
                       src={avatarUrl}
                       alt={adminName}
                       fill
+                      sizes="32px"
                       className="object-cover"
                       unoptimized
                     />

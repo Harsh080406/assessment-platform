@@ -122,13 +122,16 @@ export default function EmailOtpSignInForm({ callbackUrl = "/dashboard" }: Email
       {step === "email" ? (
         <form onSubmit={handleRequestOtp} className="space-y-4">
           <div>
-            <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+            <label htmlFor="email-signin-input" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
               Email Address
             </label>
             <div className="relative flex items-center">
               <Mail className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
               <input
+                id="email-signin-input"
+                name="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
@@ -180,14 +183,19 @@ export default function EmailOtpSignInForm({ callbackUrl = "/dashboard" }: Email
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
+            <label htmlFor="email-otp-input" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1.5">
               Enter 6-Digit Email Code
             </label>
             <div className="relative flex items-center">
               <KeyRound className="w-5 h-5 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
               <input
+                id="email-otp-input"
+                name="code"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength={6}
+                autoComplete="one-time-code"
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ""))}
                 placeholder="123456"

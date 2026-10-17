@@ -63,7 +63,11 @@ export function AdminTableToolbar({
         <div className="relative flex-1 max-w-sm">
           <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
           <input
-            type="text"
+            id="admin-table-search"
+            name="search"
+            type="search"
+            autoComplete="off"
+            aria-label={searchPlaceholder}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={searchPlaceholder}

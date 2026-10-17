@@ -329,7 +329,7 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             {data.hasPassword && (
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-[#0F172A] block">
+                  <label htmlFor="security-current-password" className="text-xs font-semibold text-[#0F172A] block">
                     Current password <span className="text-red-500">*</span>
                   </label>
                   <button
@@ -342,7 +342,10 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
                   </button>
                 </div>
                 <input
+                  id="security-current-password"
+                  name="currentPassword"
                   type="password"
+                  autoComplete="current-password"
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
@@ -353,11 +356,14 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             )}
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#0F172A] block">
+              <label htmlFor="security-new-password" className="text-xs font-semibold text-[#0F172A] block">
                 New password (min 8 characters) <span className="text-red-500">*</span>
               </label>
               <input
+                id="security-new-password"
+                name="newPassword"
                 type="password"
+                autoComplete="new-password"
                 required
                 minLength={8}
                 value={newPassword}
@@ -368,11 +374,14 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#0F172A] block">
+              <label htmlFor="security-confirm-password" className="text-xs font-semibold text-[#0F172A] block">
                 Confirm new password <span className="text-red-500">*</span>
               </label>
               <input
+                id="security-confirm-password"
+                name="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 required
                 minLength={8}
                 value={confirmPassword}
@@ -429,11 +438,14 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#0F172A] block">
+              <label htmlFor="security-otp-code" className="text-xs font-semibold text-[#0F172A] block">
                 6-Digit Verification Code <span className="text-red-500">*</span>
               </label>
               <input
+                id="security-otp-code"
+                name="code"
                 type="text"
+                autoComplete="one-time-code"
                 required
                 maxLength={6}
                 value={otpCode}
@@ -496,11 +508,14 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#0F172A] block">
+              <label htmlFor="security-reset-new-password" className="text-xs font-semibold text-[#0F172A] block">
                 New password (min 8 characters) <span className="text-red-500">*</span>
               </label>
               <input
+                id="security-reset-new-password"
+                name="newPassword"
                 type="password"
+                autoComplete="new-password"
                 required
                 minLength={8}
                 value={newPassword}
@@ -512,11 +527,14 @@ export default function SecurityClient({ initialData }: SecurityClientProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#0F172A] block">
+              <label htmlFor="security-reset-confirm-password" className="text-xs font-semibold text-[#0F172A] block">
                 Confirm new password <span className="text-red-500">*</span>
               </label>
               <input
+                id="security-reset-confirm-password"
+                name="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 required
                 minLength={8}
                 value={confirmPassword}

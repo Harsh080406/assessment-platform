@@ -231,12 +231,15 @@ export default function ActivateAccountClient({
           {/* First & Last Name */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-firstName" className="text-xs font-bold text-[#334155] block">
                 First Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="activate-firstName"
+                  name="firstName"
                   type="text"
+                  autoComplete="given-name"
                   placeholder="e.g. Sarah"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -249,12 +252,15 @@ export default function ActivateAccountClient({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-lastName" className="text-xs font-bold text-[#334155] block">
                 Last Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="activate-lastName"
+                  name="lastName"
                   type="text"
+                  autoComplete="family-name"
                   placeholder="e.g. Jenkins"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -270,12 +276,15 @@ export default function ActivateAccountClient({
           {/* Date of Birth & Country/Address */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-dob" className="text-xs font-bold text-[#334155] block">
                 Date of Birth
               </label>
               <div className="relative">
                 <input
+                  id="activate-dob"
+                  name="dateOfBirth"
                   type="date"
+                  autoComplete="bday"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
                   disabled={isPending}
@@ -286,12 +295,15 @@ export default function ActivateAccountClient({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-country" className="text-xs font-bold text-[#334155] block">
                 Country / Address
               </label>
               <div className="relative">
                 <input
+                  id="activate-country"
+                  name="country"
                   type="text"
+                  autoComplete="country-name"
                   placeholder="e.g. United Kingdom"
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
@@ -305,12 +317,15 @@ export default function ActivateAccountClient({
 
           {/* Phone Number */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-[#334155] block">
+            <label htmlFor="activate-phone" className="text-xs font-bold text-[#334155] block">
               Phone Number
             </label>
             <div className="relative">
               <input
+                id="activate-phone"
+                name="phone"
                 type="tel"
+                autoComplete="tel"
                 placeholder="+44 20 7946 0912"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -324,12 +339,15 @@ export default function ActivateAccountClient({
           {/* Password & Confirm Password */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-password" className="text-xs font-bold text-[#334155] block">
                 Create Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="activate-password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
                   placeholder="Min. 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -350,12 +368,15 @@ export default function ActivateAccountClient({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-[#334155] block">
+              <label htmlFor="activate-confirm-password" className="text-xs font-bold text-[#334155] block">
                 Confirm Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="activate-confirm-password"
+                  name="confirmPassword"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
                   placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
