@@ -58,7 +58,7 @@ export const DEFAULT_CONTENT_BLOCKS: Record<string, DefaultContentItem> = {
     body: JSON.stringify(
       {
         email: "support@alderwoodvantage.com",
-        phone: "+1 (800) 555-0199",
+        phone: "+91 93168 19331",
         office: "100 Innovation Way, Suite 400, San Francisco, CA 94105",
         hours: "Monday - Friday, 9:00 AM - 6:00 PM PST",
       },

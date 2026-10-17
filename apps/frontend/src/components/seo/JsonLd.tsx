@@ -17,11 +17,11 @@ export function OrganizationJsonLd() {
     description:
       "Alderwood Vantage provides scientifically validated career and cognitive assessments, expert counselling, and 5-year developmental roadmaps for high school and university students.",
     email: "admissions@alderwoodvantage.com",
-    telephone: "+91 93240 50035",
+    telephone: "+91 93168 19331",
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+91 93240 50035",
+        telephone: "+91 93168 19331",
         contactType: "admissions & student counselling",
         email: "admissions@alderwoodvantage.com",
         availableLanguage: ["English", "Hindi"],
