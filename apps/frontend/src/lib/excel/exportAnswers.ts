@@ -139,6 +139,29 @@ function formatCandidateAnswer(q: AssessmentQuestion, ans: any): string {
   if (q.questionType === QuestionType.LIKERT_5 || q.questionType === QuestionType.RATING_5) {
     const val = typeof ans === "number" ? ans : ans?.value;
     const num = typeof val === "number" ? val : parseInt(String(val), 10);
+
+    const isInterests =
+      q.questionType === QuestionType.RATING_5 ||
+      [
+        "realistic",
+        "investigative",
+        "artistic",
+        "social",
+        "enterprising",
+        "conventional",
+      ].includes((q.category || "").toLowerCase());
+
+    if (isInterests) {
+      const interestLabels: Record<number, string> = {
+        1: "1 - Would dislike it",
+        2: "2 - Dislike",
+        3: "3 - Neutral",
+        4: "4 - Enjoy",
+        5: "5 - Would love it",
+      };
+      return interestLabels[num] || `Enjoyment ${num}/5`;
+    }
+
     const likertLabels: Record<number, string> = {
       1: "1 - Strongly Disagree",
       2: "2 - Disagree",

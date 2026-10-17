@@ -1019,12 +1019,46 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                       );
                     }
 
-                    // Question Type 3: LIKERT_5 / RATING_5 (Psychometric / Competency)
+                    // Question Type 3: LIKERT_5 / RATING_5 (Psychometric / Competency / RIASEC Interests)
                     if (q.questionType === "LIKERT_5" || q.questionType === "RATING_5") {
                       const rawScore = getCandidateLikertValue(q.studentAnswer);
                       const isAnswered = typeof rawScore === "number";
                       const directionalScore =
                         q.reverseKeyed && isAnswered ? 6 - rawScore : rawScore;
+
+                      // Distinguish between RIASEC Vocational Interests (enjoyment scale) and Big Five / Competency (agreement scale)
+                      const isInterests =
+                        q.questionType === "RATING_5" ||
+                        (activeSection?.title || "").toLowerCase().includes("interest") ||
+                        (q.sectionTitle || "").toLowerCase().includes("interest") ||
+                        [
+                          "realistic",
+                          "investigative",
+                          "artistic",
+                          "social",
+                          "enterprising",
+                          "conventional",
+                        ].includes((q.category || "").toLowerCase());
+
+                      const scaleItems = isInterests
+                        ? [
+                            { point: 1, label: "Would dislike it", subtext: "Strongly dislike" },
+                            { point: 2, label: "Dislike", subtext: "Prefer to avoid" },
+                            { point: 3, label: "Neutral", subtext: "Indifferent" },
+                            { point: 4, label: "Enjoy", subtext: "Would like it" },
+                            { point: 5, label: "Would love it", subtext: "Strongly enjoy" },
+                          ]
+                        : [
+                            { point: 1, label: "Strongly Disagree", subtext: "Not at all me" },
+                            { point: 2, label: "Disagree", subtext: "Rarely true" },
+                            { point: 3, label: "Neutral", subtext: "Sometimes true" },
+                            { point: 4, label: "Agree", subtext: "Usually true" },
+                            { point: 5, label: "Strongly Agree", subtext: "Very accurately me" },
+                          ];
+
+                      const selectedScaleItem = isAnswered
+                        ? scaleItems.find((item) => item.point === rawScore)
+                        : null;
 
                       return (
                         <div
@@ -1043,7 +1077,7 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                                   </span>
                                 )}
                                 <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
-                                  {q.questionType}
+                                  {isInterests ? "RIASEC 5-PT ENJOYMENT SCALE" : "5-PT LIKERT SCALE"}
                                 </span>
                               </div>
                               <h4 className="text-sm font-bold text-[#0F172A] leading-snug pt-1">
@@ -1067,27 +1101,34 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
 
                           {/* 5-Point Scale Visual Steps */}
                           <div className="space-y-2 pt-1">
-                            <div className="grid grid-cols-5 gap-2">
-                              {[1, 2, 3, 4, 5].map((val) => {
-                                const isSelected = isAnswered && rawScore === val;
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                              {scaleItems.map((item) => {
+                                const isSelected = isAnswered && rawScore === item.point;
                                 return (
                                   <div
-                                    key={val}
-                                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                                    key={item.point}
+                                    className={`p-2.5 sm:p-3 rounded-xl border text-center transition-all ${
                                       isSelected
                                         ? "bg-[#0F172A] text-white border-[#0F172A] shadow-xs font-bold ring-2 ring-[#0F172A]/20"
-                                        : "bg-slate-50 text-slate-500 border-slate-200"
+                                        : "bg-slate-50 text-slate-600 border-slate-200"
                                     }`}
                                   >
-                                    <div className="text-base font-black font-mono">{val}</div>
-                                    <div className="text-[9px] uppercase tracking-wider truncate mt-0.5">
-                                      {val === 1
-                                        ? "Min (1)"
-                                        : val === 3
-                                        ? "Mid (3)"
-                                        : val === 5
-                                        ? "Max (5)"
-                                        : `Level ${val}`}
+                                    <div className="text-sm sm:text-base font-black font-mono">{item.point}</div>
+                                    <div
+                                      className={`text-[10px] font-bold truncate mt-0.5 ${
+                                        isSelected ? "text-white" : "text-[#0F172A]"
+                                      }`}
+                                      title={item.label}
+                                    >
+                                      {item.label}
+                                    </div>
+                                    <div
+                                      className={`text-[9px] truncate ${
+                                        isSelected ? "text-slate-300" : "text-slate-400"
+                                      }`}
+                                      title={item.subtext}
+                                    >
+                                      {item.subtext}
                                     </div>
                                   </div>
                                 );
@@ -1102,8 +1143,17 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
                                 <span className="text-[10px] uppercase font-bold text-[#64748B] block">
                                   Candidate Raw Response
                                 </span>
-                                <span className="font-extrabold text-[#0F172A] text-sm font-mono">
-                                  {isAnswered ? `${rawScore} / 5` : <span className="text-slate-400 italic font-sans font-normal text-xs">Unanswered</span>}
+                                <span className="font-extrabold text-[#0F172A] text-sm">
+                                  {isAnswered ? (
+                                    <>
+                                      <span className="font-mono">{rawScore} / 5</span>{" "}
+                                      <span className="text-xs font-semibold text-slate-700">
+                                        ({selectedScaleItem?.label})
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span className="text-slate-400 italic font-sans font-normal text-xs">Unanswered</span>
+                                  )}
                                 </span>
                               </div>
                               <div>
