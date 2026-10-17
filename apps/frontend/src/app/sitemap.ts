@@ -1,9 +1,26 @@
 import type { MetadataRoute } from "next";
 
+function getBaseUrl(): string {
+  // 1. Explicit environment variable set in Vercel or .env
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, "");
+  }
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
+  }
+  if (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.includes("localhost")) {
+    return process.env.NEXTAUTH_URL.replace(/\/+$/, "");
+  }
+  // 2. Canonical Vercel production domain (NOT the preview deployment hash VERCEL_URL)
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/\/+$/, "")}`;
+  }
+  // 3. Fallback to production brand domain
+  return "https://www.alderwoodvantage.com";
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://alderwoodvantage.com");
+  const baseUrl = getBaseUrl();
 
   const publicRoutes: Array<{
     path: string;
