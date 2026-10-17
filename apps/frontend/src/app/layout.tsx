@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { getBaseUrl, DEFAULT_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -14,12 +16,71 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  themeColor: "#FBFBF9",
 };
 
 export const metadata: Metadata = {
-  title: "ALDERWOOD VANTAGE - Find Your Vantage | Raising Leaders, Not Just Employees",
-  description:
-    "From self-discovery to leadership: a validated assessment, expert counselling, mentorship and a 5-year pathway that helps every student become the leader, innovator and builder they can be.",
+  metadataBase: new URL(getBaseUrl()),
+  title: {
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: "https://www.alderwoodvantage.com" }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  keywords: [
+    "Alderwood Vantage",
+    "career assessment",
+    "student leadership pathway",
+    "cognitive profiling",
+    "psychometric assessment for students",
+    "stream selection class 10",
+    "career guidance class 11 12",
+    "career clarity engine",
+    "Spark Wiring Horsepower Edge",
+    "undergraduate career mentorship",
+    "5-year leadership roadmap",
+    "student potential assessment",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: DEFAULT_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: "/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Raising Leaders, Not Just Employees`,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: DEFAULT_DESCRIPTION,
+    images: ["/Alderwood Logo_upscayl_5x_upscayl-standard-4x.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "education",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -30,6 +91,7 @@ export const metadata: Metadata = {
       { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
@@ -45,6 +107,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
         <script
           dangerouslySetInnerHTML={{
             __html: `

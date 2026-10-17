@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import StaffLayoutShell from "@/components/staff/StaffLayoutShell";
 import { getStaffDashboardStatsAction } from "@/app/actions/staff";
+
+export const metadata: Metadata = {
+  title: "Staff Review Portal | Alderwood Vantage",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 export default async function StaffLayout({
   children,
