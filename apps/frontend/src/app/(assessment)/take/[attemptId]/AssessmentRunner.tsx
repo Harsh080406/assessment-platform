@@ -76,6 +76,11 @@ interface AssessmentData {
     sections: AssessmentSection[];
   };
   savedResponses: Record<string, { answer: any; questionVersion: number; answeredAt: Date }>;
+  profileCheck?: {
+    isComplete: boolean;
+    missingFields: string[];
+    percentage: number;
+  };
 }
 
 const cardVariants: Variants = {
@@ -455,7 +460,22 @@ export default function AssessmentRunner({
       setSubmitError(
         "Cannot submit: The Work Values ranking section requires all 10 items to have a unique rank (1–10) with no duplicates or missing ranks."
       );
-      setShowSubmitModal(false);
+      return;
+    }
+
+    // Validate that all questions across all 4 modules are answered
+    if (totalQuestions - answeredCount > 0) {
+      setSubmitError(
+        `Cannot submit: All 4 evaluation modules must be 100% completed before submitting. You have ${totalQuestions - answeredCount} unanswered questions remaining.`
+      );
+      return;
+    }
+
+    // Validate Student Profile completeness
+    if (initialData.profileCheck && !initialData.profileCheck.isComplete) {
+      setSubmitError(
+        `Cannot submit: Your student profile must be completed in Settings before evaluation submission (missing: ${initialData.profileCheck.missingFields.join(", ")}).`
+      );
       return;
     }
 
@@ -1143,48 +1163,83 @@ export default function AssessmentRunner({
               </p>
             </div>
 
-            {totalQuestions - answeredCount > 0 && (
-              <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  Notice: You have <strong>{totalQuestions - answeredCount} unanswered</strong> questions. You can still submit, but completing all questions is recommended for comprehensive assessment.
-                </div>
-              </div>
-            )}
+            {(() => {
+              const hasUnanswered = totalQuestions - answeredCount > 0;
+              const isProfileIncomplete = Boolean(initialData.profileCheck && !initialData.profileCheck.isComplete);
+              const cannotSubmit = hasUnanswered || isProfileIncomplete || !isForcedRankingComplete;
 
-            {submitError && (
-              <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>{submitError}</span>
-              </div>
-            )}
+              return (
+                <>
+                  {hasUnanswered && (
+                    <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Incomplete modules:</strong> You have <strong>{totalQuestions - answeredCount} unanswered</strong> question{totalQuestions - answeredCount === 1 ? "" : "s"}. All 4 modules must be 100% completed before submitting for evaluation.
+                      </div>
+                    </div>
+                  )}
 
-            <div className="flex items-center gap-2.5 sm:gap-3 pt-2">
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => setShowSubmitModal(false)}
-                className="w-1/2 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl border border-[#E2E8F0] bg-white hover:bg-gray-50 text-xs font-bold text-[#718096] transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:bg-gray-100"
-              >
-                Keep Editing
-              </button>
+                  {isProfileIncomplete && (
+                    <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Incomplete profile:</strong> Your student profile is missing:{" "}
+                        <span className="font-semibold">{initialData.profileCheck?.missingFields.join(", ")}</span>. Please complete your profile in Dashboard Settings before submitting.
+                      </div>
+                    </div>
+                  )}
 
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={handleFinalSubmit}
-                className="w-1/2 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#FF6B6B] hover:bg-[#F95858] text-white text-xs font-extrabold shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 touch-manipulation"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Locking...</span>
-                  </>
-                ) : (
-                  <span>Yes, Submit & Lock</span>
-                )}
-              </button>
-            </div>
+                  {!isForcedRankingComplete && (
+                    <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Work Values ranking incomplete:</strong> All 10 work values must have a unique rank (1–10).
+                      </div>
+                    </div>
+                  )}
+
+                  {submitError && (
+                    <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>{submitError}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2.5 sm:gap-3 pt-2">
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => setShowSubmitModal(false)}
+                      className="w-1/2 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl border border-[#E2E8F0] bg-white hover:bg-gray-50 text-xs font-bold text-[#718096] transition-all cursor-pointer disabled:opacity-50 touch-manipulation active:bg-gray-100"
+                    >
+                      Keep Editing
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isSubmitting || cannotSubmit}
+                      onClick={handleFinalSubmit}
+                      className={`w-1/2 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs font-extrabold shadow-md flex items-center justify-center gap-2 transition-all touch-manipulation ${
+                        cannotSubmit
+                          ? "bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none"
+                          : "bg-[#FF6B6B] hover:bg-[#F95858] text-white cursor-pointer active:scale-[0.99]"
+                      }`}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Locking...</span>
+                        </>
+                      ) : cannotSubmit ? (
+                        <span>Requirements Pending</span>
+                      ) : (
+                        <span>Yes, Submit & Lock</span>
+                      )}
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       )}

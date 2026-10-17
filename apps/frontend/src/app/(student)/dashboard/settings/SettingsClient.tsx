@@ -64,6 +64,122 @@ const PRESET_AVATARS = [
   },
 ];
 
+export const GRADE_OPTIONS = [
+  "Class 8",
+  "Class 9",
+  "Class 10",
+  "Class 11",
+  "Class 12",
+  "Undergraduate Year 1 (UG 1)",
+  "Undergraduate Year 2 (UG 2)",
+  "Undergraduate Year 3 (UG 3)",
+  "Undergraduate Year 4 (UG 4)",
+];
+
+export const STREAM_OPTIONS = [
+  "Science (PCM - Physics, Chemistry, Maths)",
+  "Science (PCB - Physics, Chemistry, Biology)",
+  "Science (PCMB - Physics, Chemistry, Maths, Biology)",
+  "Commerce with Mathematics",
+  "Commerce without Mathematics",
+  "Humanities / Arts",
+  "Vocational / Applied Studies",
+  "Other",
+];
+
+export const COMMON_UG_COURSES = [
+  "B.Tech / B.E.",
+  "B.Com / B.Com (Hons)",
+  "BBA / BMS",
+  "BCA / B.Sc Computer Science",
+  "B.Sc (Sciences)",
+  "BA (Humanities / Economics)",
+  "LLB / Law",
+  "B.Des / Architecture",
+  "MBBS / Healthcare",
+];
+
+export function parseGradeDetails(rawGrade: string | null | undefined) {
+  if (!rawGrade) {
+    return {
+      baseGrade: "",
+      selectedStream: "",
+      customStream: "",
+      course: "",
+    };
+  }
+
+  const parts = rawGrade.split(/[•\-]/).map((s) => s.trim());
+  const firstPart = parts[0] || "";
+  const remainder = parts.slice(1).join(" • ").trim();
+
+  let baseGrade = firstPart;
+  if (/^undergraduate\s*(year\s*)?1(\s*\(ug\s*1\))?$/i.test(firstPart) || /^ug\s*1$/i.test(firstPart)) {
+    baseGrade = "Undergraduate Year 1 (UG 1)";
+  } else if (/^undergraduate\s*(year\s*)?2(\s*\(ug\s*2\))?$/i.test(firstPart) || /^ug\s*2$/i.test(firstPart)) {
+    baseGrade = "Undergraduate Year 2 (UG 2)";
+  } else if (/^undergraduate\s*(year\s*)?3(\s*\(ug\s*3\))?$/i.test(firstPart) || /^ug\s*3$/i.test(firstPart)) {
+    baseGrade = "Undergraduate Year 3 (UG 3)";
+  } else if (/^undergraduate\s*(year\s*)?4(\s*\(ug\s*4\))?$/i.test(firstPart) || /^ug\s*4$/i.test(firstPart)) {
+    baseGrade = "Undergraduate Year 4 (UG 4)";
+  }
+
+  const is11or12 = baseGrade === "Class 11" || baseGrade === "Class 12";
+  const isUG =
+    baseGrade.toLowerCase().includes("undergraduate") ||
+    baseGrade.toLowerCase().startsWith("ug");
+
+  let selectedStream = "";
+  let customStream = "";
+  let course = "";
+
+  if (is11or12) {
+    if (remainder) {
+      const matched = STREAM_OPTIONS.find(
+        (opt) => opt.toLowerCase() === remainder.toLowerCase() || opt.toLowerCase().startsWith(remainder.toLowerCase())
+      );
+      if (matched && matched !== "Other") {
+        selectedStream = matched;
+      } else {
+        selectedStream = "Other";
+        customStream = remainder;
+      }
+    }
+  } else if (isUG) {
+    course = remainder;
+  }
+
+  return {
+    baseGrade,
+    selectedStream,
+    customStream,
+    course,
+  };
+}
+
+export function computeFinalGrade(
+  base: string,
+  stream: string,
+  customStream: string,
+  course: string
+): string {
+  if (!base) return "";
+  const is11or12 = base === "Class 11" || base === "Class 12";
+  const isUG =
+    base.toLowerCase().includes("undergraduate") ||
+    base.toLowerCase().startsWith("ug");
+
+  if (is11or12) {
+    const streamVal = stream === "Other" ? customStream.trim() : stream.trim();
+    return streamVal ? `${base} • ${streamVal}` : base;
+  }
+  if (isUG) {
+    const courseVal = course.trim();
+    return courseVal ? `${base} • ${courseVal}` : base;
+  }
+  return base;
+}
+
 export default function SettingsClient({ initialData }: SettingsClientProps) {
   const [isPending, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -84,6 +200,13 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
   const [selectedCountryCode, setSelectedCountryCode] = useState(initialPhoneParsed.code);
   const [localPhoneNumber, setLocalPhoneNumber] = useState(initialPhoneParsed.number);
 
+  // Parsed initial grade state
+  const parsedInitialGrade = parseGradeDetails(initialData.grade);
+  const [baseGrade, setBaseGrade] = useState(parsedInitialGrade.baseGrade);
+  const [selectedStream, setSelectedStream] = useState(parsedInitialGrade.selectedStream);
+  const [customStream, setCustomStream] = useState(parsedInitialGrade.customStream);
+  const [undergradCourse, setUndergradCourse] = useState(parsedInitialGrade.course);
+
   const [formData, setFormData] = useState({
     firstName: initialData.firstName || "",
     lastName: initialData.lastName || "",
@@ -92,13 +215,21 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
     dateOfBirth: initialData.dateOfBirth || "",
     country: initialData.country || "India",
     school: initialData.school || "",
-    grade: initialData.grade || "Class 12",
-    educationLevel: initialData.educationLevel || "High School",
+    educationLevel: initialData.educationLevel || "",
     bio: initialData.bio || "",
   });
 
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Computed current grade string
+  const currentGradeString = computeFinalGrade(
+    baseGrade,
+    selectedStream,
+    customStream,
+    undergradCourse
+  );
+  const initialGradeString = initialData.grade || "";
 
   // Check if dirty
   const isDirty =
@@ -109,9 +240,26 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
     formData.dateOfBirth !== (initialData.dateOfBirth || "") ||
     formData.country !== (initialData.country || "India") ||
     formData.school !== (initialData.school || "") ||
-    formData.grade !== (initialData.grade || "Class 12") ||
-    formData.educationLevel !== (initialData.educationLevel || "High School") ||
+    currentGradeString !== initialGradeString ||
+    formData.educationLevel !== (initialData.educationLevel || "") ||
     formData.bio !== (initialData.bio || "");
+
+  const handleBaseGradeChange = (newBaseGrade: string) => {
+    setBaseGrade(newBaseGrade);
+    // Auto-sync educationLevel if not already explicitly chosen or if switching tiers
+    if (newBaseGrade === "Class 8") {
+      setFormData((prev) => ({ ...prev, educationLevel: "Middle School" }));
+    } else if (newBaseGrade === "Class 9" || newBaseGrade === "Class 10") {
+      setFormData((prev) => ({ ...prev, educationLevel: "Secondary School" }));
+    } else if (newBaseGrade === "Class 11" || newBaseGrade === "Class 12") {
+      setFormData((prev) => ({ ...prev, educationLevel: "Senior Secondary" }));
+    } else if (
+      newBaseGrade.toLowerCase().includes("undergraduate") ||
+      newBaseGrade.toLowerCase().startsWith("ug")
+    ) {
+      setFormData((prev) => ({ ...prev, educationLevel: "Undergraduate" }));
+    }
+  };
 
   const handleCountryCodeChange = (newCode: string) => {
     setSelectedCountryCode(newCode);
@@ -176,10 +324,13 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
       dateOfBirth: initialData.dateOfBirth || "",
       country: initialData.country || "India",
       school: initialData.school || "",
-      grade: initialData.grade || "Class 12",
-      educationLevel: initialData.educationLevel || "High School",
+      educationLevel: initialData.educationLevel || "",
       bio: initialData.bio || "",
     });
+    setBaseGrade(parsedInitialGrade.baseGrade);
+    setSelectedStream(parsedInitialGrade.selectedStream);
+    setCustomStream(parsedInitialGrade.customStream);
+    setUndergradCourse(parsedInitialGrade.course);
     setLocalPhoneNumber(initialPhoneParsed.number);
     setSelectedCountryCode(initialPhoneParsed.code);
     setToastMessage(null);
@@ -214,10 +365,37 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
       setToastMessage({ type: "error", text: "School or institution name is required." });
       return;
     }
-    if (!formData.grade.trim()) {
+    if (!baseGrade.trim()) {
       setToastMessage({ type: "error", text: "Current class / grade is required." });
       return;
     }
+
+    const is11or12 = baseGrade === "Class 11" || baseGrade === "Class 12";
+    const isUG =
+      baseGrade.toLowerCase().includes("undergraduate") ||
+      baseGrade.toLowerCase().startsWith("ug");
+
+    if (is11or12) {
+      const streamVal = selectedStream === "Other" ? customStream.trim() : selectedStream.trim();
+      if (!streamVal) {
+        setToastMessage({
+          type: "error",
+          text: `Please select or specify your academic stream for ${baseGrade}.`,
+        });
+        return;
+      }
+    }
+
+    if (isUG) {
+      if (!undergradCourse.trim()) {
+        setToastMessage({
+          type: "error",
+          text: "Please enter your undergraduate degree or course program (e.g. B.Tech Computer Science, B.Com, BBA).",
+        });
+        return;
+      }
+    }
+
     if (!formData.educationLevel.trim()) {
       setToastMessage({ type: "error", text: "Education stage is required." });
       return;
@@ -226,6 +404,13 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
       setToastMessage({ type: "error", text: "Target career aspirations & interests are required." });
       return;
     }
+
+    const finalGrade = computeFinalGrade(
+      baseGrade,
+      selectedStream,
+      customStream,
+      undergradCourse
+    );
 
     startTransition(async () => {
       const res = await updateStudentProfileAction({
@@ -236,7 +421,7 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
         dateOfBirth: formData.dateOfBirth.trim(),
         country: formData.country.trim(),
         school: formData.school.trim(),
-        grade: formData.grade.trim(),
+        grade: finalGrade,
         educationLevel: formData.educationLevel.trim(),
         bio: formData.bio.trim(),
       });
@@ -576,18 +761,19 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                     id="grade"
                     name="grade"
                     required
-                    value={formData.grade}
-                    onChange={handleInputChange}
+                    value={baseGrade}
+                    onChange={(e) => handleBaseGradeChange(e.target.value)}
                     className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
                   >
                     <option value="" disabled>Select current grade</option>
-                    <option value="Class 8">Class 8</option>
-                    <option value="Class 9">Class 9</option>
-                    <option value="Class 10">Class 10</option>
-                    <option value="Class 11">Class 11</option>
-                    <option value="Class 12">Class 12</option>
-                    <option value="Undergraduate Year 1">Undergraduate Year 1</option>
-                    <option value="Undergraduate Year 2">Undergraduate Year 2</option>
+                    {GRADE_OPTIONS.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                    {baseGrade && !GRADE_OPTIONS.includes(baseGrade) && (
+                      <option value={baseGrade}>{baseGrade}</option>
+                    )}
                   </select>
                 </div>
 
@@ -604,13 +790,123 @@ export default function SettingsClient({ initialData }: SettingsClientProps) {
                     className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
                   >
                     <option value="" disabled>Select education stage</option>
-                    <option value="Middle School">Middle School</option>
-                    <option value="Secondary School">Secondary School</option>
-                    <option value="Senior Secondary">Senior Secondary</option>
-                    <option value="Early Undergraduate">Early Undergraduate</option>
+                    <option value="Middle School">Middle School (Grades 6–8)</option>
+                    <option value="Secondary School">Secondary School (Grades 9–10)</option>
+                    <option value="Senior Secondary">Senior Secondary / High School (Grades 11–12)</option>
+                    <option value="Undergraduate">Undergraduate (College / University)</option>
+                    {formData.educationLevel &&
+                      !["Middle School", "Secondary School", "Senior Secondary", "Undergraduate"].includes(formData.educationLevel) && (
+                        <option value={formData.educationLevel}>{formData.educationLevel}</option>
+                      )}
                   </select>
                 </div>
               </div>
+
+              {/* Conditional Stream Selector for Class 11 & Class 12 */}
+              {(baseGrade === "Class 11" || baseGrade === "Class 12") && (
+                <div className="p-4 rounded-xl border border-[#C7D2FE] bg-[#F5F7FF] space-y-3 animate-in fade-in-0 duration-200">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <label htmlFor="academicStream" className="text-xs font-bold text-[#1E1B4B] block">
+                        Academic stream ({baseGrade}) <span className="text-red-500">*</span>
+                      </label>
+                      <p className="text-[11px] text-[#4338CA] mt-0.5">
+                        Required by assessment evaluators to calibrate subject aptitude benchmarks.
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-semibold text-[#4338CA] bg-white px-2 py-0.5 rounded-full border border-[#C7D2FE] shrink-0">
+                      Required
+                    </span>
+                  </div>
+
+                  <select
+                    id="academicStream"
+                    value={selectedStream}
+                    onChange={(e) => setSelectedStream(e.target.value)}
+                    required
+                    className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#C7D2FE] bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30 focus:border-[#4F46E5] min-h-[44px]"
+                  >
+                    <option value="" disabled>Select your academic stream</option>
+                    {STREAM_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedStream === "Other" && (
+                    <div className="space-y-1 pt-1">
+                      <label htmlFor="customStream" className="text-xs font-semibold text-[#0F172A] block">
+                        Specify your stream <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="customStream"
+                        type="text"
+                        required
+                        placeholder="e.g. Fine Arts, Vocational IT, Home Science"
+                        value={customStream}
+                        onChange={(e) => setCustomStream(e.target.value)}
+                        className="w-full px-3.5 py-2 text-base sm:text-sm rounded-xl border border-[#CBD5E1] bg-white text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] min-h-[44px]"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Conditional Course / Degree Selector for Undergraduate (UG 1, 2, 3, 4) */}
+              {(baseGrade.toLowerCase().includes("undergraduate") || baseGrade.toLowerCase().startsWith("ug")) && (
+                <div className="p-4 rounded-xl border border-[#BAE6FD] bg-[#F0F9FF] space-y-3 animate-in fade-in-0 duration-200">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <label htmlFor="undergradCourse" className="text-xs font-bold text-[#0C4A6E] block">
+                        Course / Degree program ({baseGrade}) <span className="text-red-500">*</span>
+                      </label>
+                      <p className="text-[11px] text-[#0369A1] mt-0.5">
+                        Specify your major or collegiate program to align your career evaluation dossier.
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-semibold text-[#0369A1] bg-white px-2 py-0.5 rounded-full border border-[#BAE6FD] shrink-0">
+                      Required
+                    </span>
+                  </div>
+
+                  <input
+                    id="undergradCourse"
+                    type="text"
+                    required
+                    placeholder="e.g. B.Tech Computer Science, B.Com (Hons), BBA, B.Sc Physics, BA Economics, MBBS, LLB"
+                    value={undergradCourse}
+                    onChange={(e) => setUndergradCourse(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl border border-[#BAE6FD] bg-white text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#0284C7]/30 focus:border-[#0284C7] min-h-[44px]"
+                  />
+
+                  {/* Quick-select chips */}
+                  <div className="space-y-1.5 pt-0.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#0369A1] block">
+                      Quick select popular programs:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {COMMON_UG_COURSES.map((courseOption) => {
+                        const isSelected = undergradCourse === courseOption;
+                        return (
+                          <button
+                            key={courseOption}
+                            type="button"
+                            onClick={() => setUndergradCourse(courseOption)}
+                            className={`px-2.5 py-1 text-xs rounded-lg border transition-colors cursor-pointer ${
+                              isSelected
+                                ? "bg-[#0284C7] text-white border-[#0284C7] font-semibold shadow-xs"
+                                : "bg-white text-[#0F172A] border-[#BAE6FD] hover:bg-[#E0F2FE]"
+                            }`}
+                          >
+                            {courseOption}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Bio / Aspirations */}
               <div className="space-y-1">

@@ -10,8 +10,9 @@ import {
   SubmitAssessmentSchema,
   StartAssessmentSchema,
 } from "@/lib/validations/assessment";
-import { AssessmentStatus, AttemptStatus, AuditResult, UserRole } from "@prisma/client";
+import { AssessmentStatus, AttemptStatus, AuditResult, UserRole, QuestionType } from "@prisma/client";
 import { toStudentSectionDTO, toStaffSectionDTO } from "@/lib/serializers/assessment";
+import { checkStudentProfileCompletion } from "@/lib/profile";
 
 export type AssessmentActionResult<T = unknown> = {
   success: boolean;
@@ -126,6 +127,11 @@ export async function getAssessmentAttemptData(attemptId: string) {
     const attempt = await prisma.assessmentAttempt.findUnique({
       where: { id: attemptId },
       include: {
+        user: {
+          include: {
+            studentProfile: true,
+          },
+        },
         assessment: {
           include: {
             sections: {
@@ -170,6 +176,12 @@ export async function getAssessmentAttemptData(attemptId: string) {
       attempt.status === AttemptStatus.PENDING_APPROVAL ||
       attempt.status === AttemptStatus.PUBLISHED;
 
+    // Check student profile completeness
+    const profileCheck = checkStudentProfileCompletion(
+      attempt.user?.studentProfile,
+      attempt.user?.phone
+    );
+
     // Convert responses to a map of questionId -> answer
     const savedResponses: Record<string, { answer: any; questionVersion: number; answeredAt: Date }> = {};
     attempt.responses.forEach((resp) => {
@@ -194,6 +206,11 @@ export async function getAssessmentAttemptData(attemptId: string) {
           startedAt: attempt.startedAt,
           submittedAt: attempt.submittedAt,
           isLocked,
+        },
+        profileCheck: {
+          isComplete: profileCheck.isComplete,
+          missingFields: profileCheck.missingFields,
+          percentage: profileCheck.percentage,
         },
         assessment: {
           id: attempt.assessment.id,
@@ -337,12 +354,23 @@ export async function submitAssessmentAction(
     const attempt = await prisma.assessmentAttempt.findUnique({
       where: { id: attemptId },
       include: {
+        user: {
+          include: {
+            studentProfile: true,
+          },
+        },
         responses: true,
         assessment: {
           include: {
             sections: {
+              orderBy: { displayOrder: "asc" },
               include: {
-                questions: true,
+                questions: {
+                  select: {
+                    id: true,
+                    questionType: true,
+                  },
+                },
               },
             },
           },
@@ -369,6 +397,114 @@ export async function submitAssessmentAction(
         success: true,
         message: "Assessment was already submitted.",
         locked: true,
+      };
+    }
+
+    // 1. Mandatory Student Profile Completeness Verification
+    const profileCheck = checkStudentProfileCompletion(
+      attempt.user?.studentProfile,
+      attempt.user?.phone
+    );
+
+    if (!profileCheck.isComplete) {
+      return {
+        success: false,
+        message: `Assessment cannot be submitted for evaluation yet. Please complete your student profile in Settings first (missing: ${profileCheck.missingFields.join(", ")}).`,
+        locked: false,
+      };
+    }
+
+    // 2. Mandatory 4-Module Assessment Completeness Verification
+    const sections = attempt.assessment?.sections || [];
+    if (sections.length < 4) {
+      return {
+        success: false,
+        message: "Assessment cannot be submitted: The evaluation diagnostic requires all 4 assessment modules.",
+        locked: false,
+      };
+    }
+
+    const answeredMap = new Map<string, any>();
+    for (const resp of attempt.responses) {
+      if (resp.answer !== null && resp.answer !== undefined) {
+        answeredMap.set(resp.questionId, resp.answer);
+      }
+    }
+
+    let totalQuestions = 0;
+    let totalAnswered = 0;
+    let incompleteSectionsCount = 0;
+
+    for (const section of sections) {
+      const questions = section.questions || [];
+      totalQuestions += questions.length;
+      let sectionAnsweredCount = 0;
+
+      const forcedRanks = new Set<number>();
+      const forcedQuestions = questions.filter(
+        (q) => q.questionType === QuestionType.FORCED_RANKING
+      );
+
+      for (const q of questions) {
+        const ans = answeredMap.get(q.id);
+        if (ans !== undefined && ans !== null && ans !== "") {
+          if (q.questionType === QuestionType.FORCED_RANKING) {
+            const rank = typeof ans === "number" ? ans : ans?.rank;
+            if (typeof rank === "number" && rank >= 1 && rank <= 10) {
+              forcedRanks.add(rank);
+              sectionAnsweredCount++;
+            }
+          } else if (
+            q.questionType === QuestionType.LIKERT_5 ||
+            q.questionType === QuestionType.RATING_5
+          ) {
+            const val = typeof ans === "number" ? ans : ans?.value;
+            if (typeof val === "number" && val >= 1 && val <= 5) {
+              sectionAnsweredCount++;
+            } else {
+              sectionAnsweredCount++;
+            }
+          } else if (q.questionType === QuestionType.SJT_DUAL_SELECT) {
+            const selected =
+              typeof ans === "string"
+                ? ans
+                : ans?.selected || ans?.selectedOptionId || ans?.mostEffective;
+            if (typeof selected === "string" && selected.trim().length > 0) {
+              sectionAnsweredCount++;
+            } else {
+              sectionAnsweredCount++;
+            }
+          } else if (q.questionType === QuestionType.MCQ_SINGLE_CORRECT) {
+            const selected =
+              typeof ans === "string" ? ans : ans?.selected;
+            if (typeof selected === "string" && selected.trim().length > 0) {
+              sectionAnsweredCount++;
+            } else {
+              sectionAnsweredCount++;
+            }
+          } else {
+            sectionAnsweredCount++;
+          }
+        }
+      }
+
+      totalAnswered += sectionAnsweredCount;
+      const isForcedRankingValid =
+        forcedQuestions.length === 0 ||
+        forcedRanks.size === forcedQuestions.length;
+
+      if (sectionAnsweredCount < questions.length || !isForcedRankingValid) {
+        incompleteSectionsCount++;
+      }
+    }
+
+    if (incompleteSectionsCount > 0 || totalAnswered < totalQuestions) {
+      const completedSections = sections.length - incompleteSectionsCount;
+      const remainingQuestions = totalQuestions - totalAnswered;
+      return {
+        success: false,
+        message: `Assessment cannot be submitted for evaluation yet. All 4 modules must be 100% completed (${completedSections} of ${sections.length} modules completed; ${remainingQuestions} unanswered question${remainingQuestions === 1 ? "" : "s"} remaining).`,
+        locked: false,
       };
     }
 

@@ -16,6 +16,7 @@ import {
   X,
   ExternalLink,
   ChevronDown,
+  FileSpreadsheet,
 } from "lucide-react";
 import { AttemptStatus, ReportStatus } from "@prisma/client";
 import SlaBadge from "@/components/staff/SlaBadge";
@@ -753,31 +754,43 @@ export default function StaffSubmissionsClient({
 
                       {/* 7. Action Cell */}
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                        {sub.status === AttemptStatus.PUBLISHED ? (
-                          <Link
-                            href={`/portal/review/${sub.id}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0F172A] hover:bg-slate-100 border border-[#E2E8F0] transition-colors"
+                        <div className="flex items-center justify-end gap-1.5">
+                          <a
+                            href={`/api/staff/export-answers/${sub.id}`}
+                            download
+                            title="Download candidate answers (Module-Wise Excel)"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer"
                           >
-                            <span>View Report</span>
-                          </Link>
-                        ) : isUnassigned ? (
-                          <button
-                            type="button"
-                            disabled={isClaiming}
-                            onClick={() => handleClaim(sub.id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-[#CBD5E1] hover:border-[#4F46E5] text-[#0F172A] hover:text-[#4F46E5] transition-all cursor-pointer shadow-2xs disabled:opacity-50"
-                          >
-                            <span>{isClaiming ? "Claiming..." : "Claim"}</span>
-                          </button>
-                        ) : (
-                          <Link
-                            href={`/portal/review/${sub.id}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0F172A] hover:bg-slate-800 text-white transition-all shadow-2xs"
-                          >
-                            <span>Evaluate</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
-                        )}
+                            <FileSpreadsheet className="w-3.5 h-3.5" />
+                            <span className="hidden xl:inline">Excel</span>
+                          </a>
+
+                          {sub.status === AttemptStatus.PUBLISHED ? (
+                            <Link
+                              href={`/portal/review/${sub.id}`}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0F172A] hover:bg-slate-100 border border-[#E2E8F0] transition-colors"
+                            >
+                              <span>View Report</span>
+                            </Link>
+                          ) : isUnassigned ? (
+                            <button
+                              type="button"
+                              disabled={isClaiming}
+                              onClick={() => handleClaim(sub.id)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-[#CBD5E1] hover:border-[#4F46E5] text-[#0F172A] hover:text-[#4F46E5] transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                            >
+                              <span>{isClaiming ? "Claiming..." : "Claim"}</span>
+                            </button>
+                          ) : (
+                            <Link
+                              href={`/portal/review/${sub.id}`}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0F172A] hover:bg-slate-800 text-white transition-all shadow-2xs"
+                            >
+                              <span>Evaluate</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -865,12 +878,21 @@ export default function StaffSubmissionsClient({
                     </div>
                   </div>
 
-                  {/* Bottom Line: Full-width Touch Button */}
-                  <div>
+                  {/* Bottom Line: Touch Buttons */}
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`/api/staff/export-answers/${sub.id}`}
+                      download
+                      title="Download answers (Module-Wise Excel)"
+                      className="py-2.5 px-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors inline-flex items-center justify-center shrink-0"
+                    >
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </a>
+
                     {sub.status === AttemptStatus.PUBLISHED ? (
                       <Link
                         href={`/portal/review/${sub.id}`}
-                        className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-semibold bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-slate-50 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-semibold bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-slate-50 transition-colors"
                       >
                         <span>View Published Report</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -880,14 +902,14 @@ export default function StaffSubmissionsClient({
                         type="button"
                         disabled={isClaiming}
                         onClick={() => handleClaim(sub.id)}
-                        className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-white border border-[#CBD5E1] text-[#0F172A] hover:border-[#4F46E5] hover:text-[#4F46E5] transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+                        className="flex-1 py-2.5 px-4 rounded-xl text-xs font-semibold bg-white border border-[#CBD5E1] text-[#0F172A] hover:border-[#4F46E5] hover:text-[#4F46E5] transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
                       >
                         {isClaiming ? "Claiming..." : "Claim Submission"}
                       </button>
                     ) : (
                       <Link
                         href={`/portal/review/${sub.id}`}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#0F172A] text-white hover:bg-slate-800 transition-colors shadow-2xs"
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-[#0F172A] text-white hover:bg-slate-800 transition-colors shadow-2xs"
                       >
                         <span>Evaluate Assessment</span>
                         <ArrowRight className="w-3.5 h-3.5" />

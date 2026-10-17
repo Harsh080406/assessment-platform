@@ -26,6 +26,8 @@ import {
   HelpCircle,
   Target,
   GraduationCap,
+  FileSpreadsheet,
+  Download,
 } from "lucide-react";
 import { AttemptStatus, ReportStatus } from "@prisma/client";
 import { updateSubmissionStatusAction, uploadSubmissionReportAction } from "@/app/actions/staff";
@@ -494,13 +496,22 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
             </p>
           </div>
 
-          {/* Transition Action Buttons */}
-          <div className="flex items-center gap-2">
+          {/* Transition Action Buttons & Export */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <a
+              href={`/api/staff/export-answers/${submission.attempt.id}`}
+              download
+              className="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition-all shadow-xs cursor-pointer min-h-[38px]"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span>Download Answers (Excel)</span>
+            </a>
+
             {currentStatus === AttemptStatus.SUBMITTED && (
               <button
                 onClick={() => handleStatusTransition(AttemptStatus.UNDER_REVIEW)}
                 disabled={isUpdatingStatus}
-                className="inline-flex items-center gap-2 text-xs font-bold bg-[#0F172A] text-white px-4 py-2.5 rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-2 text-xs font-bold bg-[#0F172A] text-white px-4 py-2.5 rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer shadow-xs min-h-[38px]"
               >
                 <User className="w-3.5 h-3.5" />
                 {isUpdatingStatus ? "Updating..." : "Start Evaluation (Move to Under Review)"}
@@ -511,7 +522,7 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
               <button
                 onClick={() => handleStatusTransition(AttemptStatus.REPORT_IN_PREP)}
                 disabled={isUpdatingStatus}
-                className="inline-flex items-center gap-2 text-xs font-bold bg-[#4F46E5] text-white px-4 py-2.5 rounded-xl hover:bg-[#4338CA] disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-2 text-xs font-bold bg-[#4F46E5] text-white px-4 py-2.5 rounded-xl hover:bg-[#4338CA] disabled:opacity-50 transition-all cursor-pointer shadow-xs min-h-[38px]"
               >
                 <FileText className="w-3.5 h-3.5" />
                 {isUpdatingStatus ? "Updating..." : "Move to Report Preparation"}
@@ -591,15 +602,26 @@ export default function ExpertReviewWorkspaceClient({ submission }: ExpertReview
         {/* LEFT COLUMN: Candidate Response Trajectory Inspector */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-6">
           <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
               <div>
                 <h2 className="text-lg font-bold text-[#0F172A]">Student Answers (Module-Wise)</h2>
                 <p className="text-xs text-[#64748B]">Inspect the candidate&apos;s submitted responses for each evaluation module.</p>
               </div>
 
-              <span className="text-xs font-bold px-3 py-1 bg-[#F8FAFC] text-[#0F172A] rounded-lg border border-[#E2E8F0]">
-                {submission.sections.length} Modules Total
-              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={`/api/staff/export-answers/${submission.attempt.id}`}
+                  download
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 transition-all shadow-2xs cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>Download Excel</span>
+                </a>
+
+                <span className="text-xs font-bold px-3 py-1 bg-[#F8FAFC] text-[#0F172A] rounded-lg border border-[#E2E8F0]">
+                  {submission.sections.length} Modules Total
+                </span>
+              </div>
             </div>
 
             {/* Section Tab Selector */}

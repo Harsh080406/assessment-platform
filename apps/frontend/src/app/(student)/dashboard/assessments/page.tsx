@@ -16,6 +16,7 @@ import StudentStatusPill from "@/components/student/StudentStatusPill";
 import StudentProgressBar from "@/components/student/StudentProgressBar";
 import AssessmentSubmitCard from "@/components/student/AssessmentSubmitCard";
 import { AssessmentStatus, AttemptStatus } from "@prisma/client";
+import { checkStudentProfileCompletion } from "@/lib/profile";
 
 export default async function StudentAssessmentsPage() {
   const session = await auth();
@@ -30,6 +31,7 @@ export default async function StudentAssessmentsPage() {
     prisma.user.findUnique({
       where: { id: userId },
       include: {
+        studentProfile: true,
         attempts: {
           include: {
             assessment: {
@@ -192,6 +194,9 @@ export default async function StudentAssessmentsPage() {
 
 
 
+  // Calculate profile completeness
+  const profileCheck = checkStudentProfileCompletion(user?.studentProfile, user?.phone);
+
   // Calculate module completion counts for report preparation submission
   const allModulesCompleted = tracks.length > 0 && tracks.every((t) => t.isCompleted);
   const completedModulesCount = tracks.filter((t) => t.isCompleted).length;
@@ -210,6 +215,9 @@ export default async function StudentAssessmentsPage() {
         allModulesCompleted={allModulesCompleted}
         completedCount={completedModulesCount}
         totalCount={tracks.length}
+        isProfileComplete={profileCheck.isComplete}
+        missingProfileFields={profileCheck.missingFields}
+        profilePercentage={profileCheck.percentage}
         isSubmitted={isSubmitted}
         submittedAt={completedAttempt?.submittedAt || null}
       />

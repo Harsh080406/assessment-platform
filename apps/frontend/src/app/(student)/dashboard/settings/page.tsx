@@ -35,8 +35,8 @@ export default async function StudentSettingsPage() {
       : null,
     country: profile?.country || "India",
     school: profile?.school || "",
-    grade: profile?.grade || "Class 12",
-    educationLevel: profile?.educationLevel || "High School",
+    grade: profile?.grade || "",
+    educationLevel: profile?.educationLevel || "",
     bio: profile?.bio || "",
   };
 
