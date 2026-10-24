@@ -285,10 +285,6 @@ export default function ContactClient() {
       q: "Is student test data kept private?",
       a: "Strictly yes. We maintain a zero-spam policy: student scores, contact numbers, and parent details are never shared or sold to commercial tuition or coaching institutions.",
     },
-    {
-      q: "Do parents get their own analysis report?",
-      a: "Yes. Through the Parent vs Student Decoder, parents can review an aligned breakdown of traditional career expectations versus modern high-growth realities.",
-    },
   ];
 
   return (
@@ -742,7 +738,6 @@ export default function ContactClient() {
                         >
                           <option value="Assessment Report Clarification">Assessment Report Clarification</option>
                           <option value="Psychometric Scores & Archetype Question">Psychometric Scores &amp; Archetype Question</option>
-                          <option value="Parent vs Student Decoder Discussion">Parent vs Student Decoder Discussion</option>
                           <option value="Technical or Account Assistance">Technical or Account Assistance</option>
                           <option value="General Guidance Inquiry">General Guidance Enquiry</option>
                         </select>
