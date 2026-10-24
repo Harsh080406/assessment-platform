@@ -54,7 +54,7 @@ export default function TermsClient() {
             </h1>
 
             <p className="mt-4 sm:mt-5 text-base sm:text-lg text-[#475569] font-normal leading-relaxed">
-              These terms govern the use of Alderwood Vantage (AuraPath) websites, assessment diagnostics, Leadership Blueprint deliverables, and advisory counselling sessions. Please review them carefully before taking an evaluation or enrolling a student.
+              These terms govern the use of Alderwood Vantage websites, assessment diagnostics, Leadership Blueprint deliverables, and advisory counselling sessions. Please review them carefully before taking an evaluation or enrolling a student.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-4 text-xs sm:text-sm text-[#64748B] font-medium">
@@ -238,7 +238,7 @@ export default function TermsClient() {
                   6. Intellectual Property Rights
                 </h2>
                 <p className="text-sm mb-3">
-                  All intellectual property rights in the Alderwood Vantage platform, including but not limited to the 4-module methodology (Spark, Wiring, Horsepower, Edge), question taxonomies, situational dilemmas, proprietary scoring algorithms, graphic interfaces, website copy, and report templates, are the exclusive property of Alderwood Vantage (AuraPath).
+                  All intellectual property rights in the Alderwood Vantage platform, including but not limited to the 4-module methodology (Spark, Wiring, Horsepower, Edge), question taxonomies, situational dilemmas, proprietary scoring algorithms, graphic interfaces, website copy, and report templates, are the exclusive property of Alderwood Vantage.
                 </p>
                 <p className="text-sm">
                   Upon purchase and report generation, candidates and guardians are granted a personal, non-exclusive, non-transferable license to download and retain their individual Leadership Blueprint for personal career planning purposes. Commercial reproduction, resale, or white-labeling of reports without written consent is strictly prohibited.

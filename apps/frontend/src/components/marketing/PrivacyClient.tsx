@@ -172,7 +172,7 @@ export default function PrivacyClient() {
                   2. Strict Zero-Monetization &amp; Anti-Spam Guarantee
                 </h2>
                 <p className="mb-4">
-                  AuraPath / Alderwood Vantage operates on a direct fee-for-service professional advisory model. We do not participate in ad networks, behavioural tracking brokers, or commercial student recruitment bazaars.
+                  Alderwood Vantage operates on a direct fee-for-service professional advisory model. We do not participate in ad networks, behavioural tracking brokers, or commercial student recruitment bazaars.
                 </p>
                 <ul className="space-y-2.5 my-4">
                   <li className="flex items-start gap-2.5 text-sm">
@@ -308,7 +308,7 @@ export default function PrivacyClient() {
                     <span className="font-bold text-[#0F172A]">Designation:</span> Data Protection &amp; Student Privacy Officer
                   </div>
                   <div>
-                    <span className="font-bold text-[#0F172A]">Platform:</span> Alderwood Vantage (AuraPath Assessment Platform)
+                    <span className="font-bold text-[#0F172A]">Platform:</span> Alderwood Vantage Assessment Platform
                   </div>
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-[#FF6B6B]" />
