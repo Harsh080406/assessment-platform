@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import StudentLayoutShell from "@/components/student/StudentLayoutShell";
+import IdleSessionTimeout from "@/components/auth/IdleSessionTimeout";
 
 export const metadata: Metadata = {
   title: "Student Dashboard | Alderwood Vantage",

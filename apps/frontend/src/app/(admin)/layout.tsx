@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import AdminLayoutShell from "@/components/admin/AdminLayoutShell";
+import IdleSessionTimeout from "@/components/auth/IdleSessionTimeout";
 
 export const metadata: Metadata = {
   title: "Admin Console | Alderwood Vantage",

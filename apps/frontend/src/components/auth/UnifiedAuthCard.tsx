@@ -67,6 +67,15 @@ export default function UnifiedAuthCard({
   // Parse NextAuth redirect URL errors (e.g. Google OAuth callbacks)
   // Parse NextAuth redirect URL errors (e.g. Google OAuth callbacks)
   useEffect(() => {
+    const reason = searchParams.get("reason");
+    if (reason === "inactivity") {
+      setSuccessMessage(
+        "For your privacy and security, you have been automatically signed out due to inactivity. Please sign in again to continue."
+      );
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (oauthError) {
       if (oauthError === "OAuthSignin" || oauthError === "OAuthCallback") {
         setServerError("Could not complete Google authentication. Please try signing in again.");

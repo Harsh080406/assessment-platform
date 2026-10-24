@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import StaffLayoutShell from "@/components/staff/StaffLayoutShell";
+import IdleSessionTimeout from "@/components/auth/IdleSessionTimeout";
 import { getStaffDashboardStatsAction } from "@/app/actions/staff";
 
 export const metadata: Metadata = {
