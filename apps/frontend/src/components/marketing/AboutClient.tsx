@@ -547,7 +547,7 @@ export default function AboutClient() {
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
                 <Link
-                  href="#privacy"
+                  href="/privacy"
                   className="text-sm font-semibold text-slate-300 hover:text-white underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm py-2 px-3"
                 >
                   Privacy and parental consent

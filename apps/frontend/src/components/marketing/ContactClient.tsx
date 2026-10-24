@@ -781,7 +781,7 @@ export default function ContactClient() {
                         <Lock className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
                         <span>
                           Your details are kept confidential. We never share them.{" "}
-                          <Link href="/about#privacy" className="text-[#0F172A] font-semibold underline hover:text-[#FF6B6B] transition-colors">
+                          <Link href="/privacy" className="text-[#0F172A] font-semibold underline hover:text-[#FF6B6B] transition-colors">
                             Privacy &amp; parental consent
                           </Link>
                         </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { X, Mail, Eye, EyeOff, User, AlertCircle, CheckCircle2, Loader2, ArrowLeft, KeyRound, Lock, ShieldCheck } from "lucide-react";
@@ -847,6 +848,27 @@ export default function UnifiedAuthCard({
                         <p className="text-[11px] text-red-600 mt-1 font-semibold">{errors.confirmPassword}</p>
                       )}
                     </div>
+                  </div>
+
+                                    {/* Terms & Privacy / Parental Consent Notice */}
+                  <div className="mt-3 mb-1 text-[11px] sm:text-xs text-[#64748B] leading-relaxed">
+                    By registering, you agree to our{' '}
+                    <Link
+                      href="/terms"
+                      target="_blank"
+                      className="font-semibold text-[#1E2538] hover:text-[#FF6B6B] underline transition-colors"
+                    >
+                      Terms of Service
+                    </Link>{' '}
+                    and acknowledge our{' '}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      className="font-semibold text-[#1E2538] hover:text-[#FF6B6B] underline transition-colors"
+                    >
+                      Privacy Policy &amp; Parental Consent Charter
+                    </Link>
+                    . Students under 18 must have parental or legal guardian consent.
                   </div>
 
                   {/* Submit Button */}

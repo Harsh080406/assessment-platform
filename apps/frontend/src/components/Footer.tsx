@@ -19,8 +19,8 @@ export default function Footer() {
   ];
 
   const legalLinks = [
-    { label: "Privacy & Parental Consent", href: "#privacy" },
-    { label: "Terms of Service", href: "#terms" },
+    { label: "Privacy & Parental Consent", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ];
 
   return (

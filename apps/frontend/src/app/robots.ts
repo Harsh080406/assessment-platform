@@ -16,6 +16,8 @@ export default function robots(): MetadataRoute.Robots {
           "/quests",
           "/decoder",
           "/contact",
+          "/privacy",
+          "/terms",
           "/login",
           "/register",
         ],
