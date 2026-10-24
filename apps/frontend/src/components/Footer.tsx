@@ -7,14 +7,12 @@ import { Phone, Mail } from "lucide-react";
 export default function Footer() {
   const companyLinks = [
     { label: "About Us", href: "/about" },
-    { label: "Why Vantage", href: "/#why-vantage" },
     { label: "How It Works", href: "/how-it-works" },
     { label: "FAQs", href: "/#faq" },
   ];
 
   const packageLinks = [
     { label: "Packages Overview", href: "/packages" },
-    { label: "Assessment Pathways", href: "/#pathways" },
     { label: "5-Year Leadership Roadmap", href: "/packages" },
   ];
 
