@@ -4,16 +4,16 @@ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "How It Works | 5-Step Student Leadership Pathway",
+  title: `How It Works | The ${SITE_NAME} Assessment Methodology`,
   description:
-    "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap. See how Alderwood Vantage unlocks student career clarity.",
+    "Learn how our 4-module evaluation, practitioner debrief, and customized 5-year leadership roadmap provide definitive career clarity.",
   alternates: {
     canonical: "/how-it-works",
   },
   openGraph: {
-    title: `How It Works | ${SITE_NAME}`,
+    title: `How It Works | The ${SITE_NAME} Assessment Methodology`,
     description:
-      "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap. See how Alderwood Vantage unlocks student career clarity.",
+      "Learn how our 4-module evaluation, practitioner debrief, and customized 5-year leadership roadmap provide definitive career clarity.",
     url: "/how-it-works",
     siteName: SITE_NAME,
     type: "website",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `How It Works | ${SITE_NAME}`,
+    title: `How It Works | The ${SITE_NAME} Assessment Methodology`,
     description:
-      "From 4-module cognitive assessment to 1-on-1 expert debrief and a 5-year leadership roadmap.",
+      "Learn how our 4-module evaluation, practitioner debrief, and customized 5-year leadership roadmap provide definitive career clarity.",
     images: ["/alderwood-og.png"],
   },
 };
@@ -49,12 +49,17 @@ const PROCESS_FAQS = [
   {
     question: "How long does the assessment take to complete?",
     answer:
-      "The assessment is broken into four distinct modules and is completely self-paced. Most students finish each module in 20-30 minutes, and work is auto-saved so students can pause and resume across any device.",
+      "The assessment is divided into 4 bite-sized modules and takes approximately 45–60 minutes in total. Students can complete it in one sitting or pause between modules at their own pace.",
   },
   {
-    question: "Does the student need to prepare or study beforehand?",
+    question: "Who conducts the 1-on-1 counselling session?",
     answer:
-      "No preparation, formulas, or studying is required. The assessment evaluates natural problem solving, intrinsic drivers, cognitive wiring, and decision dilemmas rather than memorized academic facts.",
+      "All counselling sessions are conducted by certified corporate leadership practitioners (DDI Master Facilitators and EPSHRM alumni from IIM Calcutta). Parents are strongly encouraged to attend alongside the student.",
+  },
+  {
+    question: "What makes the 5-Year Leadership Roadmap actionable?",
+    answer:
+      "Rather than abstract suggestions, the roadmap outlines year-by-year recommended milestones, extracurricular portfolio builds, skill acquisitions, target degree pathways, and internship frontiers aligned with the student's unique archetype.",
   },
 ];
 

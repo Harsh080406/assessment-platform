@@ -4,16 +4,16 @@ import { BreadcrumbJsonLd, CourseProgramJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Packages & Modules | Spark, Wiring, Horsepower, Edge",
+  title: `Assessment Packages & Programs | ${SITE_NAME}`,
   description:
-    "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package tailored for high school and university students.",
+    "Compare our comprehensive student assessment programs, diagnostic reporting tiers, and 1-on-1 career counselling sessions.",
   alternates: {
     canonical: "/packages",
   },
   openGraph: {
-    title: `Packages & Modules | ${SITE_NAME}`,
+    title: `Assessment Packages & Programs | ${SITE_NAME}`,
     description:
-      "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package tailored for high school and university students.",
+      "Compare our comprehensive student assessment programs, diagnostic reporting tiers, and 1-on-1 career counselling sessions.",
     url: "/packages",
     siteName: SITE_NAME,
     type: "website",
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
         url: "/alderwood-og.png",
         width: 1200,
         height: 630,
-        alt: `Packages & Modules - ${SITE_NAME}`,
+        alt: `Packages & Programs - ${SITE_NAME}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Packages & Modules | ${SITE_NAME}`,
+    title: `Assessment Packages & Programs | ${SITE_NAME}`,
     description:
-      "Explore our 4 assessment dimensions and choose the Discover, Decode, or Design leadership package.",
+      "Compare our comprehensive student assessment programs, diagnostic reporting tiers, and 1-on-1 career counselling sessions.",
     images: ["/alderwood-og.png"],
   },
 };
 
 const BREADCRUMBS = [
   { name: "Home", item: "/" },
-  { name: "Packages & Modules", item: "/packages" },
+  { name: "Packages & Programs", item: "/packages" },
 ];
 
 export default function PackagesPage() {

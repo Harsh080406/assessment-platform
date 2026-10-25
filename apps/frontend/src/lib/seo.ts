@@ -1,7 +1,7 @@
 export const SITE_NAME = "Alderwood Vantage";
-export const SITE_TAGLINE = "Raising Leaders, Not Just Employees";
+export const SITE_TAGLINE = "Career & Leadership Assessment for Students";
 export const DEFAULT_DESCRIPTION =
-  "Validated psychometric assessments, expert counselling, and 5-year developmental roadmaps empowering students to become visionary leaders and innovators.";
+  "Evidence-based psychometric evaluations, senior practitioner mentorship, and 5-year developmental roadmaps for students from Class 8 to University.";
 export const DEFAULT_OG_IMAGE = "/alderwood-og.png";
 export const DEFAULT_LOGO = "/alderwood-logo.png";
 

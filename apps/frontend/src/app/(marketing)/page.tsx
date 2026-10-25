@@ -4,13 +4,13 @@ import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Find Your Vantage | Raising Leaders, Not Just Employees",
+  title: `${SITE_NAME} | ${SITE_TAGLINE}`,
   description: DEFAULT_DESCRIPTION,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: `Find Your Vantage | ${SITE_NAME}`,
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
     url: "/",
     siteName: SITE_NAME,
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
         url: "/alderwood-og.png",
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} - Raising Leaders, Not Just Employees`,
+        alt: `${SITE_NAME} - ${SITE_TAGLINE}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Find Your Vantage | ${SITE_NAME}`,
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: DEFAULT_DESCRIPTION,
     images: ["/alderwood-og.png"],
   },
@@ -49,14 +49,14 @@ const HOME_FAQS = [
       "Teenagers are still growing, and student cognitive and behavioral data is sensitive. Parental consent is taken up front because we handle student information with utmost care. Data is strictly confidential and never shared or sold to coaching centers.",
   },
   {
-    question: "What is the Leadership Blueprint deliverable?",
+    question: "What outcomes do students and parents walk away with?",
     answer:
-      "The Leadership Blueprint is a clear, jargon-free report covering the Leader's Lens (how the student shows up today as a leader and innovator), Pathway Fit (suitability across Building a Venture, Leading the Family Business, a Professional Career, or Hybrid), and the Gap-to-Ready Meter.",
+      "You receive the comprehensive 24-page Leadership Blueprint, pinpoint career fitment matrices, a personalized 5-Year Leadership Roadmap, and a scheduled 1-on-1 strategic counselling session with senior enterprise facilitators.",
   },
   {
-    question: "What packages do you offer and what is the 5-Year Leadership Roadmap?",
+    question: "Is Alderwood Vantage suitable for all students from Class 8 to college?",
     answer:
-      "We offer three packages: Discover (Assessment + Leadership Blueprint), Decode (Assessment + Blueprint + 2 one-on-one counselling sessions), and Design (Assessment + Blueprint + Counselling + 5-Year Leadership Roadmap detailing skills to build, real-world projects, mentorship, and yearly milestones).",
+      "Yes. Our adaptive test tracks calibrate difficulty, situational dilemmas, and academic choices dynamically based on whether the student is in Class 8–10 (stream selection), Class 11–12 (undergraduate major & college targeting), or University (career launchpad & pivot strategy).",
   },
 ];
 

@@ -4,16 +4,16 @@ import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Admissions & School Partnerships",
+  title: `Contact & Partnerships | ${SITE_NAME}`,
   description:
-    "Connect with Alderwood Vantage for student guidance, counsellor helpline (+91 93168 19331), assessment support, and institutional campus cohorts.",
+    "Connect with Alderwood Vantage for admissions queries, student guidance, and school or institutional campus partnerships.",
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
-    title: `Contact Us | ${SITE_NAME}`,
+    title: `Contact & Partnerships | ${SITE_NAME}`,
     description:
-      "Connect with Alderwood Vantage for student guidance, counsellor helpline (+91 93168 19331), assessment support, and institutional campus cohorts.",
+      "Connect with Alderwood Vantage for admissions queries, student guidance, and school or institutional campus partnerships.",
     url: "/contact",
     siteName: SITE_NAME,
     type: "website",
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
         url: "/alderwood-og.png",
         width: 1200,
         height: 630,
-        alt: `Contact ${SITE_NAME}`,
+        alt: `Contact & Partnerships - ${SITE_NAME}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Contact Us | ${SITE_NAME}`,
+    title: `Contact & Partnerships | ${SITE_NAME}`,
     description:
-      "Connect with Alderwood Vantage for student guidance, counsellor helpline (+91 93168 19331), and school partnerships.",
+      "Connect with Alderwood Vantage for admissions queries, student guidance, and school or institutional campus partnerships.",
     images: ["/alderwood-og.png"],
   },
 };
 
 const BREADCRUMBS = [
   { name: "Home", item: "/" },
-  { name: "Contact Us", item: "/contact" },
+  { name: "Contact & Partnerships", item: "/contact" },
 ];
 
 const CONTACT_FAQS = [
@@ -49,17 +49,12 @@ const CONTACT_FAQS = [
   {
     question: "Can I speak directly with a certified counsellor before booking?",
     answer:
-      "Yes. Our senior counselling desk is reachable via phone (+91 93168 19331) or email from Monday to Saturday, 9:00 AM – 7:00 PM IST.",
+      "Yes. Our admissions desk can arrange a preliminary 15-minute alignment call with a senior practitioner to address any questions about the evaluation format or package fitment.",
   },
   {
-    question: "How is candidate cognitive data kept private and secure?",
+    question: "Do you offer institutional assessments for schools and colleges?",
     answer:
-      "We adhere to rigorous student data protection standards. Assessment data is encrypted at rest and in transit, and is strictly never shared or sold to test prep academies, advertisers, or third-party recruiters.",
-  },
-  {
-    question: "Do you offer in-person campus workshops and school cohorts?",
-    answer:
-      "Yes. We partner with K-12 senior secondary schools and universities to conduct on-campus orientation sessions, diagnostic cohorts, and institutional leadership workshops.",
+      "Yes. Alderwood Vantage partners with premier high schools, IB World Schools, and undergraduate universities to administer campus-wide cohorts, providing aggregate institutional analytics alongside individual student blueprints.",
   },
 ];
 

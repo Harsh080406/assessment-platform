@@ -106,8 +106,8 @@ export function SiteNavigationJsonLd() {
       {
         "@type": "SiteNavigationElement",
         "@id": `${baseUrl}/#nav-contact`,
-        name: "Contact & Admissions",
-        description: "Connect with our admissions desk, counsellors, and student advisory team.",
+        name: "Contact & Partnerships",
+        description: "Connect with Alderwood Vantage for admissions queries, student guidance, and school partnerships.",
         url: `${baseUrl}/contact`,
       },
       {

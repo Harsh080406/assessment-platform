@@ -4,16 +4,16 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "About Us | Alderwood Vantage Mission & Pedagogy",
+  title: `About Us | ${SITE_NAME} Leadership Advisory`,
   description:
-    "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
+    "Founded by senior enterprise leadership practitioners and academic advisers to guide young minds toward purposeful, high-growth careers.",
   alternates: {
     canonical: "/about",
   },
   openGraph: {
-    title: `About Us | ${SITE_NAME}`,
+    title: `About Us | ${SITE_NAME} Leadership Advisory`,
     description:
-      "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
+      "Founded by senior enterprise leadership practitioners and academic advisers to guide young minds toward purposeful, high-growth careers.",
     url: "/about",
     siteName: SITE_NAME,
     type: "website",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `About Us | ${SITE_NAME}`,
+    title: `About Us | ${SITE_NAME} Leadership Advisory`,
     description:
-      "Discover Alderwood Vantage: our mission to raise leaders, our scientifically validated 4-module methodology, and senior enterprise practitioners guiding students.",
+      "Founded by senior enterprise leadership practitioners and academic advisers to guide young minds toward purposeful, high-growth careers.",
     images: ["/alderwood-og.png"],
   },
 };
