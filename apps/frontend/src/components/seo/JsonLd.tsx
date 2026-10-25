@@ -49,12 +49,75 @@ export function WebSiteJsonLd() {
     "@id": `${baseUrl}/#website`,
     url: baseUrl,
     name: "Alderwood Vantage",
+    alternateName: ["Alderwood", "Vantage Assessment", "Alderwood Vantage Platform"],
     description:
       "Validated cognitive assessments, expert counselling, and 5-year leadership roadmaps.",
     publisher: {
       "@id": `${baseUrl}/#organization`,
     },
     inLanguage: "en-US",
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+/**
+ * SiteNavigationElement schema:
+ * Directly signals Googlebot our key site sections for expanded Sitelinks representation.
+ */
+export function SiteNavigationJsonLd() {
+  const baseUrl = getBaseUrl();
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-how-it-works`,
+        name: "How It Works",
+        description: "Explore the 4-module assessment process: Spark, Wiring, Horsepower, and Edge.",
+        url: `${baseUrl}/how-it-works`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-packages`,
+        name: "Assessment Packages",
+        description: "Compare Vantage Foundation, Decode, and Design mentorship & report tiers.",
+        url: `${baseUrl}/packages`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-about`,
+        name: "About Us",
+        description: "Meet our leadership practitioners, academic advisers, and our founding purpose.",
+        url: `${baseUrl}/about`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-quests`,
+        name: "The 4 Quests",
+        description: "Discover the 4 psychometric dimensions measured in our evaluation suite.",
+        url: `${baseUrl}/quests`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-contact`,
+        name: "Contact & Admissions",
+        description: "Connect with our admissions desk, counsellors, and student advisory team.",
+        url: `${baseUrl}/contact`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${baseUrl}/#nav-privacy`,
+        name: "Privacy & Parental Consent",
+        description: "Review our strict student data confidentiality charter and guardian consent protocols.",
+        url: `${baseUrl}/privacy`,
+      },
+    ],
   };
 
   return (
