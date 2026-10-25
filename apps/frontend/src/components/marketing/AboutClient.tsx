@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Eye,
@@ -12,7 +13,6 @@ import {
   TrendingUp,
   Award,
   BookOpen,
-  Quote,
   Compass,
   FileText,
   MessageSquare,
@@ -211,9 +211,9 @@ export default function AboutClient() {
           id="our-story"
         >
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
               {/* Left Column: Story narrative */}
-              <div className="lg:col-span-7">
+              <div className="lg:col-span-6">
                 <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#FF6B6B]">
                   Background and genesis
                 </span>
@@ -224,7 +224,7 @@ export default function AboutClient() {
                   Our story
                 </h2>
 
-                <div className="space-y-4 text-base sm:text-lg text-[#334155] leading-relaxed max-w-[65ch]">
+                <div className="space-y-4 text-base sm:text-lg text-[#334155] leading-relaxed max-w-[60ch]">
                   <p>
                     We have spent our careers inside leading organisations, hiring, assessing and developing leaders. Again and again we saw the same thing: potential is often visible early, but rarely nurtured with intent.
                   </p>
@@ -237,22 +237,28 @@ export default function AboutClient() {
                 </div>
               </div>
 
-              {/* Right Column: Designed Pull-Quote Card (No photo) */}
-              <div className="lg:col-span-5">
-                <div className="relative bg-[#FAFAF9] rounded-2xl border border-[#E7E5E4] p-7 sm:p-9 shadow-xs overflow-hidden">
-                  <Quote
-                    className="w-16 h-16 text-[#FF6B6B]/15 absolute -top-2 -right-2 rotate-12 pointer-events-none"
-                    aria-hidden="true"
+              {/* Right Column: Future Paths Image (Border-free, seamlessly blended, protected from drag/download) */}
+              <div className="lg:col-span-6 flex justify-center lg:justify-end">
+                <div
+                  className="relative w-full max-w-[560px] select-none bg-transparent"
+                  onContextMenu={(e) => e.preventDefault()}
+                >
+                  <Image
+                    src="/future-paths.png"
+                    alt="Future Paths - Alderwood Vantage"
+                    width={1536}
+                    height={1024}
+                    priority
+                    quality={100}
+                    draggable={false}
+                    className="w-full h-auto object-contain select-none pointer-events-none mix-blend-multiply"
                   />
-                  <div className="w-10 h-10 rounded-xl bg-[#F5F5F4] border border-[#E7E5E4] flex items-center justify-center text-[#FF6B6B] mb-5">
-                    <Quote className="w-5 h-5" aria-hidden="true" />
-                  </div>
-                  <blockquote className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-[-0.01em] leading-snug">
-                    “Potential is often visible early, but rarely nurtured with intent.”
-                  </blockquote>
-                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#FF6B6B]">
-                    The founding insight behind Alderwood Vantage
-                  </p>
+                  {/* Transparent overlay shield to prevent drag-to-desktop and right-click download */}
+                  <div
+                    className="absolute inset-0 z-10 bg-transparent select-none"
+                    aria-hidden="true"
+                    onContextMenu={(e) => e.preventDefault()}
+                  />
                 </div>
               </div>
             </div>
