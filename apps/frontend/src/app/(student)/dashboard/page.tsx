@@ -545,34 +545,48 @@ export default async function StudentDashboardPage() {
           </section>
 
           {/* 5. MENTORSHIP & ROADMAP PLANS CARD */}
-          <section className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white rounded-2xl p-5 sm:p-6 shadow-xs space-y-4 relative overflow-hidden border border-slate-800">
-            <div className="absolute top-0 right-0 -mr-6 -mt-6 w-28 h-28 bg-[#FF6B6B]/20 rounded-full blur-xl pointer-events-none" />
-            <div className="flex items-center justify-between relative">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FF6B6B]/20 text-[#FF8585] border border-[#FF6B6B]/30">
-                <Sparkles className="w-3 h-3 text-[#FF6B6B]" />
-                Mentorship Tiers
+          <section className="bg-white border border-[#E2E8F0] rounded-2xl p-5 sm:p-6 shadow-xs space-y-4 hover:border-[#CBD5E1] transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#FFF2EE] text-[#FF6B6B] flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <h3 className="text-sm font-bold text-[#0F172A]">
+                  Plan &amp; Guidance
+                </h3>
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-emerald-800 bg-emerald-50 border border-emerald-200">
+                Discover Active
               </span>
-              <span className="text-[11px] text-slate-400 font-medium">Discover Active</span>
             </div>
 
-            <div className="space-y-1 relative">
-              <h3 className="text-sm font-bold text-white tracking-tight">
-                Decode &amp; Design Plans
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Elevate beyond diagnostics with 1-on-1 industry mentorship debriefs and a personalized 5-year leadership roadmap.
-              </p>
+            {/* Visual 3-tier roadmap comparison pill */}
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-center">
+              <div className="py-2 px-1 rounded-lg bg-white border border-emerald-200 shadow-2xs">
+                <div className="text-[11px] font-bold text-emerald-700">Discover</div>
+                <div className="text-[10px] text-[#64748B]">Active</div>
+              </div>
+              <div className="py-2 px-1 rounded-lg">
+                <div className="text-[11px] font-bold text-[#0F172A]">Decode</div>
+                <div className="text-[10px] text-[#64748B]">1-on-1 Debrief</div>
+              </div>
+              <div className="py-2 px-1 rounded-lg">
+                <div className="text-[11px] font-bold text-[#0F172A]">Design</div>
+                <div className="text-[10px] text-[#64748B]">5-Yr Roadmap</div>
+              </div>
             </div>
 
-            <div className="pt-1 relative">
-              <Link
-                href="/dashboard/plans"
-                className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 rounded-xl bg-white text-[#0F172A] hover:bg-slate-100 font-semibold text-xs transition-colors shadow-xs"
-              >
-                <span>Choose a Plan Type</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#0F172A]" />
-              </Link>
-            </div>
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              Explore tier upgrades to add 1-on-1 expert debrief sessions or a personalized 5-year career roadmap.
+            </p>
+
+            <Link
+              href="/dashboard/plans"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#0F172A] hover:bg-black text-white transition-all shadow-2xs group"
+            >
+              <span>Choose a Plan Type</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#FF6B6B] group-hover:translate-x-0.5 transition-transform" />
+            </Link>
           </section>
 
           {/* 5. RECENT ACTIVITY TIMELINE */}
