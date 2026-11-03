@@ -178,7 +178,7 @@ export default function StudentPlansClient({
   };
 
   return (
-    <div className="w-full space-y-8 animate-fade-in pb-16">
+    <div className="w-full space-y-6 sm:space-y-8 animate-fade-in pb-24 sm:pb-16">
       {/* 1. Header */}
       <StudentPageHeader
         title="Choose a Plan Type"
@@ -439,38 +439,49 @@ export default function StudentPlansClient({
       </div>
 
       {/* 4. Side-by-Side Detailed Comparison Table */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-        <div>
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
-            Deep Dive
-          </span>
-          <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
-            Package Comparison Matrix
-          </h3>
-          <p className="text-xs text-[#64748B] mt-1">
-            Compare features across diagnostic, guidance, and strategic roadmapping tiers.
-          </p>
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xs space-y-5 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
+              Deep Dive
+            </span>
+            <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
+              Package Comparison Matrix
+            </h3>
+            <p className="text-xs text-[#64748B] mt-1">
+              Compare features across diagnostic, guidance, and strategic roadmapping tiers.
+            </p>
+          </div>
+          <div className="sm:hidden self-start inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-[10px] font-semibold text-[#64748B] border border-slate-200">
+            <span>← Scroll to compare tiers →</span>
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left border-collapse">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <table className="min-w-[580px] w-full text-xs text-left border-collapse">
             <thead>
               <tr className="border-b border-[#E2E8F0] text-[11px] uppercase tracking-wider font-bold text-[#64748B]">
-                <th className="py-3 px-4 w-1/2">Capability / Deliverable</th>
-                <th className="py-3 px-4 text-center">Discover</th>
-                <th className="py-3 px-4 text-center bg-indigo-50/50 rounded-t-lg text-indigo-900">
+                <th className="py-3 px-4 w-[42%] min-w-[210px] sticky left-0 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.06)]">
+                  Capability / Deliverable
+                </th>
+                <th className="py-3 px-3 text-center min-w-[105px]">
+                  Discover
+                </th>
+                <th className="py-3 px-3 text-center bg-indigo-50/60 rounded-t-lg text-indigo-900 min-w-[130px] font-bold">
                   Decode
                 </th>
-                <th className="py-3 px-4 text-center">Design</th>
+                <th className="py-3 px-3 text-center min-w-[130px] font-bold">
+                  Design
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F1F5F9]">
               {comparisonRows.map((row, idx) => (
-                <tr key={idx} className="hover:bg-[#F8FAFC]/80 transition-colors">
-                  <td className="py-3.5 px-4 font-medium text-[#1E293B]">
+                <tr key={idx} className="hover:bg-[#F8FAFC]/80 transition-colors group">
+                  <td className="py-3.5 px-4 font-medium text-[#1E293B] sticky left-0 bg-white group-hover:bg-[#F8FAFC] transition-colors z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.06)]">
                     {row.feature}
                   </td>
-                  <td className="py-3.5 px-4 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     {typeof row.discover === "boolean" ? (
                       row.discover ? (
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
@@ -481,7 +492,7 @@ export default function StudentPlansClient({
                       <span className="font-semibold text-[#0F172A]">{row.discover}</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-center bg-indigo-50/30 font-semibold text-indigo-950">
+                  <td className="py-3.5 px-3 text-center bg-indigo-50/30 font-semibold text-indigo-950">
                     {typeof row.decode === "boolean" ? (
                       row.decode ? (
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
@@ -492,7 +503,7 @@ export default function StudentPlansClient({
                       <span className="font-semibold text-indigo-950">{row.decode}</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     {typeof row.design === "boolean" ? (
                       row.design ? (
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
