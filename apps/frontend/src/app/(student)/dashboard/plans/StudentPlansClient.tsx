@@ -367,12 +367,12 @@ export default function StudentPlansClient({
           {/* Card A: Leadership Blueprint */}
           <div className="border border-[#E2E8F0] rounded-2xl p-5 hover:border-[#CBD5E1] transition-all bg-[#FAFAFA]/50 flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  Included in Discover, Decode &amp; Design
+              <div className="flex flex-wrap items-center justify-between gap-2.5">
+                <span className="inline-flex text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  Discover • Decode • Design
                 </span>
-                <span className="text-xs text-[#64748B] font-semibold flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
+                <span className="inline-flex text-xs text-[#64748B] font-semibold items-center gap-1.5 shrink-0">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
                   <span>24 Pages</span>
                 </span>
               </div>
@@ -403,12 +403,12 @@ export default function StudentPlansClient({
           {/* Card B: 5-Year Career Roadmap */}
           <div className="border border-[#E2E8F0] rounded-2xl p-5 hover:border-[#CBD5E1] transition-all bg-[#FAFAFA]/50 flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200">
-                  Exclusive to Design Package
+              <div className="flex flex-wrap items-center justify-between gap-2.5">
+                <span className="inline-flex text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200">
+                  Design Tier Exclusive
                 </span>
-                <span className="text-xs text-[#64748B] font-semibold flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
+                <span className="inline-flex text-xs text-[#64748B] font-semibold items-center gap-1.5 shrink-0">
+                  <Calendar className="w-3.5 h-3.5 text-purple-500" />
                   <span>5-Year Horizon</span>
                 </span>
               </div>
