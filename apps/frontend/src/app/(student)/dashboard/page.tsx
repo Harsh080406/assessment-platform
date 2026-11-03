@@ -7,6 +7,7 @@ import {
   Clock,
   ArrowRight,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import StartAssessmentButton from "@/components/StartAssessmentButton";
 import StudentProgressBar from "@/components/student/StudentProgressBar";
@@ -541,6 +542,37 @@ export default async function StudentDashboardPage() {
               <span>{isProfileComplete ? "Edit profile" : "Complete profile now"}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
+          </section>
+
+          {/* 5. MENTORSHIP & ROADMAP PLANS CARD */}
+          <section className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white rounded-2xl p-5 sm:p-6 shadow-xs space-y-4 relative overflow-hidden border border-slate-800">
+            <div className="absolute top-0 right-0 -mr-6 -mt-6 w-28 h-28 bg-[#FF6B6B]/20 rounded-full blur-xl pointer-events-none" />
+            <div className="flex items-center justify-between relative">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FF6B6B]/20 text-[#FF8585] border border-[#FF6B6B]/30">
+                <Sparkles className="w-3 h-3 text-[#FF6B6B]" />
+                Mentorship Tiers
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium">Discover Active</span>
+            </div>
+
+            <div className="space-y-1 relative">
+              <h3 className="text-sm font-bold text-white tracking-tight">
+                Decode &amp; Design Plans
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Elevate beyond diagnostics with 1-on-1 industry mentorship debriefs and a personalized 5-year leadership roadmap.
+              </p>
+            </div>
+
+            <div className="pt-1 relative">
+              <Link
+                href="/dashboard/plans"
+                className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 rounded-xl bg-white text-[#0F172A] hover:bg-slate-100 font-semibold text-xs transition-colors shadow-xs"
+              >
+                <span>Explore Tier Upgrades &amp; Samples</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#0F172A]" />
+              </Link>
+            </div>
           </section>
 
           {/* 5. RECENT ACTIVITY TIMELINE */}

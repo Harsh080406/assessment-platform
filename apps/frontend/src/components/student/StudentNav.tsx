@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Compass, BarChart3 } from "lucide-react";
+import { LayoutDashboard, FileText, Compass, BarChart3, Sparkles } from "lucide-react";
 
 export default function StudentNav() {
   const pathname = usePathname();
@@ -25,6 +25,12 @@ export default function StudentNav() {
       label: "Results",
       icon: BarChart3,
       isActive: pathname.startsWith("/dashboard/results"),
+    },
+    {
+      href: "/dashboard/plans",
+      label: "Plans",
+      icon: Sparkles,
+      isActive: pathname.startsWith("/dashboard/plans"),
     },
   ];
 

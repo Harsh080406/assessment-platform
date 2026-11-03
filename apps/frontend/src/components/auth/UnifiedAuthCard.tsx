@@ -684,9 +684,6 @@ export default function UnifiedAuthCard({
                 <p className="text-xs text-[#718096] leading-relaxed">
                   We have sent a verification link to <span className="font-bold text-[#191F2D]">{signUpData.email}</span>. Please verify your email before logging in.
                 </p>
-                <div className="p-3 bg-[#FFF8F5] border border-[#F4E3DC] rounded-2xl text-[11px] text-[#718096]">
-                  <span className="font-bold text-[#191F2D]">Development Notice:</span> In development mode, check your server console log for the verification URL.
-                </div>
                 <button
                   type="button"
                   onClick={() => switchMode("login")}
@@ -702,13 +699,15 @@ export default function UnifiedAuthCard({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label htmlFor="signup-firstName" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
-                        First Name
+                        First Name <span className="text-red-500">*</span>
                       </label>
                       <div className="relative flex items-center">
                         <User className="w-4 h-4 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                         <input
                           id="signup-firstName"
                           type="text"
+                          required
+                          aria-required="true"
                           name="firstName"
                           autoComplete="given-name"
                           value={signUpData.firstName}
@@ -731,11 +730,13 @@ export default function UnifiedAuthCard({
 
                     <div>
                       <label htmlFor="signup-lastName" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
-                        Last Name
+                        Last Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="signup-lastName"
                         type="text"
+                        required
+                        aria-required="true"
                         name="lastName"
                         autoComplete="family-name"
                         value={signUpData.lastName}
@@ -759,13 +760,15 @@ export default function UnifiedAuthCard({
                   {/* Email Address */}
                   <div>
                     <label htmlFor="signup-email" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
-                      Email Address
+                      Email Address <span className="text-red-500">*</span>
                     </label>
                     <div className="relative flex items-center">
                       <Mail className="w-4 h-4 text-[#8C95A6] absolute left-3.5 pointer-events-none" />
                       <input
                         id="signup-email"
                         type="email"
+                        required
+                        aria-required="true"
                         name="email"
                         autoComplete="email"
                         value={signUpData.email}
@@ -788,12 +791,14 @@ export default function UnifiedAuthCard({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label htmlFor="signup-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
-                        Password
+                        Password <span className="text-red-500">*</span>
                       </label>
                       <div className="relative flex items-center">
                         <input
                           id="signup-password"
                           type={showSignUpPassword ? "text" : "password"}
+                          required
+                          aria-required="true"
                           name="password"
                           autoComplete="new-password"
                           value={signUpData.password}
@@ -824,12 +829,14 @@ export default function UnifiedAuthCard({
 
                     <div>
                       <label htmlFor="signup-confirm-password" className="block text-xs sm:text-sm font-bold text-[#1E2538] mb-1">
-                        Confirm
+                        Confirm Password <span className="text-red-500">*</span>
                       </label>
                       <div className="relative flex items-center">
                         <input
                           id="signup-confirm-password"
                           type={showSignUpConfirm ? "text" : "password"}
+                          required
+                          aria-required="true"
                           name="confirmPassword"
                           autoComplete="new-password"
                           value={signUpData.confirmPassword}

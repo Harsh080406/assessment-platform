@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   FileText,
   BarChart3,
+  Sparkles,
   Bell,
   Settings,
   PanelLeftClose,
@@ -58,6 +59,12 @@ export default function StudentSidebar({
       label: "Results & Reports",
       icon: BarChart3,
       isActive: pathname.startsWith("/dashboard/results"),
+    },
+    {
+      href: "/dashboard/plans",
+      label: "Plans & Packages",
+      icon: Sparkles,
+      isActive: pathname.startsWith("/dashboard/plans"),
     },
     {
       href: "/dashboard/notifications",
