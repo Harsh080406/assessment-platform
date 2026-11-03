@@ -10,13 +10,8 @@ import {
   FileText,
   ExternalLink,
   ShieldCheck,
-  Users,
   Compass,
   Calendar,
-  Phone,
-  Mail,
-  ChevronDown,
-  HelpCircle,
   Clock,
   Layers,
   X,
@@ -46,7 +41,6 @@ export default function StudentPlansClient({
   const [selectedPlanForInquiry, setSelectedPlanForInquiry] = useState<string | null>(null);
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const [inquiryNotes, setInquiryNotes] = useState("");
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const packages = [
     {
@@ -118,10 +112,10 @@ export default function StudentPlansClient({
 
   const comparisonRows = [
     {
-      feature: "4-Module Evaluation Suite (Spark, Wiring, Horsepower, Edge)",
-      discover: "Full Access",
-      decode: "Full Access",
-      design: "Full Access",
+      feature: "4 Assessment Modules (Spark, Wiring, Horsepower, Edge)",
+      discover: true,
+      decode: true,
+      design: true,
     },
     {
       feature: "24-Page Certified Leadership Blueprint Deliverable",
@@ -130,71 +124,46 @@ export default function StudentPlansClient({
       design: true,
     },
     {
-      feature: "Leader's Lens Cognitive Archetype Classification",
+      feature: "Cognitive Capability & Behavioral Archetype Breakdown",
       discover: true,
       decode: true,
       design: true,
     },
     {
-      feature: "Multi-Pathway Fitment (Startup, Family Enterprise, Corporate)",
-      discover: true,
-      decode: true,
-      design: true,
-    },
-    {
-      feature: "1-on-1 Confidential Video Counselling Sessions",
-      discover: "None",
+      feature: "1-on-1 Video Debrief Sessions with Senior Practitioners",
+      discover: false,
       decode: "2 Sessions (60m each)",
-      design: "Ongoing Mentorship",
+      design: "2 Sessions (60m each)",
     },
     {
-      feature: "Parent-Student Alignment & Debrief Call",
+      feature: "Parent-Inclusive Strategic Alignment Debrief",
       discover: false,
       decode: true,
       design: true,
     },
     {
-      feature: "Stream Selection & Undergraduate Degree Targeting",
-      discover: "Report only",
-      decode: "Practitioner Debrief",
-      design: "Practitioner Debrief",
+      feature: "Academic Major & College Entrance Strategy Mapping",
+      discover: false,
+      decode: true,
+      design: true,
     },
     {
-      feature: "Personalized 5-Year Leadership Milestone Roadmap",
+      feature: "Personalized 5-Year Actionable Career & Leadership Roadmap",
       discover: false,
       decode: false,
       design: true,
     },
     {
-      feature: "Real-World Projects & Portfolio Building Recommendations",
+      feature: "Annual Milestone Tracking & Portfolio Building Blueprint",
       discover: false,
       decode: false,
       design: true,
     },
     {
-      feature: "Periodic Trajectory Calibration & Review Check-ins",
+      feature: "Follow-up Advisory Check-in Support",
       discover: false,
-      decode: false,
-      design: true,
-    },
-  ];
-
-  const faqs = [
-    {
-      q: "Can I take the assessment first and upgrade to Decode or Design later?",
-      a: "Yes, absolutely! All registered students have access to the full 4-module evaluation under the Discover tier. You can take your time completing the assessment now, and request the Decode 1-on-1 debrief or Design 5-Year Roadmap whenever your family is ready to review results.",
-    },
-    {
-      q: "Who conducts the 1-on-1 counselling debriefs in Decode?",
-      a: "Every session is conducted by certified corporate leadership practitioners (DDI Master Facilitators and EPSHRM alumni from IIM Calcutta). We do not use automated bots or junior telecallers; your debrief is conducted by seasoned talent evaluators who understand real-world enterprise requirements.",
-    },
-    {
-      q: "Are parents welcome to join the counselling session?",
-      a: "Yes, strongly recommended. One of the greatest values of Alderwood Vantage is bridging the gap between parental expectations and student aspirations with compassionate, objective psychometric data.",
-    },
-    {
-      q: "What if my school or college has an institutional partnership with Alderwood Vantage?",
-      a: "If your institution has sponsored your cohort, your counselling sessions and roadmap access are provisioned automatically through your school's guidance desk. Contact admissions@alderwoodvantage.com or check with your school counsellor with your registered student ID.",
+      decode: "30 Days Email",
+      design: "Quarterly Milestones",
     },
   ];
 
@@ -212,8 +181,8 @@ export default function StudentPlansClient({
     <div className="w-full space-y-8 animate-fade-in pb-16">
       {/* 1. Header */}
       <StudentPageHeader
-        title="Assessment & Mentorship Plans"
-        description="Explore the three structured developmental tiers: diagnostic evaluations, 1-on-1 senior practitioner debriefs, and your personalized 5-Year Leadership Roadmap."
+        title="Choose a Plan Type"
+        description="Select the evaluation tier, 1-on-1 leadership debrief, and strategic 5-year career roadmap suited for your trajectory."
         backHref="/dashboard"
         backLabel="Dashboard"
         action={{
@@ -223,51 +192,14 @@ export default function StudentPlansClient({
         }}
       />
 
-      {/* 2. Current Student Status Bar */}
-      <div className="bg-gradient-to-r from-[#FFF8F6] via-[#FFF2EE] to-white border border-[#FED7CC] rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <div className="w-11 h-11 rounded-xl bg-white border border-[#FED7CC] text-[#FF6B6B] flex items-center justify-center shrink-0 shadow-2xs">
-            <Sparkles className="w-5 h-5 stroke-[2.2]" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-bold text-[#0F172A]">
-                Welcome, {firstName}!
-              </span>
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                Discover Tier Active
-              </span>
-              {studentGrade && (
-                <span className="text-[10px] font-bold text-[#64748B] bg-white border border-[#E2E8F0] px-2 py-0.5 rounded-full">
-                  {studentGrade}
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-[#475569] mt-1 leading-relaxed max-w-2xl">
-              Your student account grants full access to all 4 evaluation modules (Spark, Wiring, Horsepower, Edge) and the synthesized Leadership Blueprint. Explore Decode and Design to add certified 1-on-1 debriefs and your 5-year execution blueprint.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 w-full md:w-auto">
-          <Link
-            href="/dashboard/assessments"
-            className="w-full md:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0F172A] hover:bg-black text-white text-xs font-bold transition-all shadow-xs"
-          >
-            <span>{hasStartedAssessment ? "Go to Modules" : "Begin Evaluation"}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </div>
-
-      {/* 3. The Three Packages Grid */}
+      {/* 2. The Three Packages Grid */}
       <div>
         <div className="text-center max-w-2xl mx-auto mb-8">
           <span className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B]">
-            Structured Guidance
+            Mentorship &amp; Roadmaps
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight mt-1">
-            Choose Your Level of Guidance
+            Choose a Plan Type
           </h2>
           <p className="text-xs sm:text-sm text-[#64748B] mt-2 leading-relaxed">
             From cognitive self-discovery to deep expert counselling and comprehensive multi-year career roadmapping.
@@ -378,11 +310,15 @@ export default function StudentPlansClient({
               </div>
 
               {/* Action Button */}
-              <div className="pt-6 mt-6 border-t border-current/10">
+              <div className="pt-8">
                 {pkg.buttonHref ? (
                   <Link
                     href={pkg.buttonHref}
-                    className="w-full py-3 px-4 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] border border-[#CBD5E1]"
+                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs ${
+                      pkg.popular
+                        ? "bg-[#FF6B6B] hover:bg-[#F95858] text-white"
+                        : "bg-white border border-[#CBD5E1] text-[#0F172A] hover:bg-[#F8FAFC]"
+                    }`}
                   >
                     <span>{pkg.buttonLabel}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -391,10 +327,10 @@ export default function StudentPlansClient({
                   <button
                     type="button"
                     onClick={() => setSelectedPlanForInquiry(pkg.name)}
-                    className={`w-full py-3 px-4 rounded-xl text-xs font-black transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.99] ${
                       pkg.popular
-                        ? "bg-[#FF6B6B] hover:bg-[#EE5252] text-white shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                        : "bg-[#0F172A] hover:bg-black text-white hover:-translate-y-0.5"
+                        ? "bg-[#FF6B6B] hover:bg-[#F95858] text-white shadow-md"
+                        : "bg-[#0F172A] hover:bg-black text-white"
                     }`}
                   >
                     <span>{pkg.buttonLabel}</span>
@@ -407,97 +343,131 @@ export default function StudentPlansClient({
         </div>
       </div>
 
-      {/* 4. Sample Deliverables Preview */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs">
-        <div className="max-w-2xl mb-6">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
-            Certified Executive Deliverables
-          </span>
-          <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
-            Preview Sample Diagnostic Reports &amp; Roadmaps
-          </h3>
-          <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
-            Review actual, anonymized deliverables to see the depth, psychological rigor, and actionable milestone planning before scheduling a debrief.
-          </p>
+      {/* 3. Sample Deliverables Preview */}
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F5F9] pb-5">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
+              Tangible Outcomes
+            </span>
+            <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
+              Sample Deliverables Preview
+            </h3>
+            <p className="text-xs text-[#64748B] mt-1">
+              Download certified redacted samples to review the depth, rigor, and visual elegance of your final deliverables.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-[#475569] text-xs font-semibold self-start sm:self-auto">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Certified Alderwood Standard</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div className="p-4 sm:p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col justify-between hover:border-[#CBD5E1] transition-all">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <FileText className="w-4 h-4 text-[#FF6B6B]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
-                  24-Page Leadership Blueprint Sample
+          {/* Card A: Leadership Blueprint */}
+          <div className="border border-[#E2E8F0] rounded-2xl p-5 hover:border-[#CBD5E1] transition-all bg-[#FAFAFA]/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  Included in Discover, Decode &amp; Design
+                </span>
+                <span className="text-xs text-[#64748B] font-semibold flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  <span>24 Pages</span>
                 </span>
               </div>
-              <p className="text-xs text-[#475569] leading-relaxed mb-4">
-                Full psychological evaluation assessing behavioral traits, cognitive horsepower, pathway fit, and executive competency matrices.
-              </p>
+              <div>
+                <h4 className="text-base font-bold text-[#0F172A]">
+                  Alderwood Leadership Blueprint
+                </h4>
+                <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                  Comprehensive multidimensional psychometric evaluation report detailing cognitive horsepower, behavioral wiring, intrinsic spark, and competitive execution edge.
+                </p>
+              </div>
             </div>
-            <a
-              href="/docs/Career%20Vantage%20Sample%20Report%20-Fashion%20Lawyer.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#0F172A] hover:text-white transition-all shadow-2xs"
-            >
-              <span>Inspect Sample Blueprint (PDF)</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+
+            <div className="pt-5">
+              <a
+                href="/docs/Career%20Vantage%20Sample%20Report%20-Fashion%20Lawyer.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-white border border-[#CBD5E1] hover:bg-[#F8FAFC] text-xs font-bold text-[#0F172A] transition-colors shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#FF6B6B]" />
+                <span>View Sample Leadership Blueprint (PDF)</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col justify-between hover:border-[#CBD5E1] transition-all">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-4 h-4 text-[#4F46E5]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
-                  5-Year Leadership Roadmap Sample
+          {/* Card B: 5-Year Career Roadmap */}
+          <div className="border border-[#E2E8F0] rounded-2xl p-5 hover:border-[#CBD5E1] transition-all bg-[#FAFAFA]/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200">
+                  Exclusive to Design Package
+                </span>
+                <span className="text-xs text-[#64748B] font-semibold flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span>5-Year Horizon</span>
                 </span>
               </div>
-              <p className="text-xs text-[#475569] leading-relaxed mb-4">
-                Actionable year-by-year trajectory mapping covering academic choices, certifications, real-world portfolio projects, and internship horizons.
-              </p>
+              <div>
+                <h4 className="text-base font-bold text-[#0F172A]">
+                  5-Year Actionable Milestone Roadmap
+                </h4>
+                <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                  Annualized execution roadmap mapping semester goals, high-impact internships, college admissions target bands, and executive mentorship interventions.
+                </p>
+              </div>
             </div>
-            <a
-              href="/docs/5%20Year%20Career%20Map%20Sample.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#0F172A] hover:text-white transition-all shadow-2xs"
-            >
-              <span>Inspect Sample 5-Year Roadmap (PDF)</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+
+            <div className="pt-5">
+              <a
+                href="/docs/5%20Year%20Career%20Map%20Sample.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-white border border-[#CBD5E1] hover:bg-[#F8FAFC] text-xs font-bold text-[#0F172A] transition-colors shadow-2xs"
+              >
+                <Compass className="w-3.5 h-3.5 text-indigo-600" />
+                <span>View Sample 5-Year Roadmap (PDF)</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 5. Comprehensive Feature Comparison Table */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs overflow-hidden">
-        <div className="mb-6">
+      {/* 4. Side-by-Side Detailed Comparison Table */}
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+        <div>
           <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
-            Side-by-Side Comparison
+            Deep Dive
           </span>
           <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
-            Package Features &amp; Deliverables
+            Package Comparison Matrix
           </h3>
           <p className="text-xs text-[#64748B] mt-1">
-            Understand exactly what is unlocked at each stage of your leadership journey.
+            Compare features across diagnostic, guidance, and strategic roadmapping tiers.
           </p>
         </div>
 
-        <div className="overflow-x-auto -mx-6 sm:mx-0">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                <th className="py-3 px-4 font-bold text-[#0F172A]">Feature / Deliverable</th>
-                <th className="py-3 px-4 font-bold text-[#0F172A] text-center w-28">Discover</th>
-                <th className="py-3 px-4 font-black text-[#FF6B6B] text-center w-36 bg-[#FFF2EE]">Decode</th>
-                <th className="py-3 px-4 font-bold text-[#0F172A] text-center w-32">Design</th>
+              <tr className="border-b border-[#E2E8F0] text-[11px] uppercase tracking-wider font-bold text-[#64748B]">
+                <th className="py-3 px-4 w-1/2">Capability / Deliverable</th>
+                <th className="py-3 px-4 text-center">Discover</th>
+                <th className="py-3 px-4 text-center bg-indigo-50/50 rounded-t-lg text-indigo-900">
+                  Decode
+                </th>
+                <th className="py-3 px-4 text-center">Design</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0]">
+            <tbody className="divide-y divide-[#F1F5F9]">
               {comparisonRows.map((row, idx) => (
-                <tr key={idx} className="hover:bg-[#F8FAFC]/60 transition-colors">
-                  <td className="py-3.5 px-4 font-medium text-[#334155]">
+                <tr key={idx} className="hover:bg-[#F8FAFC]/80 transition-colors">
+                  <td className="py-3.5 px-4 font-medium text-[#1E293B]">
                     {row.feature}
                   </td>
                   <td className="py-3.5 px-4 text-center">
@@ -511,15 +481,15 @@ export default function StudentPlansClient({
                       <span className="font-semibold text-[#0F172A]">{row.discover}</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-center bg-[#FFF2EE]/40">
+                  <td className="py-3.5 px-4 text-center bg-indigo-50/30 font-semibold text-indigo-950">
                     {typeof row.decode === "boolean" ? (
                       row.decode ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] mx-auto" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
                       ) : (
                         <span className="text-[#94A3B8]">—</span>
                       )
                     ) : (
-                      <span className="font-black text-[#FF6B6B]">{row.decode}</span>
+                      <span className="font-semibold text-indigo-950">{row.decode}</span>
                     )}
                   </td>
                   <td className="py-3.5 px-4 text-center">
@@ -540,79 +510,7 @@ export default function StudentPlansClient({
         </div>
       </div>
 
-      {/* 6. Institutional Cohort & School Partnership Callout */}
-      <div className="bg-[#0F172A] text-white rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800 text-[#FF6B6B] text-[10px] font-black uppercase tracking-wider border border-slate-700">
-            <Users className="w-3 h-3" />
-            <span>School &amp; University Partnerships</span>
-          </div>
-          <h4 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-            Enrolled Through a Partner Institution?
-          </h4>
-          <p className="text-xs text-[#94A3B8] leading-relaxed">
-            If your high school or college administers Alderwood Vantage for your grade cohort, your 1-on-1 debriefs and personalized roadmaps are coordinated directly with your school guidance department.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
-          <a
-            href="mailto:admissions@alderwoodvantage.com?subject=Institutional%20Cohort%20Inquiry%20-%20Student%20Portal"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-[#0F172A] font-bold text-xs hover:bg-gray-100 transition-colors shadow-2xs"
-          >
-            <Mail className="w-3.5 h-3.5 text-[#FF6B6B]" />
-            <span>Contact Advisory Desk</span>
-          </a>
-          <a
-            href="tel:+919316819331"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 text-white font-semibold text-xs hover:bg-slate-700 transition-colors border border-slate-700"
-          >
-            <Phone className="w-3.5 h-3.5 text-slate-400" />
-            <span>+91 93168 19331</span>
-          </a>
-        </div>
-      </div>
-
-      {/* 7. Student FAQs */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
-        <div className="mb-2">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
-            Questions &amp; Clarity
-          </span>
-          <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
-            Frequently Asked Questions
-          </h3>
-        </div>
-
-        <div className="space-y-3">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="border border-[#E2E8F0] rounded-xl overflow-hidden transition-colors"
-            >
-              <button
-                type="button"
-                onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                className="w-full p-4 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#0F172A] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
-              >
-                <span>{faq.q}</span>
-                <ChevronDown
-                  className={`w-4 h-4 text-[#64748B] shrink-0 transition-transform duration-200 ${
-                    activeFaq === index ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {activeFaq === index && (
-                <div className="p-4 pt-0 text-xs text-[#475569] leading-relaxed border-t border-[#F1F5F9] bg-[#F8FAFC]/40">
-                  {faq.a}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 8. Interactive Inquiry / Upgrade Modal */}
+      {/* 5. Interactive Inquiry / Upgrade Modal */}
       {selectedPlanForInquiry && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-[#E2E8F0] overflow-hidden p-6 sm:p-7 text-[#0F172A]">

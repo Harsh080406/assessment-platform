@@ -569,7 +569,7 @@ export default async function StudentDashboardPage() {
                 href="/dashboard/plans"
                 className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 rounded-xl bg-white text-[#0F172A] hover:bg-slate-100 font-semibold text-xs transition-colors shadow-xs"
               >
-                <span>Explore Tier Upgrades &amp; Samples</span>
+                <span>Choose a Plan Type</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#0F172A]" />
               </Link>
             </div>
