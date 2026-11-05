@@ -35,12 +35,12 @@ export const DEFAULT_CONTENT_BLOCKS: Record<string, DefaultContentItem> = {
           a: "Teenagers are still growing, and student cognitive and behavioral data is sensitive. Parental consent is taken up front because we handle student information with utmost care. Data is strictly confidential and never shared or sold to coaching centers.",
         },
         {
-          q: "What is the Leadership Blueprint deliverable?",
-          a: "The Leadership Blueprint is a clear, jargon-free report covering the Leader's Lens (how the student shows up today as a leader and innovator), Pathway Fit (suitability across Building a Venture, Leading the Family Business, a Professional Career, or Hybrid), and the Gap-to-Ready Meter.",
+          q: "What is the Career Vantage Report deliverable?",
+          a: "The Career Vantage Report is an evidence-based written report (about 15–17 pages) with charts and plain-language explanations covering personality, interests, work values, 16 skills and reasoning, top 3 career pathways with match strength, academic direction, and a measurable development plan.",
         },
         {
-          q: "What packages do you offer and what is the 5-Year Leadership Roadmap?",
-          a: "We offer three packages: Discover (Assessment + Leadership Blueprint), Decode (Assessment + Blueprint + 2 one-on-one counselling sessions), and Design (Assessment + Blueprint + Counselling + 5-Year Leadership Roadmap detailing skills to build, real-world projects, mentorship, and yearly milestones).",
+          q: "What packages do you offer and how do they differ?",
+          a: "Every package starts with the same assessment and report. We offer: Discover (₹6,000, Report only), Decode (₹10,500, Report + 2 counselling sessions + 90-day action plan), and Design (₹19,500, Report + 10-page 5-Year Career & Education Map + 3 counselling sessions). Additional counselling sessions are available as an add-on at ₹2,500 per session.",
         },
       ],
       null,

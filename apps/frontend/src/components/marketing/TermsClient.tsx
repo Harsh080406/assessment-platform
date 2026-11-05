@@ -174,13 +174,16 @@ export default function TermsClient() {
                 </p>
                 <div className="space-y-3 text-sm my-4">
                   <div className="bg-white p-4 rounded-xl border border-[#E2E8F0]">
-                    <span className="font-bold text-[#0F172A]">Discover Package:</span> Comprehensive 4-module evaluation (Spark, Wiring, Horsepower, Edge) resulting in a personalized Leadership Blueprint diagnostic deliverable.
+                    <span className="font-bold text-[#0F172A]">Discover Package (₹6,000 [Excl. GST]):</span> Online assessment covering personality, interests, work values, 16 skills and reasoning, resulting in a personalised 15–17 page Career Vantage Report delivered within 7–10 working days.
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-[#E2E8F0]">
-                    <span className="font-bold text-[#0F172A]">Decode Package:</span> Assessment + Leadership Blueprint + two 1-on-1 strategic debrief sessions with certified senior practitioners.
+                    <span className="font-bold text-[#0F172A]">Decode Package (₹10,500 [Excl. GST]):</span> Everything in Discover plus two 1-on-1 strategic counselling sessions (45–60 min each, valid for 90 days) and a 1-page written action plan.
                   </div>
                   <div className="bg-white p-4 rounded-xl border border-[#E2E8F0]">
-                    <span className="font-bold text-[#0F172A]">Design Package:</span> Assessment + Blueprint + Debrief + a comprehensive 5-Year Leadership Roadmap specifying skill pathways, project portfolios, and milestone tracking.
+                    <span className="font-bold text-[#0F172A]">Design Package (₹19,500 [Excl. GST]):</span> Everything in Decode plus three counselling sessions (valid for 6 months), a 10-page 5-Year Career &amp; Education Map with pathway fit analysis, capstone milestones, skills roadmap, and mentor map.
+                  </div>
+                  <div className="bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] text-xs text-[#475569]">
+                    <span className="font-bold text-[#0F172A]">Optional Add-on:</span> Additional counselling sessions (45–60 minutes, online or in person) are available at ₹2,500 per session.
                   </div>
                 </div>
               </div>

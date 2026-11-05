@@ -564,20 +564,20 @@ export default async function StudentDashboardPage() {
             <div className="grid grid-cols-3 gap-1.5 p-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-center">
               <div className="py-2 px-1 rounded-lg bg-white border border-emerald-200 shadow-2xs">
                 <div className="text-[11px] font-bold text-emerald-700">Discover</div>
-                <div className="text-[10px] text-[#64748B]">Active</div>
+                <div className="text-[10px] text-[#64748B]">Active • ₹6k</div>
               </div>
               <div className="py-2 px-1 rounded-lg">
                 <div className="text-[11px] font-bold text-[#0F172A]">Decode</div>
-                <div className="text-[10px] text-[#64748B]">1-on-1 Debrief</div>
+                <div className="text-[10px] text-[#64748B]">2 Sessions • ₹10.5k</div>
               </div>
               <div className="py-2 px-1 rounded-lg">
                 <div className="text-[11px] font-bold text-[#0F172A]">Design</div>
-                <div className="text-[10px] text-[#64748B]">5-Yr Roadmap</div>
+                <div className="text-[10px] text-[#64748B]">5-Yr Map • ₹19.5k</div>
               </div>
             </div>
 
             <p className="text-xs text-[#64748B] leading-relaxed">
-              Explore tier upgrades to add 1-on-1 expert debrief sessions or a personalized 5-year career roadmap.
+              Every package includes the full assessment and report. Add 2 counselling sessions with Decode or a 10-page 5-Year Career Map with Design.
             </p>
 
             <Link
