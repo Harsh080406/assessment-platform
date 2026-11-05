@@ -321,33 +321,35 @@ export default function PackagesClient() {
           </div>
 
           {/* =========================================================
-              THE OUTPUT: YOUR LEADERSHIP BLUEPRINT
+              THE OUTPUT: CAREER VANTAGE REPORT DELIVERABLE
           ========================================================= */}
-          <div className="bg-[#0F172A] text-white rounded-3xl p-7 sm:p-10 lg:p-12 relative overflow-hidden shadow-2xl border border-[#1E293B]">
-            {/* Background Glow */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[#FF6B6B]/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-gradient-to-br from-white via-[#FCFCFA] to-[#FFF8F6] border border-[#E8E6DF] rounded-3xl p-7 sm:p-10 lg:p-12 relative overflow-hidden shadow-xs hover:shadow-md transition-all text-[#0F172A]">
+            {/* Subtle Ambient Glow */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[#FF6B6B]/8 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 max-w-3xl">
-              <span className="text-xs font-black tracking-widest uppercase text-[#FF6B6B] block mb-2">
-                The Tangible Output
-              </span>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-4 text-white">
+            <div className="relative z-10 max-w-4xl">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-3 text-[#0F172A]">
                 Personalised Career Vantage Report
               </h3>
-              <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed mb-10">
+              <p className="text-sm sm:text-base text-[#475569] font-medium leading-relaxed mb-8 max-w-3xl">
                 A detailed, plain-language written report (about 15–17 pages) with charts, benchmarks, and actionable directions delivered within 7–10 working days of assessment completion.
               </p>
 
               {/* 3 Pillars Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 border-t border-slate-800">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-2">
                 {blueprintOutputs.map((out) => (
-                  <div key={out.title} className="space-y-1.5">
-                    <h4 className="text-base font-bold text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#FF6B6B]" />
-                      {out.title}
-                    </h4>
-                    <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  <div
+                    key={out.title}
+                    className="bg-white/90 border border-[#E2E8F0] rounded-2xl p-5 sm:p-6 shadow-2xs hover:border-[#CBD5E1] hover:shadow-xs transition-all space-y-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B6B] shrink-0" />
+                      <h4 className="text-base font-bold text-[#0F172A]">
+                        {out.title}
+                      </h4>
+                    </div>
+                    <p className="text-xs sm:text-[13px] text-[#64748B] leading-relaxed">
                       {out.description}
                     </p>
                   </div>
@@ -355,13 +357,25 @@ export default function PackagesClient() {
               </div>
 
               {/* Bottom Clarification */}
-              <div className="mt-8 pt-6 border-t border-slate-800/80 flex items-center gap-3">
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-3 py-1 rounded-full">
-                  Scientific &amp; Actionable
-                </span>
-                <p className="text-xs sm:text-sm text-[#94A3B8]">
-                  Every package starts with the same assessment and report. The difference is how much support you get to turn the report into decisions.
-                </p>
+              <div className="mt-8 pt-6 border-t border-[#E8E6DF] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full shrink-0">
+                    Scientific &amp; Actionable
+                  </span>
+                  <p className="text-xs sm:text-sm text-[#475569] font-medium leading-relaxed">
+                    Every package starts with the same assessment and report. The difference is how much support you get to turn the report into decisions.
+                  </p>
+                </div>
+                <a
+                  href="/docs/Career%20Vantage%20Sample%20Report%20-Fashion%20Lawyer.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#CBD5E1] hover:bg-[#F8FAFC] text-xs font-bold text-[#0F172A] transition-colors shadow-2xs shrink-0 self-end sm:self-auto"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#FF6B6B]" />
+                  <span>View Sample PDF</span>
+                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                </a>
               </div>
             </div>
           </div>
