@@ -507,57 +507,63 @@ export default function AboutClient() {
         ========================================================= */}
         <section
           aria-labelledby="trust-heading"
-          className="bg-[#0F172A] text-white py-16 sm:py-20"
+          className="py-16 sm:py-24 bg-[#FBFBF9] border-t border-[#E8E6DF] relative overflow-hidden"
           id="privacy"
         >
           <div className="max-w-[1120px] mx-auto px-4 sm:px-6">
-            <div className="text-center max-w-[720px] mx-auto">
-              {/* Trust Icon */}
-              <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-[#FF6B6B] mx-auto mb-6">
-                <Lock className="w-6 h-6" aria-hidden="true" />
-              </div>
+            <div className="bg-gradient-to-br from-white via-[#FCFCFA] to-[#FFF8F6] border border-[#E8E6DF] rounded-3xl p-8 sm:p-12 lg:p-16 shadow-xs relative overflow-hidden text-center">
+              {/* Subtle Ambient Glow */}
+              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[#FF6B6B]/8 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
 
-              <h2
-                id="trust-heading"
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-[-0.01em]"
-              >
-                Privacy and trust guaranteed
-              </h2>
-              <p className="mt-3 text-base sm:text-lg text-slate-300 leading-relaxed max-w-[620px] mx-auto">
-                Student data is collected only with parental consent, kept confidential, and never shared without permission.
-              </p>
+              <div className="relative z-10 max-w-[720px] mx-auto">
+                {/* Trust Icon */}
+                <div className="w-14 h-14 rounded-2xl bg-[#FFF2EE] border border-[#FED7CC] flex items-center justify-center text-[#FF6B6B] mx-auto mb-6 shadow-2xs">
+                  <Lock className="w-6 h-6" aria-hidden="true" />
+                </div>
 
-              {/* 3 Explicit Promises */}
-              <div className="mt-8 mb-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-slate-300 font-medium">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
-                  <span>Parental consent required</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
-                  <span>Strictly confidential</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
-                  <span>Never shared without permission</span>
-                </div>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  href="/packages"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF6B6B] hover:bg-[#F95858] text-white text-sm sm:text-base font-bold shadow-xs hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+                <h2
+                  id="trust-heading"
+                  className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F172A] tracking-tight"
                 >
-                  <span>Explore packages</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/privacy"
-                  className="text-sm font-semibold text-slate-300 hover:text-white underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm py-2 px-3"
-                >
-                  Privacy and parental consent
-                </Link>
+                  Privacy and trust guaranteed
+                </h2>
+                <p className="mt-3 text-base sm:text-lg text-[#475569] font-medium leading-relaxed max-w-[620px] mx-auto">
+                  Student data is collected only with parental consent, kept confidential, and never shared without permission.
+                </p>
+
+                {/* 3 Explicit Promises */}
+                <div className="mt-8 mb-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E2E8F0] shadow-2xs text-[#0F172A] font-semibold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
+                    <span>Parental consent required</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E2E8F0] shadow-2xs text-[#0F172A] font-semibold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
+                    <span>Strictly confidential</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E2E8F0] shadow-2xs text-[#0F172A] font-semibold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-[#FF6B6B] shrink-0" aria-hidden="true" />
+                    <span>Never shared without permission</span>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Link
+                    href="/packages"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF6B6B] hover:bg-[#F95858] text-white text-sm sm:text-base font-bold shadow-xs hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] focus-visible:ring-offset-2"
+                  >
+                    <span>Explore packages</span>
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/privacy"
+                    className="text-sm font-semibold text-[#64748B] hover:text-[#0F172A] underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] rounded-sm py-2 px-3"
+                  >
+                    Privacy and parental consent
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
