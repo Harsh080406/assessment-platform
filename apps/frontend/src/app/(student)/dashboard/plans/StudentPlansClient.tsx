@@ -44,6 +44,7 @@ export default function StudentPlansClient({
   const [selectedPlanForInquiry, setSelectedPlanForInquiry] = useState<string | null>(null);
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const [inquiryNotes, setInquiryNotes] = useState("");
+  const [mobileTableView, setMobileTableView] = useState<"all" | "discover" | "decode" | "design">("all");
 
   const packages = [
     {
@@ -627,8 +628,8 @@ export default function StudentPlansClient({
       </div>
 
       {/* 6. Side-by-Side Detailed Comparison Table */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xs space-y-5 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xs space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
               Compare the Packages
@@ -640,39 +641,125 @@ export default function StudentPlansClient({
               A quick view of what is in each package. Prices in INR [Exclusive of GST].
             </p>
           </div>
-          <div className="sm:hidden self-start inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-[10px] font-semibold text-[#64748B] border border-slate-200">
-            <span>← Scroll to compare tiers →</span>
+
+          {/* Desktop Badge */}
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-semibold text-[#475569]">
+            <span>3 Tiers Side-by-Side</span>
+          </div>
+        </div>
+
+        {/* Mobile Segmented Tab Filter */}
+        <div className="sm:hidden space-y-2">
+          <div className="flex items-center justify-between text-[11px] text-[#64748B] px-0.5">
+            <span className="font-semibold">Select tier view:</span>
+            <span className="text-[10px] text-slate-400">Tap to filter or compare</span>
+          </div>
+          <div className="grid grid-cols-4 p-1 bg-[#F1F5F9] rounded-xl text-[11px] font-bold">
+            <button
+              type="button"
+              onClick={() => setMobileTableView("all")}
+              className={`py-2 px-1 rounded-lg text-center transition-all ${
+                mobileTableView === "all"
+                  ? "bg-white text-[#0F172A] shadow-xs font-black"
+                  : "text-[#64748B] hover:text-[#0F172A]"
+              }`}
+            >
+              All Tiers
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTableView("discover")}
+              className={`py-2 px-1 rounded-lg text-center transition-all ${
+                mobileTableView === "discover"
+                  ? "bg-white text-emerald-700 shadow-xs font-black"
+                  : "text-[#64748B] hover:text-[#0F172A]"
+              }`}
+            >
+              Discover
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTableView("decode")}
+              className={`py-2 px-1 rounded-lg text-center transition-all ${
+                mobileTableView === "decode"
+                  ? "bg-white text-indigo-700 shadow-xs font-black"
+                  : "text-[#64748B] hover:text-[#0F172A]"
+              }`}
+            >
+              Decode
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTableView("design")}
+              className={`py-2 px-1 rounded-lg text-center transition-all ${
+                mobileTableView === "design"
+                  ? "bg-white text-[#FF6B6B] shadow-xs font-black"
+                  : "text-[#64748B] hover:text-[#0F172A]"
+              }`}
+            >
+              Design
+            </button>
           </div>
         </div>
 
         <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <table className="min-w-[580px] w-full text-xs text-left border-collapse">
+          <table className="w-full text-xs text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#E2E8F0] text-[11px] uppercase tracking-wider font-bold text-[#64748B]">
-                <th className="py-3 px-4 w-[42%] min-w-[210px] sticky left-0 bg-white z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.06)]">
+              <tr className="border-b border-[#E2E8F0] text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-[#64748B]">
+                <th className="py-2.5 sm:py-3 px-2 sm:px-4 w-[38%] min-w-[125px] sm:min-w-[210px] sticky left-0 bg-white z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)]">
                   Feature / Deliverable
                 </th>
-                <th className="py-3 px-3 text-center min-w-[105px]">
-                  Package 1<br /><span className="text-[10px] font-medium text-slate-500">Discover</span>
+                <th
+                  className={`py-2.5 sm:py-3 px-1.5 sm:px-3 text-center min-w-[68px] sm:min-w-[105px] text-[10px] sm:text-[11px] font-bold text-[#0F172A] ${
+                    mobileTableView === "all" || mobileTableView === "discover"
+                      ? "table-cell"
+                      : "hidden sm:table-cell"
+                  }`}
+                >
+                  <span className="block text-[9px] sm:text-[10px] font-semibold text-slate-500 uppercase">Pkg 1</span>
+                  <span className="block text-xs sm:text-sm font-black text-[#0F172A]">Discover</span>
+                  <span className="block text-[10px] sm:text-xs font-bold text-emerald-700 mt-0.5">₹6,000</span>
                 </th>
-                <th className="py-3 px-3 text-center bg-indigo-50/60 rounded-t-lg text-indigo-900 min-w-[130px] font-bold">
-                  Package 2<br /><span className="text-[10px] font-medium text-indigo-700">Decode</span>
+                <th
+                  className={`py-2.5 sm:py-3 px-1.5 sm:px-3 text-center bg-indigo-50/70 rounded-t-lg text-indigo-950 min-w-[74px] sm:min-w-[130px] font-bold text-[10px] sm:text-[11px] ${
+                    mobileTableView === "all" || mobileTableView === "decode"
+                      ? "table-cell"
+                      : "hidden sm:table-cell"
+                  }`}
+                >
+                  <span className="block text-[9px] sm:text-[10px] font-semibold text-indigo-600 uppercase">Pkg 2</span>
+                  <span className="block text-xs sm:text-sm font-black text-indigo-950">Decode</span>
+                  <span className="block text-[10px] sm:text-xs font-bold text-indigo-700 mt-0.5">₹10,500</span>
                 </th>
-                <th className="py-3 px-3 text-center min-w-[130px] font-bold">
-                  Package 3<br /><span className="text-[10px] font-medium text-slate-500">Design</span>
+                <th
+                  className={`py-2.5 sm:py-3 px-1.5 sm:px-3 text-center min-w-[74px] sm:min-w-[130px] font-bold text-[#0F172A] text-[10px] sm:text-[11px] ${
+                    mobileTableView === "all" || mobileTableView === "design"
+                      ? "table-cell"
+                      : "hidden sm:table-cell"
+                  }`}
+                >
+                  <span className="block text-[9px] sm:text-[10px] font-semibold text-slate-500 uppercase">Pkg 3</span>
+                  <span className="block text-xs sm:text-sm font-black text-[#0F172A]">Design</span>
+                  <span className="block text-[10px] sm:text-xs font-bold text-[#FF6B6B] mt-0.5">₹19,500</span>
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F1F5F9]">
               {comparisonRows.map((row, idx) => (
                 <tr key={idx} className="hover:bg-[#F8FAFC]/80 transition-colors group">
-                  <td className="py-3.5 px-4 font-medium text-[#1E293B] sticky left-0 bg-white group-hover:bg-[#F8FAFC] transition-colors z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.06)]">
+                  <td className="py-2.5 sm:py-3.5 px-2 sm:px-4 font-medium text-[#1E293B] text-[11px] sm:text-xs leading-snug sticky left-0 bg-white group-hover:bg-[#F8FAFC] transition-colors z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)]">
                     {row.feature}
                   </td>
-                  <td className="py-3.5 px-3 text-center">
+                  <td
+                    className={`py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-[11px] sm:text-xs ${
+                      mobileTableView === "all" || mobileTableView === "discover"
+                        ? "table-cell"
+                        : "hidden sm:table-cell"
+                    }`}
+                  >
                     {typeof row.discover === "boolean" ? (
                       row.discover ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
+                        <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 mx-auto" />
                       ) : (
                         <span className="text-[#94A3B8]">—</span>
                       )
@@ -680,10 +767,16 @@ export default function StudentPlansClient({
                       <span className="font-bold text-[#0F172A]">{row.discover}</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-3 text-center bg-indigo-50/30 font-semibold text-indigo-950">
+                  <td
+                    className={`py-2.5 sm:py-3.5 px-1 sm:px-3 text-center bg-indigo-50/30 font-semibold text-indigo-950 text-[11px] sm:text-xs ${
+                      mobileTableView === "all" || mobileTableView === "decode"
+                        ? "table-cell"
+                        : "hidden sm:table-cell"
+                    }`}
+                  >
                     {typeof row.decode === "boolean" ? (
                       row.decode ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
+                        <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 mx-auto" />
                       ) : (
                         <span className="text-[#94A3B8]">—</span>
                       )
@@ -691,10 +784,16 @@ export default function StudentPlansClient({
                       <span className="font-bold text-indigo-950">{row.decode}</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-3 text-center">
+                  <td
+                    className={`py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-[11px] sm:text-xs ${
+                      mobileTableView === "all" || mobileTableView === "design"
+                        ? "table-cell"
+                        : "hidden sm:table-cell"
+                    }`}
+                  >
                     {typeof row.design === "boolean" ? (
                       row.design ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto" />
+                        <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 mx-auto" />
                       ) : (
                         <span className="text-[#94A3B8]">—</span>
                       )
