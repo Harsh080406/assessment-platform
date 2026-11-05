@@ -475,63 +475,6 @@ export default function StudentPlansClient({
         </div>
       </div>
 
-      {/* 4. How It Works (4 Steps) */}
-      <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xs space-y-6">
-        <div>
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6B6B] block mb-1">
-            Simple 4-Step Process
-          </span>
-          <h3 className="text-xl font-bold text-[#0F172A] tracking-tight">
-            How It Works
-          </h3>
-          <p className="text-xs text-[#64748B] mt-1">
-            From initial registration to report delivery and practitioner walkthroughs.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
-            <div className="w-7 h-7 rounded-lg bg-[#0F172A] text-white flex items-center justify-center text-xs font-bold">
-              1
-            </div>
-            <h5 className="text-sm font-bold text-[#0F172A]">Register</h5>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Choose a package. For students under 18, a parent or guardian gives consent.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
-            <div className="w-7 h-7 rounded-lg bg-[#0F172A] text-white flex items-center justify-center text-xs font-bold">
-              2
-            </div>
-            <h5 className="text-sm font-bold text-[#0F172A]">Take the Assessment</h5>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Online, 60–90 minutes, at home or at a scheduled convenient time.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
-            <div className="w-7 h-7 rounded-lg bg-[#0F172A] text-white flex items-center justify-center text-xs font-bold">
-              3
-            </div>
-            <h5 className="text-sm font-bold text-[#0F172A]">Receive Your Report</h5>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              A personalised PDF delivered within 7–10 working days of assessment completion.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2">
-            <div className="w-7 h-7 rounded-lg bg-[#0F172A] text-white flex items-center justify-center text-xs font-bold">
-              4
-            </div>
-            <h5 className="text-sm font-bold text-[#0F172A]">Talk It Through</h5>
-            <p className="text-xs text-[#64748B] leading-relaxed">
-              Your sessions (Packages 2 and 3) and, in Package 3, your 5-year career &amp; education map.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* 5. Sample Deliverables Preview */}
       <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xs space-y-5 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F5F9] pb-5">
